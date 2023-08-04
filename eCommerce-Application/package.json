@@ -8,7 +8,7 @@
         "prod": "webpack --mode production",
         "lint": "eslint . --ext .ts",
         "format": "npx prettier --write .",
-        "prepare": "cd .. && husky install front/.husky",
+        "prepare": "cd .. && husky install ecommerce-application/.husky",
         "test": "jest"
     },
     "author": "",
