@@ -24,7 +24,7 @@ module.exports = (_env, options) => {
                 { test: /\.ts$/i, use: 'ts-loader' },
                 {
                     test: /\.css$/i,
-                    use: ['style-loader', 'css-loader'],
+                    use: ['style-loader', 'css-loader', 'sass-loader'],
                 },
                 {
                     test: /\.html$/i,
