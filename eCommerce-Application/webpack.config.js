@@ -3,6 +3,7 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const EslingPlugin = require('eslint-webpack-plugin');
+const { merge } = require('webpack-merge');
 
 module.exports = (_env, options) => {
     const isProduction = options.mode === 'production';
@@ -23,7 +24,7 @@ module.exports = (_env, options) => {
             rules: [
                 { test: /\.ts$/i, use: 'ts-loader' },
                 {
-                    test: /\.css$/i,
+                    test: /\.scss$/i,
                     use: ['style-loader', 'css-loader', 'sass-loader'],
                 },
                 {
@@ -55,5 +56,11 @@ module.exports = (_env, options) => {
             new EslingPlugin({ extensions: 'ts' }),
         ],
     };
+
+    if (!isProduction) {
+        const envConfig = require('./webpack.dev.config');
+        return merge(config, envConfig);
+    }
+
     return config;
 };
