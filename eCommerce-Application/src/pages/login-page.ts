@@ -1,6 +1,6 @@
-import { View } from './abstract/view';
+import { Page } from './abstract/page';
 
-export class LoginView extends View {
+export class LoginPage extends Page {
     public render(): void {
         this.html = document.createElement('div');
         this.html.innerHTML = 'Login Page';

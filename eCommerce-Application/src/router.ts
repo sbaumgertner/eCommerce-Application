@@ -1,4 +1,4 @@
-import { RouteAction } from './action/routeAction';
+import { RouteAction } from './store/action/routeAction';
 import { Page, PageName } from './types';
 
 export const pages: Page[] = [

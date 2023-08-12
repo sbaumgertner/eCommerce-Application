@@ -1,5 +1,5 @@
 import { Dispatcher } from 'flux';
-import { Action } from './types';
+import { Action } from '../types';
 
 export class AppDispatcher {
     private dispatcher?: Dispatcher<Action>;

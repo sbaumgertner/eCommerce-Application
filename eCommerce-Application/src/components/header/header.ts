@@ -1,22 +1,25 @@
-import { StoreView } from './abstract/store-view';
 import { AppStore } from '../../store/app-store';
-import { PageName, StoreEventType } from '../../app/types';
-import { RouteAction } from '../../app/action/routeAction';
+import { PageName, StoreEventType } from '../../types';
+import { RouteAction } from '../../store/action/routeAction';
+import { Component } from '../component';
 
-export class HeaderView extends StoreView {
+export class Header implements Component {
+    private appStore: AppStore;
+    private html?: HTMLElement;
+
     private navEl: HTMLElement[];
     private selectedEl?: HTMLElement;
     private routeAction: RouteAction;
 
-    constructor(store: AppStore) {
-        super(store);
+    constructor(appStore: AppStore) {
+        this.appStore = appStore;
         this.routeAction = new RouteAction();
         this.navEl = [];
-        this.store.addChangeListener(StoreEventType.PAGE_CHANGE, this.onStoreChange.bind(this));
+        this.appStore.addChangeListener(StoreEventType.PAGE_CHANGE, this.onStoreChange.bind(this));
     }
 
     protected onStoreChange(): void {
-        const page: PageName = (this.store as AppStore).getCurrentPage();
+        const page: PageName = this.appStore.getCurrentPage();
         const selected = this.navEl.find((item) => item.dataset.page === page);
         if (selected) {
             this.selectedEl?.classList.remove('selected');
@@ -51,5 +54,9 @@ export class HeaderView extends StoreView {
         this.navEl.forEach((item) => {
             this.html?.append(item);
         });
+    }
+
+    public getHtml(): HTMLElement {
+        return this.html as HTMLElement;
     }
 }

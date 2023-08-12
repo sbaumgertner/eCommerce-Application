@@ -1,4 +1,4 @@
-export abstract class View {
+export abstract class Page {
     protected html?: HTMLElement;
 
     public getHtml(): HTMLElement {

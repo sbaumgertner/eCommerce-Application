@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
-import { Action, StoreEventType } from '../../app/types';
-import { AppDispatcher } from '../../app/dispatcher';
+import { Action, StoreEventType } from '../../types';
+import { AppDispatcher } from '../dispatcher';
 
 export abstract class Store extends EventEmitter {
     protected dispatcher: AppDispatcher;

@@ -1,6 +1,6 @@
-import { View } from './abstract/view';
+import { Page } from './abstract/page';
 
-export class NotFoundView extends View {
+export class NotFoundPage extends Page {
     public render(): void {
         this.html = document.createElement('div');
         this.html.innerHTML = 'Page not found';

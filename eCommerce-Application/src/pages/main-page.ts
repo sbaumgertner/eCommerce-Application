@@ -1,6 +1,6 @@
-import { View } from './abstract/view';
+import { Page } from './abstract/page';
 
-export class IndexView extends View {
+export class MainPage extends Page {
     public render(): void {
         this.html = document.createElement('div');
         this.html.innerHTML = 'Main Page';

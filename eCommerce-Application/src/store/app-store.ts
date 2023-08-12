@@ -1,6 +1,6 @@
-import { RouteActionData } from '../app/action/routeAction';
-import { Router } from '../app/router';
-import { Action, ActionType, PageName, StoreEventType } from '../app/types';
+import { RouteActionData } from './action/routeAction';
+import { Router } from '../router';
+import { Action, ActionType, PageName, StoreEventType } from '../types';
 import { Store } from './abstract/store';
 
 export class AppStore extends Store {
@@ -17,15 +17,19 @@ export class AppStore extends Store {
         return this.currentPage;
     }
 
+    private onRouteChange(jsonData: string): void {
+        const data: RouteActionData = JSON.parse(jsonData);
+        this.currentPage = data.page;
+        if (data.addHistory) {
+            this.router.addHistory(this.currentPage);
+        }
+        this.emit(StoreEventType.PAGE_CHANGE);
+    }
+
     protected actionCallback(action: Action): void {
-        const data: RouteActionData = JSON.parse(action.data);
         switch (action.actionType) {
             case ActionType.ROUTE_CHANGE:
-                this.currentPage = data.page;
-                if (data.addHistory) {
-                    this.router.addHistory(this.currentPage);
-                }
-                this.emit(StoreEventType.PAGE_CHANGE);
+                this.onRouteChange(action.data);
                 break;
         }
     }

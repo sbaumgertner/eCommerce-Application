@@ -1,4 +1,4 @@
-import { AppDispatcher } from '../../dispatcher';
+import { AppDispatcher } from '../dispatcher';
 
 export abstract class Action {
     dispatcher: AppDispatcher;

@@ -1,5 +1,5 @@
-import { ActionType, PageName } from '../types';
-import { Action } from './abstract/action';
+import { ActionType, PageName } from '../../types';
+import { Action } from '../abstract/action';
 
 export type RouteActionData = {
     addHistory: boolean;
