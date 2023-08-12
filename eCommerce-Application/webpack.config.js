@@ -11,7 +11,6 @@ module.exports = (_env, options) => {
     const config = {
         mode: isProduction ? 'production' : 'development',
         devtool: 'inline-source-map',
-        watch: !isProduction,
         entry: ['./src/script'],
         resolve: {
             extensions: ['.ts', '.js', '.json'],
