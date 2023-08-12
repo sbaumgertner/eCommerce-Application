@@ -1,5 +1,5 @@
-import { ClientResponse, CustomerPagedQueryResponse } from '@commercetools/platform-sdk';
-import { apiRoot } from './client';
+import { ClientResponse, CustomerPagedQueryResponse, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
+import { getCredentialFlowClient, getPasswordFlowClient } from './client';
 
 type CustomerData = {
     email: string;
@@ -9,6 +9,11 @@ type CustomerData = {
     countryCode: string;
     key: string;
 };
+const apiRoot = createApiBuilderFromCtpClient(getCredentialFlowClient).withProjectKey({ projectKey: '{projectKey}' });
+
+// const apiRoot = createApiBuilderFromCtpClient(
+//     getPasswordFlowClient('julia2@example.com', 'examplePassword')
+// ).withProjectKey({ projectKey: 'ecom_app' });
 
 export default class CustomerAPI {
     async createCustomer(customerData: CustomerData): Promise<unknown> {
