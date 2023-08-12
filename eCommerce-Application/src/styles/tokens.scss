@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Italiana&family=Roboto:wght@300;400;500&display=swap');
+
+// Colors
+$color-white: #ffffff;
+
+$color-neutral-10: #0F1B07;
+$color-neutral-30: #37432F;
+$color-neutral-60: #7D8975;
+$color-neutral-90: #CDD9C5;
+$color-neutral-98: #EBF7E3;
+$color-neutral-100: #FFFFF7;
+
+$color-primary-10: #003300;
+$color-primary-40: #427911;
+$color-primary-60: #7EB54D;
+$color-primary-80: #A6DD75;
+$color-primary-98: #ECFFBB;
+$color-primary-100: #FFFFF7;
+
+$color-secondary-10: #870300;
+$color-secondary-40: #E15D53;
+$color-secondary-60: #FF8F85;
+$color-secondary-80: #FFB7AD;
+$color-secondary-98: #FFF3E9;
+$color-secondary-100: #FFFBF7;
+
+
+// Breakpoints
+$max-tablet: 1168px;
+$max-mobile: 768px;
+
+
+// Text
+@mixin font-h1 {
+  font: {
+    family: 'Italiana', serif;
+    size: 128px;
+    weight: 400;
+  }
+  line-height: 144px;
+  @media (max-width: $max-tablet) {
+    font-size: 72px;
+    line-height: 80px;
+  }
+  @media (max-width: $max-mobile) {
+    font-size: 56px;
+    line-height: 64px;
+  }
+}
+
+@mixin font-h2 {
+  font: {
+    family: 'Italiana', serif;
+    size: 72px;
+    weight: 400;
+  }
+  line-height: 80px;
+  @media (max-width: $max-tablet) {
+    font-size: 48px;
+    line-height: 56px;
+  }
+}
+
+@mixin font-h3 {
+  font: {
+    family: 'Italiana', serif;
+    size: 48px;
+    weight: 400;
+  }
+  line-height: 56px;
+  @media (max-width: $max-tablet) {
+    font-size: 40px;
+    line-height: 48px;
+  }
+}
+
+@mixin font-h4 {
+  font: {
+    family: 'Italiana', serif;
+    size: 40px;
+    weight: 400;
+  }
+  line-height: 48px;
+  @media (max-width: $max-tablet) {
+    font-size: 32px;
+    line-height: 36px;
+  }
+}
+
+@mixin font-h5 {
+  font: {
+    family: 'Italiana', serif;
+    size: 32px;
+    weight: 400;
+  }
+  line-height: 40px;
+  @media (max-width: $max-tablet) {
+    font-size: 28px;
+    line-height: 32px;
+  }
+}
+
+@mixin font-h6 {
+  font: {
+    family: 'Italiana', serif;
+    size: 24px;
+    weight: 400;
+  }
+  line-height: 28px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  @media (max-width: $max-tablet) {
+    font-size: 20px;
+    line-height: 24px;
+  }
+}
+
+@mixin font-text {
+  font: {
+    family: 'Roboto', sans-serif;
+    size: 16px;
+    weight: 300;
+  }
+  line-height: 24px;
+  margin-bottom: 12px;
+}
+
+@mixin font-text-bold {
+  font: {
+    family: 'Roboto', sans-serif;
+    size: 16px;
+    weight: 500;
+  }
+  line-height: 24px;
+}
+
+@mixin font-caption {
+  font: {
+    family: 'Roboto', sans-serif;
+    size: 12px;
+    weight: 400;
+  }
+  line-height: 16px;
+  letter-spacing: 0.5px;
+}
+
+@mixin font-overline {
+  font: {
+    family: 'Roboto', sans-serif;
+    size: 12px;
+    weight: 500;
+  }
+  line-height: 16px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
