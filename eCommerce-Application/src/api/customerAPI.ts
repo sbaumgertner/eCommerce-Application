@@ -1,5 +1,6 @@
 import { ClientResponse, CustomerPagedQueryResponse, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import { getCredentialFlowClient, getPasswordFlowClient } from './client';
+import { ByProjectKeyRequestBuilder } from '@commercetools/typescript-sdk/dist/typings/generated/client/by-project-key-request-builder';
 
 type CustomerData = {
     email: string;
@@ -11,11 +12,15 @@ type CustomerData = {
 };
 const apiRoot = createApiBuilderFromCtpClient(getCredentialFlowClient).withProjectKey({ projectKey: '{projectKey}' });
 
-// const apiRoot = createApiBuilderFromCtpClient(
-//     getPasswordFlowClient('julia2@example.com', 'examplePassword')
-// ).withProjectKey({ projectKey: 'ecom_app' });
-
 export default class CustomerAPI {
+    private username: string;
+    private password: string;
+
+    constructor(username?: string, password?: string) {
+        this.username = username as string;
+        this.password = password as string;
+    }
+
     async createCustomer(customerData: CustomerData): Promise<unknown> {
         try {
             const customer = apiRoot
@@ -30,13 +35,13 @@ export default class CustomerAPI {
         }
     }
 
-    async getCustomerByEmail(customerEmail: string): Promise<void> {
+    async getCustomerByEmail(username: string): Promise<void> {
         const returnCustomerByEmail = (): Promise<ClientResponse<CustomerPagedQueryResponse>> => {
             return apiRoot
                 .customers()
                 .get({
                     queryArgs: {
-                        where: `email="${customerEmail}"`,
+                        where: `email="${username}"`,
                     },
                 })
                 .execute();
@@ -55,15 +60,31 @@ export default class CustomerAPI {
             .catch(console.error);
     }
 
+    // getapiRootForPasswordFlow(): ByProjectKeyRequestBuilder {
+    //     const apiRootForPasswordFlow = createApiBuilderFromCtpClient(
+    //         getPasswordFlowClient(this.username, this.password)
+    //     ).withProjectKey({
+    //         projectKey: 'ecom_app',
+    //     });
+
+    //     return apiRootForPasswordFlow;
+    // }
+
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    async loginCustommer(customerEmail: string, customerLoginl: string) {
-        return apiRoot
+    async loginCustommer() {
+        const apiRootForPasswordFlow = createApiBuilderFromCtpClient(
+            getPasswordFlowClient(this.username, this.password)
+        ).withProjectKey({
+            projectKey: 'ecom_app',
+        });
+
+        return apiRootForPasswordFlow
             .me()
             .login()
             .post({
                 body: {
-                    email: customerEmail,
-                    password: customerLoginl,
+                    email: this.username,
+                    password: this.password,
                 },
             })
             .execute();
