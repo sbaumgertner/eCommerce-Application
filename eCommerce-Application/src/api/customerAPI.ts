@@ -1,6 +1,5 @@
 import { ClientResponse, CustomerPagedQueryResponse, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import { getCredentialFlowClient, getPasswordFlowClient } from './client';
-import { ByProjectKeyRequestBuilder } from '@commercetools/typescript-sdk/dist/typings/generated/client/by-project-key-request-builder';
 
 type CustomerData = {
     email: string;
