@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import fetch from 'node-fetch';
 import MyToken from './myToken';
-import { ApiRoot, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
+import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import {
     ClientBuilder,
 
@@ -10,58 +9,90 @@ import {
     type HttpMiddlewareOptions,
     PasswordAuthMiddlewareOptions,
     Client,
+    AnonymousAuthMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
 
-const projectKey = 'ecom_app';
-const scopes = [
-    'view_cart_discounts:ecom_app manage_orders:ecom_app view_project_settings:ecom_app manage_my_shopping_lists:ecom_app manage_customers:ecom_app view_messages:ecom_app view_published_products:ecom_app manage_my_profile:ecom_app view_shipping_methods:ecom_app manage_shopping_lists:ecom_app view_shopping_lists:ecom_app view_payments:ecom_app view_orders:ecom_app view_categories:ecom_app view_discount_codes:ecom_app manage_my_orders:ecom_app',
+const CTP_PROJECT_KEY = 'ecom_app';
+const CTP_CLIENT_SECRET = 'jgIUZAg-yTbrBpijCK4Rjtw_wAy0vXsu';
+const CTP_CLIENT_ID = '5bYmbO7AS_8C4ELloQB1ZRDm';
+const CPT_AUTH_URL = 'https://auth.europe-west1.gcp.commercetools.com';
+const CPT_API_URL = 'https://api.europe-west1.gcp.commercetools.com';
+const CPT_SCOPES = [
+    'view_cart_discounts:ecom_app manage_orders:ecom_app view_project_settings:ecom_app manage_my_shopping_lists:ecom_app manage_customers:ecom_app view_messages:ecom_app view_published_products:ecom_app introspect_oauth_tokens:ecom_app manage_my_profile:ecom_app view_shipping_methods:ecom_app create_anonymous_token:ecom_app manage_shopping_lists:ecom_app view_shopping_lists:ecom_app view_payments:ecom_app view_orders:ecom_app view_categories:ecom_app view_discount_codes:ecom_app manage_my_orders:ecom_app',
 ];
+const ANONYMOUS_ID = 'idAnonym1';
 
 const myToken = new MyToken();
 
 // Configure authMiddlewareOptions
 const authMiddlewareOptions: AuthMiddlewareOptions = {
-    host: 'https://auth.europe-west1.gcp.commercetools.com',
-    projectKey: projectKey,
+    host: CPT_AUTH_URL,
+    projectKey: CTP_PROJECT_KEY,
     credentials: {
-        clientId: 'UJTD3OU8CioK_XrFbFC_efra',
-        clientSecret: 't_OVmNdZWvATtcojxwUvAUzlQxTrhIti',
+        clientId: CTP_CLIENT_ID,
+        clientSecret: CTP_CLIENT_SECRET,
     },
-    scopes,
+    scopes: CPT_SCOPES,
     fetch,
 };
 
 // Configure httpMiddlewareOptions
 const httpMiddlewareOptions: HttpMiddlewareOptions = {
-    host: 'https://api.europe-west1.gcp.commercetools.com',
+    host: CPT_API_URL,
+    fetch,
+};
+
+const anonymousMiddlewareOptions: AnonymousAuthMiddlewareOptions = {
+    host: 'https://auth.europe-west1.gcp.commercetools.com',
+    projectKey: 'ecom_app',
+    credentials: {
+        clientId: CTP_CLIENT_ID,
+        clientSecret: CTP_CLIENT_SECRET,
+        anonymousId: ANONYMOUS_ID,
+    },
+    scopes: [
+        'view_cart_discounts:ecom_app manage_orders:ecom_app view_project_settings:ecom_app manage_my_shopping_lists:ecom_app manage_customers:ecom_app view_messages:ecom_app view_published_products:ecom_app manage_my_profile:ecom_app view_shipping_methods:ecom_app manage_shopping_lists:ecom_app view_shopping_lists:ecom_app view_payments:ecom_app view_orders:ecom_app view_categories:ecom_app view_discount_codes:ecom_app manage_my_orders:ecom_app',
+    ],
     fetch,
 };
 
 function getPasswordFlowOptions(username: string, password: string) {
     const options: PasswordAuthMiddlewareOptions = {
-        host: 'https://auth.europe-west1.gcp.commercetools.com',
-        projectKey: projectKey,
+        host: CPT_AUTH_URL,
+        projectKey: CTP_PROJECT_KEY,
         credentials: {
-            clientId: 'UJTD3OU8CioK_XrFbFC_efra',
-            clientSecret: 't_OVmNdZWvATtcojxwUvAUzlQxTrhIti',
+            clientId: CTP_CLIENT_ID,
+            clientSecret: CTP_CLIENT_SECRET,
             user: {
                 username: username,
                 password: password,
             },
         },
         tokenCache: myToken,
-        scopes,
+        scopes: CPT_SCOPES,
         fetch,
     };
     return options;
 }
-
 export const getCredentialFlowClient = (): Client => {
     const ctpClient = new ClientBuilder()
-        .withProjectKey(projectKey)
+        .withProjectKey(CTP_PROJECT_KEY)
         .withClientCredentialsFlow(authMiddlewareOptions)
+        //.withAnonymousSessionFlow(anonymousMiddlewareOptions)
         .withHttpMiddleware(httpMiddlewareOptions)
-        .withLoggerMiddleware() // Include middleware for logging
+        .withLoggerMiddleware()
+        .build();
+
+    return ctpClient;
+};
+
+export const getAnonymousFlowClient = (): Client => {
+    const ctpClient = new ClientBuilder()
+        .withProjectKey(CTP_PROJECT_KEY)
+        .withClientCredentialsFlow(authMiddlewareOptions)
+        .withAnonymousSessionFlow(anonymousMiddlewareOptions)
+        .withHttpMiddleware(httpMiddlewareOptions)
+        .withLoggerMiddleware()
         .build();
 
     return ctpClient;
@@ -69,7 +100,7 @@ export const getCredentialFlowClient = (): Client => {
 
 export const getPasswordFlowClient = (username: string, password: string): Client => {
     const ctpClient = new ClientBuilder()
-        .withProjectKey(projectKey)
+        .withProjectKey(CTP_PROJECT_KEY)
         .withClientCredentialsFlow(authMiddlewareOptions)
         .withPasswordFlow(getPasswordFlowOptions(username, password))
         .withHttpMiddleware(httpMiddlewareOptions)
@@ -79,35 +110,28 @@ export const getPasswordFlowClient = (username: string, password: string): Clien
     return ctpClient;
 };
 
-// export const apiRoot = createApiBuilderFromCtpClient(
-//     getPasswordFlowClient('julia2@example.com', 'examplePassword')
-// ).withProjectKey({ projectKey: 'ecom_app' });
+export const getApiRootForCredentialFlow = () => {
+    const apiRootForAnonumousFlow = createApiBuilderFromCtpClient(getCredentialFlowClient()).withProjectKey({
+        projectKey: CTP_PROJECT_KEY,
+    });
 
-// const getProject = async () => {
-//     try {
-//         apiRoot
-//             .me()
-//             .login()
-//             .post({
-//                 body: {
-//                     email: 'julia2@example.com',
-//                     password: 'examplePassword',
-//                 },
-//             })
-//             .execute();
-//         console.log(myToken);
-//         (myToken.get().token);
-//     } catch (error) {
-//         console.log(error);
-//     }
-// };
-// Retrieve Project information and output the result to the log
+    return apiRootForAnonumousFlow;
+};
 
-// getProject();
+export const getApiRootForAnonymousFlow = () => {
+    const apiRootForAnonumousFlow = createApiBuilderFromCtpClient(getAnonymousFlowClient()).withProjectKey({
+        projectKey: CTP_PROJECT_KEY,
+    });
 
-// Example call to return Project information
-// This code has the same effect as sending a GET request to the commercetools Composable Commerce API without any endpoints.
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    return apiRootForAnonumousFlow;
+};
 
-// // Retrieve Project information and output the result to the log
-// getProject().then(console.log).catch(console.error);
+export const getApiRootForPasswordFlow = (username: string, password: string) => {
+    const apiRootForPasswordFlow = createApiBuilderFromCtpClient(
+        getPasswordFlowClient(username, password)
+    ).withProjectKey({
+        projectKey: CTP_PROJECT_KEY,
+    });
+
+    return apiRootForPasswordFlow;
+};
