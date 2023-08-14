@@ -1,0 +1,26 @@
+@import "../../styles/tokens.scss";
+
+.gh-link {
+    display: flex;
+    column-gap: 8px;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+
+    @include font-text;
+    color: $color-white;
+
+    opacity: 0.6;
+
+    &__icon {
+        display: flex;
+    }
+
+    & svg {
+        fill: $color-white;
+    }
+
+    &:hover {
+        opacity: 1;
+    }
+}
