@@ -6,12 +6,14 @@ import { LoginPage } from './login-page';
 import { NotFoundPage } from './notfound-page';
 import { RegisterPage } from './register-page';
 import { Page } from './abstract/page';
+import Footer from '../components/footer/footer';
 
 export class Layout extends Page {
     private appStore: AppStore;
 
     private header: Header;
     private main: Page;
+    private footer: Footer;
     private mainEl: HTMLElement;
 
     constructor(appStore: AppStore) {
@@ -20,6 +22,7 @@ export class Layout extends Page {
 
         this.header = new Header(this.appStore);
         this.main = new MainPage();
+        this.footer = new Footer(this.appStore);
 
         this.mainEl = document.createElement('main');
         this.appStore.addChangeListener(StoreEventType.PAGE_CHANGE, this.onStoreChange.bind(this));
@@ -52,9 +55,9 @@ export class Layout extends Page {
 
     public render(): void {
         this.header.render();
+        this.footer.render();
         this.main.render();
         this.mainEl.append(this.main.getHtml());
-        document.body.append(this.header.getHtml());
-        document.body.append(this.mainEl);
+        document.body.append(this.header.getHtml(), this.mainEl, this.footer.getComponent());
     }
 }

@@ -22,3 +22,15 @@ export type Action = {
 export enum StoreEventType {
     PAGE_CHANGE = 'PAGE_CHANGE',
 }
+
+export type ElementParams = {
+    tag: string;
+    classes: string[];
+    id?: string;
+    text?: string;
+};
+
+export type CreatorGithubInfo = {
+    name: string;
+    link: string;
+};

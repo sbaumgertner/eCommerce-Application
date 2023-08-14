@@ -31,11 +31,15 @@ module.exports = (_env, options) => {
                     loader: 'html-loader',
                 },
                 {
-                    test: /\.(png|jpe?g|gif|svg)$/i,
+                    test: /\.(png|jpe?g|gif)$/i,
                     type: 'asset/resource',
                     generator: {
                         filename: 'img/[name][ext]',
                     },
+                },
+                {
+                    test: /\.svg$/i,
+                    type: 'asset/source',
                 },
                 {
                     test: /\.(woff|woff2|eot|ttf|otf)$/i,
