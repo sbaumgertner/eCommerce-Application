@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "dev": "webpack --mode development",
+        "dev": "webpack server --mode development",
         "prod": "webpack --mode production",
         "lint": "eslint ./src",
         "format": "npx prettier --write .",
@@ -16,6 +16,7 @@
     "devDependencies": {
         "@babel/core": "^7.22.5",
         "@babel/preset-env": "^7.22.5",
+        "@types/flux": "^3.1.11",
         "@types/jest": "^29.5.3",
         "@types/node-fetch": "^2.6.4",
         "@typescript-eslint/eslint-plugin": "^5.61.0",
@@ -28,6 +29,7 @@
         "eslint-plugin-prettier": "^4.2.1",
         "eslint-webpack-plugin": "^4.0.1",
         "file-loader": "^6.2.0",
+        "flux": "^4.0.4",
         "html-loader": "^4.2.0",
         "html-webpack-plugin": "^5.5.3",
         "husky": "^8.0.3",
@@ -41,6 +43,7 @@
         "ts-loader": "^9.4.4",
         "typescript": "^5.1.6",
         "webpack": "^5.87.0",
+<<<<<<< HEAD
         "webpack-cli": "^5.1.4"
     },
     "dependencies": {
@@ -56,5 +59,9 @@
         "@commercetools/typescript-sdk": "^0.0.22",
         "dotenv": "^16.3.1",
         "ts-node": "^10.9.1"
+=======
+        "webpack-cli": "^5.1.4",
+        "webpack-dev-server": "^4.15.1"
+>>>>>>> feat/sprint_2
     }
 }
