@@ -1,6 +1,6 @@
 import { PageName, StoreEventType } from '../types';
 import { AppStore } from '../store/app-store';
-import { Header } from '../components/header/header';
+import Header from '../components/header/header';
 import { MainPage } from './main-page';
 
 import { NotFoundPage } from './notfound/notfound';
@@ -68,6 +68,6 @@ export class Layout extends Page {
         this.footer.render();
         this.main.render();
         this.mainEl.append(this.main.getHtml());
-        document.body.append(this.header.getHtml(), this.mainEl, this.footer.getComponent());
+        document.body.append(this.header.getComponent(), this.mainEl, this.footer.getComponent());
     }
 }
