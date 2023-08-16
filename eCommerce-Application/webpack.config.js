@@ -3,6 +3,7 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const EslingPlugin = require('eslint-webpack-plugin');
+const { merge } = require('webpack-merge');
 
 module.exports = (_env, options) => {
     const isProduction = options.mode === 'production';
@@ -10,7 +11,6 @@ module.exports = (_env, options) => {
     const config = {
         mode: isProduction ? 'production' : 'development',
         devtool: 'inline-source-map',
-        watch: !isProduction,
         entry: ['./src/script'],
         resolve: {
             extensions: ['.ts', '.js', '.json'],
@@ -23,7 +23,7 @@ module.exports = (_env, options) => {
             rules: [
                 { test: /\.ts$/i, use: 'ts-loader' },
                 {
-                    test: /\.css$/i,
+                    test: /\.scss$/i,
                     use: ['style-loader', 'css-loader', 'sass-loader'],
                 },
                 {
@@ -31,11 +31,15 @@ module.exports = (_env, options) => {
                     loader: 'html-loader',
                 },
                 {
-                    test: /\.(png|jpe?g|gif|svg)$/i,
+                    test: /\.(png|jpe?g|gif)$/i,
                     type: 'asset/resource',
                     generator: {
                         filename: 'img/[name][ext]',
                     },
+                },
+                {
+                    test: /\.svg$/i,
+                    type: 'asset/source',
                 },
                 {
                     test: /\.(woff|woff2|eot|ttf|otf)$/i,
@@ -55,5 +59,11 @@ module.exports = (_env, options) => {
             new EslingPlugin({ extensions: 'ts' }),
         ],
     };
+
+    if (!isProduction) {
+        const envConfig = require('./webpack.dev.config');
+        return merge(config, envConfig);
+    }
+
     return config;
 };
