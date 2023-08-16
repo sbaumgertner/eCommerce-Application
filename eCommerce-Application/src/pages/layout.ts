@@ -2,7 +2,7 @@ import { PageName, StoreEventType } from '../types';
 import { AppStore } from '../store/app-store';
 import { Header } from '../components/header/header';
 import { MainPage } from './main-page';
-import { LoginPage } from './login-page';
+import { LoginPage } from './login-page/login-page';
 import { NotFoundPage } from './notfound-page';
 import { RegisterPage } from './register-page';
 import { Page } from './abstract/page';
@@ -35,7 +35,7 @@ export class Layout extends Page {
                 this.updateMainView(new MainPage());
                 break;
             case PageName.LOGIN:
-                this.updateMainView(new LoginPage());
+                this.updateMainView(new LoginPage(this.appStore));
                 break;
             case PageName.REGISTRATION:
                 this.updateMainView(new RegisterPage());
