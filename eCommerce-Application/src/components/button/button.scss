@@ -1,0 +1,27 @@
+@import '../../styles/tokens.scss';
+
+.button {
+  padding: 8px 24px;
+  text-align: center;
+  border-radius: 12px;
+  @include font-text;
+  
+  &:disabled {
+    opacity: 0.5;
+  }
+
+  &_filled {
+    background-color: $color-primary-60;
+    color: $color-primary-100;
+    border: none;
+  }
+
+  &_bordered {
+    background-color: $color-white;
+    color: $color-primary-40;
+    border: 1px solid $color-neutral-60;
+  }
+}
+
+
+
