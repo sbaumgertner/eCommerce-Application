@@ -1,3 +1,5 @@
+@import "../../styles/tokens.scss";
+
 .form {
     display: flex;
     flex-direction: column;
@@ -7,3 +9,42 @@
     display: flex;
     flex-direction: column;
 }
+
+.label {
+    @include font-overline;
+    padding: 0 16px;
+}
+
+.input {
+    display: flex;
+    padding: 8px 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    align-self: stretch;
+    border-radius: 12px;
+    border: 1px solid $color-neutral-60;
+    background: $color-white;
+}
+
+.input:focus {
+    outline: 1;
+}
+
+.error {
+    height: 24px;
+    color: $color-secondary-10;
+}
+
+.form-item.success .input {
+    border-color: $color-primary-40;
+}
+
+.form-item.error .input {
+    border-color: $color-secondary-10;
+}
+
+::-webkit-input-placeholder {
+    @include font-text;
+    color: $color-neutral-60; 
+    opacity:1;}

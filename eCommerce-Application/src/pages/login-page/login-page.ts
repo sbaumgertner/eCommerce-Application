@@ -69,7 +69,7 @@ export class LoginPage extends Page {
             this.appStore,
             'email',
             'email',
-            'Email',
+            'username',
             'Enter your Username'
         ).getComponent();
         return emailInput;
