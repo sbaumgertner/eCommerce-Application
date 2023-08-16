@@ -2,6 +2,8 @@ export enum PageName {
     INDEX = 'INDEX',
     LOGIN = 'LOGIN',
     REGISTRATION = 'REGISTRATION',
+    CATALOG = 'CATALOG',
+    ABOUT_US = 'ABOUT_US',
     NOT_FOUND = 'NOT_FOUND',
 }
 
@@ -33,4 +35,9 @@ export type ElementParams = {
 export type CreatorGithubInfo = {
     name: string;
     link: string;
+};
+
+export type LinkProps = {
+    page: PageName;
+    text: string;
 };

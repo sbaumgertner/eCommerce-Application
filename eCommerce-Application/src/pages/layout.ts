@@ -44,6 +44,12 @@ export class Layout extends Page {
             case PageName.REGISTRATION:
                 this.updateMainView(new RegisterPage());
                 break;
+            case PageName.CATALOG:
+                this.updateMainView(new NotFoundPage());
+                break;
+            case PageName.ABOUT_US:
+                this.updateMainView(new NotFoundPage());
+                break;
             case PageName.NOT_FOUND:
                 this.updateMainView(new NotFoundPage());
                 break;

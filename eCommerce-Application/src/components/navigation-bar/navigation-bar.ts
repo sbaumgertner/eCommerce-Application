@@ -1,5 +1,5 @@
 import './navigation-bar.scss';
-import { ElementParams, PageName, StoreEventType } from '../../types';
+import { ElementParams, PageName, StoreEventType, LinkProps } from '../../types';
 import Component from '../abstract/component';
 import NavLink from '../link-navigation/link-navigation';
 import { RouteAction } from '../../store/action/routeAction';
@@ -11,7 +11,7 @@ export default class NavigationBar extends Component {
     private selectedEl?: HTMLElement;
     private navEl: HTMLElement[] = [];
 
-    constructor(appStore: AppStore, pagesName: PageName[], color: 'light' | 'dark' = 'dark') {
+    constructor(appStore: AppStore, linksProps: LinkProps[], color: 'light' | 'dark' = 'dark') {
         const navigationBarParams: ElementParams = {
             tag: 'nav',
             classes: ['nav-bar'],
@@ -19,13 +19,13 @@ export default class NavigationBar extends Component {
         super(navigationBarParams);
         this.appStore = appStore;
         this.appStore.addChangeListener(StoreEventType.PAGE_CHANGE, this.onStoreChange.bind(this));
-        this.render(pagesName, color);
+        this.render(linksProps, color);
     }
 
-    public render(pagesName: PageName[], color: 'light' | 'dark' = 'dark'): void {
+    public render(linksProps: LinkProps[], color: 'light' | 'dark' = 'dark'): void {
         this.componentElem.innerHTML = '';
-        pagesName.forEach((pageName) => {
-            const link = new NavLink(pageName, color);
+        linksProps.forEach((linkProps) => {
+            const link = new NavLink(linkProps, color);
             const linkEl = link.getComponent();
             linkEl.addEventListener('click', (event: Event) => this.changePage(event));
             this.navEl.push(linkEl);
