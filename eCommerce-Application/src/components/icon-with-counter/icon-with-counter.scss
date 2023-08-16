@@ -1,0 +1,23 @@
+@import "../../styles/tokens.scss";
+
+.icon-count {
+  display: inline-block;
+  position: relative;
+  &::after {
+    content: attr(data-count);
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    padding: 0 4px;
+    border-radius: 8px;
+    background: $color-secondary-60;
+    color: $color-secondary-100;
+    @include font-caption;
+  }
+
+
+
+  &__icon{
+    display: flex;
+  }
+}
