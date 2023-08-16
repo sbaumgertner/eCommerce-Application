@@ -1,7 +1,6 @@
 import './login-page.scss';
 
 import createElement from '../../utils/create-element';
-import { RouteAction } from '../../store/action/routeAction';
 import { AppStore } from '../../store/app-store';
 import { Page } from '../abstract/page';
 import { PageName } from '../../types';
@@ -12,12 +11,12 @@ const NavLinks: PageName[] = [PageName.LOGIN, PageName.REGISTRATION];
 
 export class LoginPage extends Page {
     private appStore: AppStore;
-    private routeAction: RouteAction = new RouteAction();
+    private menuEl: NavigationBar;
 
     constructor(appStore: AppStore) {
         super();
         this.appStore = appStore;
-        this.render();
+        this.menuEl = new NavigationBar(this.appStore, NavLinks, 'dark');
     }
 
     public render(): void {
@@ -46,7 +45,7 @@ export class LoginPage extends Page {
 
     private createNavigation(): HTMLElement {
         const formNavigation = createElement({ tag: 'div', classes: ['form-wrapper__navigation'] });
-        const menuEl = new NavigationBar(this.appStore, NavLinks, 'dark').getComponent();
+        const menuEl = this.menuEl.getComponent();
         menuEl.classList.add('login__menu');
         formNavigation.append(menuEl);
         return formNavigation;
