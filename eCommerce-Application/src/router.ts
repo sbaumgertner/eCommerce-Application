@@ -26,7 +26,7 @@ export class Router {
             }
             this.navigate();
         });
-        window.addEventListener('popstate', this.navigate);
+        window.addEventListener('popstate', this.navigate.bind(this));
     }
 
     public addHistory(page: PageName): void {

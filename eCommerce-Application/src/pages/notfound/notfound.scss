@@ -8,6 +8,7 @@
   gap: 32px;
   background-color: $color-neutral-60;
   background-image: url('../../assets/img/image-06.png');
+  background-size: cover;
 }
 
 .header-404 {
@@ -20,4 +21,12 @@
   text-align: center;
   @include font-text;
   color: $color-white;
+}
+
+.img-404 {
+  height: 303px;
+  background-image: url('../../assets/img/image-07.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
