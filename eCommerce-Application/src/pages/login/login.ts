@@ -25,7 +25,6 @@ export class LoginPage extends Page {
     public render(): void {
         this.html = document.createElement('div');
         this.html.className = 'login-page';
-        this.html.innerHTML = 'login-page';
         this.html.append(this.createWrapper());
     }
 
@@ -45,6 +44,7 @@ export class LoginPage extends Page {
             this.createLoginForm(),
             this.loginButton.getComponent()
         );
+
         return formWrapper;
     }
 
