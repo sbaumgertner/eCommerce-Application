@@ -38,7 +38,7 @@ export class LoginPage extends Page {
 
     private createFormWrapper(): HTMLElement {
         const formWrapper = createElement({ tag: 'div', classes: ['login-page__form-wrapper'] });
-        const wrapperImage = createElement({ tag: 'div', classes: ['wrapper__image'] });
+        const wrapperImage = createElement({ tag: 'div', classes: ['form-wrapper__image'] });
         formWrapper.append(
             wrapperImage,
             this.createNavigation(),

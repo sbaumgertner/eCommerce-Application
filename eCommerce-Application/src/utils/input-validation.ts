@@ -1,4 +1,4 @@
-export const togglePasswordVisibility = (element: HTMLButtonElement): void => {
+export const togglePasswordVisibility = (element: HTMLInputElement): void => {
     if (element.type === 'password') {
         element.type = 'text';
     } else {
