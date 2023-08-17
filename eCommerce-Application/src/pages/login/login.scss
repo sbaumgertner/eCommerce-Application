@@ -5,6 +5,7 @@
     &__wrapper {
         display: flex;
         justify-content: center;
+        align-items: center;
         background: url("../../assets/img/image-04.jpg") no-repeat;
         background-size: cover;
         background-position: center;
@@ -47,4 +48,10 @@
     & >* {
         flex: 0 1 50%;
     }
+}
+
+@media (max-width: $max-tablet) {
+    .login-page__wrapper {
+        padding: 32px;
+    } 
 }
