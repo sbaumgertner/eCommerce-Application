@@ -2,8 +2,10 @@ import { PageName, StoreEventType } from '../types';
 import { AppStore } from '../store/app-store';
 import { Header } from '../components/header/header';
 import { MainPage } from './main-page';
-import { LoginPage } from './login-page';
+
 import { NotFoundPage } from './notfound/notfound';
+import { LoginPage } from './login/login';
+
 import { RegisterPage } from './register-page';
 import { Page } from './abstract/page';
 import Footer from '../components/footer/footer';
@@ -14,6 +16,7 @@ export class Layout extends Page {
     private header: Header;
     private main: Page;
     private footer: Footer;
+    private loginPage: LoginPage;
     private mainEl: HTMLElement;
 
     constructor(appStore: AppStore) {
@@ -23,6 +26,7 @@ export class Layout extends Page {
         this.header = new Header(this.appStore);
         this.main = new MainPage();
         this.footer = new Footer(this.appStore);
+        this.loginPage = new LoginPage(this.appStore);
 
         this.mainEl = document.createElement('main');
         this.appStore.addChangeListener(StoreEventType.PAGE_CHANGE, this.onStoreChange.bind(this));
@@ -35,7 +39,7 @@ export class Layout extends Page {
                 this.updateMainView(new MainPage());
                 break;
             case PageName.LOGIN:
-                this.updateMainView(new LoginPage());
+                this.updateMainView(this.loginPage);
                 break;
             case PageName.REGISTRATION:
                 this.updateMainView(new RegisterPage());
