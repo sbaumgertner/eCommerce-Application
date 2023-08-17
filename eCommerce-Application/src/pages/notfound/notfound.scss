@@ -1,6 +1,7 @@
 @import '../../styles/tokens.scss';
 
 .wrapper-404 {
+  min-height: calc(100vh - 80px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,6 +15,7 @@
 .header-404 {
   @include font-h2;
   color: $color-neutral-98;
+  text-align: center;
 }
 
 .text-404 {
