@@ -7,6 +7,7 @@ import { PageName } from '../../types';
 import NavigationBar from '../../components/navigation-bar/navigation-bar';
 import InputField from '../../components/input/input';
 import { Button } from '../../components/button/button';
+import { RouteAction } from '../../store/action/routeAction';
 
 const NavLinks: PageName[] = [PageName.LOGIN, PageName.REGISTRATION];
 
@@ -14,6 +15,7 @@ export class LoginPage extends Page {
     private appStore: AppStore;
     private menuEl: NavigationBar;
     private loginButton: Button;
+    private routeAction: RouteAction = new RouteAction();
 
     constructor(appStore: AppStore) {
         super();
@@ -89,5 +91,11 @@ export class LoginPage extends Page {
         ).getComponent();
         passwordInput.classList.add('password-icon');
         return passwordInput;
+    }
+
+    public addEventListeners(): void {
+        this.loginButton.getComponent().addEventListener('click', () => {
+            this.routeAction.changePage({ addHistory: true, page: PageName.INDEX });
+        });
     }
 }
