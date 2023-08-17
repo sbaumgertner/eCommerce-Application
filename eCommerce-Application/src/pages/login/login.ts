@@ -3,13 +3,22 @@ import './login.scss';
 import createElement from '../../utils/create-element';
 import { AppStore } from '../../store/app-store';
 import { Page } from '../abstract/page';
-import { PageName } from '../../types';
+import { LinkProps, PageName } from '../../types';
 import NavigationBar from '../../components/navigation-bar/navigation-bar';
 import InputField from '../../components/input/input';
 import { Button } from '../../components/button/button';
 import { RouteAction } from '../../store/action/routeAction';
 
-const NavLinks: PageName[] = [PageName.LOGIN, PageName.REGISTRATION];
+const NavLinks: LinkProps[] = [
+    {
+        page: PageName.LOGIN,
+        text: 'Login',
+    },
+    {
+        page: PageName.REGISTRATION,
+        text: 'Registration',
+    },
+];
 
 export class LoginPage extends Page {
     private appStore: AppStore;
