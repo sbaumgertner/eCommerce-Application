@@ -18,6 +18,7 @@ module.exports = (_env, options) => {
         output: {
             path: path.join(__dirname, '/dist'),
             filename: 'script.js',
+            publicPath: '/',
         },
         module: {
             rules: [

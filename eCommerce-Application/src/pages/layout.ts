@@ -3,7 +3,7 @@ import { AppStore } from '../store/app-store';
 import { Header } from '../components/header/header';
 import { MainPage } from './main-page';
 import { LoginPage } from './login-page';
-import { NotFoundPage } from './notfound-page';
+import { NotFoundPage } from './notfound/notfound';
 import { RegisterPage } from './register-page';
 import { Page } from './abstract/page';
 import Footer from '../components/footer/footer';
