@@ -6,17 +6,20 @@ import { Page } from '../abstract/page';
 import { PageName } from '../../types';
 import NavigationBar from '../../components/navigation-bar/navigation-bar';
 import InputField from '../../components/input/input';
+import { Button } from '../../components/button/button';
 
 const NavLinks: PageName[] = [PageName.LOGIN, PageName.REGISTRATION];
 
 export class LoginPage extends Page {
     private appStore: AppStore;
     private menuEl: NavigationBar;
+    private loginButton: Button;
 
     constructor(appStore: AppStore) {
         super();
         this.appStore = appStore;
         this.menuEl = new NavigationBar(this.appStore, NavLinks, 'dark');
+        this.loginButton = new Button('filled', 'button-login', 'Login');
     }
 
     public render(): void {
@@ -35,7 +38,13 @@ export class LoginPage extends Page {
     private createFormWrapper(): HTMLElement {
         const formWrapper = createElement({ tag: 'div', classes: ['login-page__form-wrapper'] });
         const wrapperImage = createElement({ tag: 'div', classes: ['wrapper__image'] });
-        formWrapper.append(wrapperImage, this.createNavigation(), this.createLoginTitle(), this.createLoginForm());
+        formWrapper.append(
+            wrapperImage,
+            this.createNavigation(),
+            this.createLoginTitle(),
+            this.createLoginForm(),
+            this.loginButton.getComponent()
+        );
         return formWrapper;
     }
 
