@@ -1,0 +1,30 @@
+@import "../../styles/tokens.scss";
+
+.login-page {
+
+    &__wrapper {
+        display: flex;
+        justify-content: center;
+        background: url("../../assets/img/image-04.jpg") no-repeat;
+        background-size: cover;
+        padding: 64px;
+        max-height: 670px;
+    }
+
+    &__form-wrapper {
+        display: flex;
+        padding: 16px 32px 32px 32px;
+        flex-direction: column;
+        //align-items: center;
+        max-width: 640px;
+        padding: 16px 32px 32px 32px;
+        gap: 32px;
+        max-width: 640px;
+        align-self: stretch;
+        border-radius: 32px;
+    }
+
+    &__form-wrapper {
+        background-color: $color-neutral-90;
+    }
+}
