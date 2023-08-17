@@ -17,6 +17,7 @@ export class Layout extends Page {
     private main: Page;
     private footer: Footer;
     private loginPage: LoginPage;
+    private notFound = new NotFoundPage();
     private mainEl: HTMLElement;
 
     constructor(appStore: AppStore) {
@@ -44,14 +45,20 @@ export class Layout extends Page {
             case PageName.REGISTRATION:
                 this.updateMainView(new RegisterPage());
                 break;
+            case PageName.ACCOUNT:
+                this.updateMainView(this.notFound);
+                break;
+            case PageName.CART:
+                this.updateMainView(this.notFound);
+                break;
             case PageName.CATALOG:
-                this.updateMainView(new NotFoundPage());
+                this.updateMainView(this.notFound);
                 break;
             case PageName.ABOUT_US:
-                this.updateMainView(new NotFoundPage());
+                this.updateMainView(this.notFound);
                 break;
             case PageName.NOT_FOUND:
-                this.updateMainView(new NotFoundPage());
+                this.updateMainView(this.notFound);
                 break;
         }
     }
