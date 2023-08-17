@@ -9,7 +9,7 @@
   
   &:disabled {
     opacity: 0.5;
-    cursor: default;
+    pointer-events: none;
   }
 
   &_filled {
@@ -34,10 +34,11 @@
 
   &_text {
     color: $color-neutral-30;
+    background: none;
     border: none;
 
     &:hover {
-      box-shadow: 0px 0px 16px 0px $color-primary-40;
+      text-shadow: 0px 0px 16px $color-primary-40;
     }
   }
 }
