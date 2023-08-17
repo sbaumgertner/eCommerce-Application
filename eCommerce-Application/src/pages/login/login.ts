@@ -1,4 +1,4 @@
-import './login-page.scss';
+import './login.scss';
 
 import createElement from '../../utils/create-element';
 import { AppStore } from '../../store/app-store';
@@ -34,12 +34,7 @@ export class LoginPage extends Page {
 
     private createFormWrapper(): HTMLElement {
         const formWrapper = createElement({ tag: 'div', classes: ['login-page__form-wrapper'] });
-        formWrapper.append(
-            this.createNavigation(),
-            this.createLoginTitle(),
-            this.createLoginForm(),
-            this.createLoginButton()
-        );
+        formWrapper.append(this.createNavigation(), this.createLoginTitle(), this.createLoginForm());
         return formWrapper;
     }
 
@@ -82,13 +77,7 @@ export class LoginPage extends Page {
             'Password',
             'Enter your Password'
         ).getComponent();
+        passwordInput.classList.add('password-icon');
         return passwordInput;
-    }
-
-    private createLoginButton(): HTMLElement {
-        const loginButton = createElement({ tag: 'button', classes: ['form-wrapper__button'] });
-        loginButton.textContent = 'Login';
-        (loginButton as HTMLButtonElement).type = 'submit';
-        return loginButton;
     }
 }
