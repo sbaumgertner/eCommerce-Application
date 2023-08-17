@@ -3,7 +3,13 @@
 .icon-count {
   display: inline-block;
   position: relative;
-  &::after {
+
+  &:hover {
+    cursor: pointer;
+    background: $grad-primary-40;
+  }
+
+  &_count::after {
     content: attr(data-count);
     position: absolute;
     top: -2px;
@@ -15,9 +21,10 @@
     @include font-caption;
   }
 
-
-
   &__icon{
     display: flex;
+    & svg {
+      fill: $color-neutral-30;
+    }
   }
 }
