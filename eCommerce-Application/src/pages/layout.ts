@@ -2,8 +2,13 @@ import { PageName, StoreEventType } from '../types';
 import { AppStore } from '../store/app-store';
 import { Header } from '../components/header/header';
 import { MainPage } from './main-page';
+<<<<<<< HEAD
 import { NotFoundPage } from './notfound/notfound';
 import { LoginPage } from './login-page/login-page';
+=======
+import { LoginPage } from './login/login';
+import { NotFoundPage } from './notfound-page';
+>>>>>>> ac769fe (refactor: upfate stules for login page)
 import { RegisterPage } from './register-page';
 import { Page } from './abstract/page';
 import Footer from '../components/footer/footer';

@@ -1,6 +1,7 @@
 @import "../../styles/tokens.scss";
 
 .form {
+    position: relative;
     display: flex;
     flex-direction: column;
 }
@@ -16,6 +17,7 @@
 }
 
 .input {
+    position: relative;
     display: flex;
     padding: 8px 16px;
     justify-content: center;
@@ -25,6 +27,7 @@
     border-radius: 12px;
     border: 1px solid $color-neutral-60;
     background: $color-white;
+    //background: url('../../assets/icons/icon-cart.svg') contain center no-repeat;
 }
 
 .input:focus {
@@ -47,4 +50,5 @@
 ::-webkit-input-placeholder {
     @include font-text;
     color: $color-neutral-60; 
-    opacity:1;}
+    opacity:1;
+}
