@@ -5,7 +5,7 @@ import LoginWrapper from '../../components/login-wrapper/login-wrapper';
 import { AppStore } from '../../store/app-store';
 import { Page } from '../abstract/page';
 import createElement from '../../utils/create-element';
-import InputField from '../../components/input/input';
+import InputField from '../../components/input-field/input-field';
 import { RegistrationStore } from '../../store/registration-store';
 import { RegistrationAction } from '../../store/action/registrationAction';
 import { StoreEventType } from '../../types';

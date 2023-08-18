@@ -1,60 +1,32 @@
-import './input.scss';
-import { ElementParams } from '../../types';
-import createElement from '../../utils/create-element';
+import { InputElementParams } from '../../types';
 import Component from '../abstract/component';
-import InputElement from '../input-element/input-element';
 
-export default class InputField extends Component {
-    private input: InputElement;
-    private error: HTMLElement;
+export default class InputElement extends Component {
+    constructor(inputParams: InputElementParams) {
+        super({ tag: 'input', classes: inputParams.classes, id: inputParams.id });
 
-    constructor(
-        readonly typeInput: string,
-        readonly nameInput: string,
-        readonly inputLabel: string,
-        readonly placeholder: string
-    ) {
-        const inputParams: ElementParams = {
-            tag: 'div',
-            classes: ['form-item'],
-        };
-        super(inputParams);
-        this.input = new InputElement(typeInput, ['input'], nameInput, placeholder);
-        this.error = createElement({ tag: 'div', classes: ['error'] });
-        this.render(inputLabel, typeInput);
+        const el: HTMLInputElement = this.getComponent();
+
+        el.type = inputParams.type;
+        el.name = inputParams.name;
+        if (inputParams.placeholder) {
+            el.placeholder = inputParams.placeholder;
+        }
     }
 
-    public render(inputLabel: string, nameInput: string): void {
-        this.componentElem.innerHTML = '';
-        this.componentElem.append(this.createLabel(inputLabel, nameInput), this.input.getComponent(), this.error);
-    }
-
-    private createLabel(inputLabel: string, nameInput: string): HTMLElement {
-        const label = createElement({ tag: 'label', classes: ['label'] });
-        label.setAttribute('for', nameInput);
-        label.textContent = inputLabel;
-
-        return label;
+    public getComponent(): HTMLInputElement {
+        return this.componentElem as HTMLInputElement;
     }
 
     public getValue(): string {
-        return this.input.getValue();
+        return this.getComponent().value;
     }
 
-    public setError(error: string): void {
-        this.error.innerText = error;
+    public setError(isError: boolean): void {
+        if (isError) {
+            this.getComponent().classList.add('input_invalid');
+        } else {
+            this.getComponent().classList.remove('input_invalid');
+        }
     }
-
-    /*private createInput(nameInput: string, typeInput: string, placeholder: string): HTMLElement {
-        const input = new InputElement(typeInput, ['input'], nameInput, placeholder)//createElement({ tag: 'input', classes: ['input'] });
-        input.setAttribute('name', this.nameInput);
-        input.setAttribute('type', this.typeInput);
-        input.setAttribute('placeholder', this.placeholder);
-        return input;
-    }*/
-
-    /*private createError(): HTMLElement {
-        const error = createElement({ tag: 'div', classes: ['error'] });
-        return error;
-    }*/
 }

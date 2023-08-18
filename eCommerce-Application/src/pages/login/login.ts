@@ -5,7 +5,7 @@ import { AppStore } from '../../store/app-store';
 import { Page } from '../abstract/page';
 import { PageName } from '../../types';
 import NavigationBar from '../../components/navigation-bar/navigation-bar';
-import InputField from '../../components/input/input';
+import InputField from '../../components/input-field/input-field';
 import { Button } from '../../components/button/button';
 import { RouteAction } from '../../store/action/routeAction';
 

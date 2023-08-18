@@ -32,6 +32,14 @@ export type ElementParams = {
     text?: string;
 };
 
+export type InputElementParams = {
+    classes: string[];
+    id?: string;
+    type: string;
+    name: string;
+    placeholder?: string;
+};
+
 export type CreatorGithubInfo = {
     name: string;
     link: string;
