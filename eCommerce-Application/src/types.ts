@@ -18,6 +18,7 @@ export enum ActionType {
     ROUTE_CHANGE = 'ROUTE_CHANGE',
     USER_TYPE_CHANGE = 'USER_TYPE_CHANGE',
     REGISTRATION = 'REGISTRATION',
+    LOGIN = 'LOGIN',
 }
 
 export type Action = {

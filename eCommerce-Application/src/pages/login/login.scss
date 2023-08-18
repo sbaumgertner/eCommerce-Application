@@ -23,18 +23,22 @@
         gap: 32px;
         border-radius: 32px;
         background-color: $color-neutral-100;
+        overflow: hidden;
+        z-index: 0;
     }
 }
 
 .form-wrapper__image {
     position: absolute;
     background: url('../../assets/img/image-05.png') no-repeat;
-    background-position: center;
+    background-position: right;
     background-size: 100% 100%;
+    background-size: cover;
     height: 100%;
     width: 100%;
     bottom: 0;
     right: 0;
+    z-index: -1;
 }
 
 .login__menu {
@@ -48,9 +52,8 @@
 @media (max-width: $max-tablet) {
     .login-page__wrapper {
         padding: 32px;
-    } 
+    }
 }
-
 @media (max-width: $max-mobile) {
     .login-page__form-wrapper {
         padding: 16px 16px 32px 16px;
@@ -59,7 +62,6 @@
         padding: 16px;
     } 
     .form-wrapper__image {
-       width: 150%;
-        right: -20%;
+        left: 40%;
     }
 }

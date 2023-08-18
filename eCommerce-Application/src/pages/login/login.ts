@@ -7,7 +7,7 @@ import { LinkProps, PageName } from '../../types';
 import NavigationBar from '../../components/navigation-bar/navigation-bar';
 import InputField from '../../components/input-field/input-field';
 import { Button } from '../../components/button/button';
-import { RouteAction } from '../../store/action/routeAction';
+import { LoginAction } from '../../store/action/loginAction';
 
 const NavLinks: LinkProps[] = [
     {
@@ -24,7 +24,7 @@ export class LoginPage extends Page {
     private appStore: AppStore;
     private menuEl: NavigationBar;
     private loginButton: Button;
-    private routeAction: RouteAction = new RouteAction();
+    private loginAction: LoginAction = new LoginAction();
 
     constructor(appStore: AppStore) {
         super();
@@ -37,6 +37,7 @@ export class LoginPage extends Page {
         this.html = document.createElement('div');
         this.html.className = 'login-page';
         this.html.append(this.createWrapper());
+        this.addEventListeners();
     }
 
     private createWrapper(): HTMLElement {
@@ -92,7 +93,7 @@ export class LoginPage extends Page {
 
     public addEventListeners(): void {
         this.loginButton.getComponent().addEventListener('click', () => {
-            this.routeAction.changePage({ addHistory: true, page: PageName.INDEX });
+            this.loginAction.login({ email: 'string@jnn.com', password: 'Password' });
         });
     }
 }
