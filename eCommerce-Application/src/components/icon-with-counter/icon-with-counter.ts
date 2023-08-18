@@ -1,30 +1,26 @@
 import './icon-with-counter.scss';
-import { ElementParams } from '../../types';
-import Component from '../abstract/component';
-import htmlToElement from '../../utils/html-to-element';
+import { IconButton } from '../button/button';
 
-export default class IconWithCounter extends Component {
-    constructor(private icon: string, count: number) {
-        const iconCountParams: ElementParams = {
-            tag: 'a',
-            classes: ['icon-count'],
+export default class IconWithCounter extends IconButton {
+    constructor(private icon: string, type: 'filled' | 'bordered' | 'clear', private count: number) {
+        const iconCountParams = {
+            icon,
+            type,
         };
         super(iconCountParams);
-        this.render(count);
+        this.render();
     }
 
     public setCount(count: number): void {
+        this.count = count;
         this.componentElem.dataset.count = `${count}`;
         if (count > 0) {
             this.componentElem.classList.add('icon-count_count');
         }
     }
 
-    public render(count: number): void {
-        const iconEl = htmlToElement(`<div class="icon-count__icon">${this.icon}</div>`);
-
-        this.componentElem.innerHTML = '';
-        this.setCount(count);
-        this.componentElem.append(iconEl);
+    public render(): void {
+        this.componentElem.classList.add('icon-count');
+        this.setCount(this.count);
     }
 }

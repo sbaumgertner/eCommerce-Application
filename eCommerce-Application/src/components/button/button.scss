@@ -12,10 +12,21 @@
     pointer-events: none;
   }
 
+  &-icon {
+    padding: 8px;
+  }
+  &__icon {
+    display: flex;
+  }
+
   &_filled {
     background-color: $color-primary-60;
     color: $color-primary-100;
     border: none;
+
+    & svg {
+      fill: $color-primary-100;
+    }
 
     &:hover {
       box-shadow: 0px 0px 32px 0px $color-primary-98 inset;
@@ -23,12 +34,27 @@
   }
 
   &_bordered {
-    background-color: rgba(255, 255, 255, 0.01);
+    background: none;
     color: $color-primary-40;
     border: 1px solid $color-neutral-60;
 
+    & svg {
+      fill: $color-neutral-30;
+    }
+
     &:hover {
       box-shadow: 0px 0px 32px 0px $color-primary-98 inset;
+    }
+
+    &_negative {
+      color: $color-secondary-40;
+      border-color: $color-secondary-40;
+      & svg {
+        fill: $color-secondary-40;
+      }
+      &:hover {
+        box-shadow: 0px 0px 32px 0px $color-secondary-98 inset;
+      }
     }
   }
 
@@ -41,7 +67,16 @@
       text-shadow: 0px 0px 16px $color-primary-40;
     }
   }
+
+  &_clear {    
+    background: none;
+
+    & svg {
+      fill: $color-neutral-30;
+    }
+    
+    &:hover {
+        background: $grad-primary-40;
+    }
+  }
 }
-
-
-
