@@ -1,7 +1,7 @@
 import { ElementParams } from '../../types';
 import Component from './component';
 
-export default abstract class Input extends Component {
+export default abstract class InteractComponent extends Component {
     constructor(elemParams: ElementParams) {
         super(elemParams);
     }

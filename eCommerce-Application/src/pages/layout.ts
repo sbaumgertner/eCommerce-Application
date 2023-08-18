@@ -6,7 +6,7 @@ import { MainPage } from './main-page';
 import { NotFoundPage } from './notfound/notfound';
 import { LoginPage } from './login/login';
 
-import { RegisterPage } from './register-page';
+import { RegisterPage } from './registration/registration';
 import { Page } from './abstract/page';
 import Footer from '../components/footer/footer';
 
@@ -42,7 +42,7 @@ export class Layout extends Page {
                 this.updateMainView(this.loginPage);
                 break;
             case PageName.REGISTRATION:
-                this.updateMainView(new RegisterPage());
+                this.updateMainView(new RegisterPage(this.appStore));
                 break;
             case PageName.NOT_FOUND:
                 this.updateMainView(new NotFoundPage());

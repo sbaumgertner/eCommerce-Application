@@ -71,24 +71,12 @@ export class LoginPage extends Page {
     }
 
     private createEmailInput(): HTMLElement {
-        const emailInput = new InputField(
-            this.appStore,
-            'email',
-            'email',
-            'username',
-            'Enter your Username'
-        ).getComponent();
+        const emailInput = new InputField('email', 'email', 'username', 'Enter your Username').getComponent();
         return emailInput;
     }
 
     private createPasswordLabel(): HTMLElement {
-        const passwordInput = new InputField(
-            this.appStore,
-            'password',
-            'password',
-            'Password',
-            'Enter your Password'
-        ).getComponent();
+        const passwordInput = new InputField('password', 'password', 'Password', 'Enter your Password').getComponent();
         passwordInput.classList.add('password-icon');
         return passwordInput;
     }

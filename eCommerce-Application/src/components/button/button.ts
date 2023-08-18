@@ -1,8 +1,8 @@
 import './button.scss';
 import { ElementParams } from '../../types';
-import Input from '../abstract/input';
+import InteractComponent from '../abstract/interact-component';
 
-export class Button extends Input {
+export class Button extends InteractComponent {
     constructor(type: 'filled' | 'bordered' | 'text', id?: string, text?: string) {
         const classes = [];
         classes.push('button');
