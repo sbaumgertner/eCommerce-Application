@@ -7,11 +7,14 @@ import NavigationBar from '../navigation-bar/navigation-bar';
 import { AppStore } from '../../store/app-store';
 import { RouteAction } from '../../store/action/routeAction';
 import IconWithCounter from '../icon-with-counter/icon-with-counter';
+import { UserTypeAction } from '../../store/action/userTypeAction';
+import { Button, IconButton } from '../button/button';
 
 import darkLogoImg from '../../assets/logo-dark.svg';
 import cartIcon from '../../assets/icons/icon-cart.svg';
 import userIcon from '../../assets/icons/icon-user.svg';
-import { UserTypeAction } from '../../store/action/userTypeAction';
+import burgerIcon from '../../assets/icons/icon-menu.svg';
+import closeIcon from '../../assets/icons/icon-cross.svg';
 
 const HeaderNavLinks: LinkProps[] = [
     {
@@ -33,6 +36,10 @@ export default class Header extends Component {
     private userAction: UserTypeAction = new UserTypeAction();
     private isAnonUser: boolean;
 
+    private mediaQuery = window.matchMedia('(max-width: 768px)');
+    private isMobile = this.handleMobileChange(this.mediaQuery);
+    private navigationBar = new NavigationBar(this.appStore, HeaderNavLinks, 'dark').getComponent();
+
     constructor(private appStore: AppStore) {
         const headerParams: ElementParams = {
             tag: 'header',
@@ -41,6 +48,7 @@ export default class Header extends Component {
         super(headerParams);
         this.appStore.addChangeListener(StoreEventType.USER_TYPE_CHANGE, this.onUserType.bind(this));
         this.isAnonUser = this.appStore.getIsAnonUser();
+        this.mediaQuery.addEventListener('change', (e) => this.handleMobileChange(e));
         this.render();
     }
 
@@ -56,12 +64,23 @@ export default class Header extends Component {
 
     private createWrapper(): HTMLElement {
         const wrapperEl = createElement({ tag: 'div', classes: ['header__wrapper'] });
-        const navBar = new NavigationBar(this.appStore, HeaderNavLinks, 'dark').getComponent();
+        const headerNavBar = this.createHeaderNavBar();
         const logoEl = this.createLogo();
         const buttonBarEl = this.createButtonBar();
 
-        wrapperEl.append(navBar, logoEl, buttonBarEl);
+        wrapperEl.append(headerNavBar, logoEl, buttonBarEl);
         return wrapperEl;
+    }
+
+    private createHeaderNavBar(): HTMLElement {
+        const headerNavBar = createElement({ tag: 'div', classes: ['header__nav'] });
+
+        if (this.isMobile) {
+            headerNavBar.append(this.createBurgerMenu());
+        } else {
+            headerNavBar.append(this.navigationBar);
+        }
+        return headerNavBar;
     }
 
     private createLogo(): HTMLElement {
@@ -76,15 +95,54 @@ export default class Header extends Component {
         const userIconEl = this.createUserIcon();
         const loginBtnEl = this.createloginButton();
         const registrationBtnEl = this.createRegistrationButton();
-        const logoutBtn = this.createAccountMenu();
 
-        btnBarEl.append(cartIconEl, userIconEl, loginBtnEl, registrationBtnEl, logoutBtn);
-
+        if (this.isMobile) {
+            btnBarEl.append(cartIconEl);
+        } else if (this.isAnonUser) {
+            btnBarEl.append(cartIconEl, loginBtnEl, registrationBtnEl);
+        } else {
+            btnBarEl.append(cartIconEl, userIconEl);
+        }
         return btnBarEl;
     }
 
+    private createBurgerMenu(): HTMLElement {
+        const burgerMenuEl = createElement({ tag: 'div', classes: ['header__burger-menu'] });
+        const burgerButtonEl = new IconButton({ icon: burgerIcon, type: 'clear' }).getComponent();
+        const closeButtonEl = new IconButton({ icon: closeIcon, type: 'clear' }).getComponent();
+        const mobiletMenuEl = this.createMobileMenu();
+
+        burgerButtonEl.classList.add('header__burger-icon');
+        closeButtonEl.classList.add('header__close-icon');
+
+        burgerMenuEl.append(burgerButtonEl, closeButtonEl, mobiletMenuEl);
+
+        burgerMenuEl.addEventListener('click', () => {
+            burgerMenuEl.classList.toggle('header__burger-menu_active');
+            mobiletMenuEl.classList.toggle('header__mobile-menu_active');
+        });
+
+        return burgerMenuEl;
+    }
+    private createMobileMenu(): HTMLElement {
+        const mobileMenuEl = createElement({ tag: 'div', classes: ['header__mobile-menu'] });
+        const loginBtnEl = this.createloginButton();
+        const registrationBtnEl = this.createRegistrationButton();
+        const logoutBtnEl = this.createLogoutButton();
+
+        if (this.isAnonUser) {
+            this.navigationBar?.classList.remove('nav-bar_auth');
+            mobileMenuEl.append(this.navigationBar, loginBtnEl, registrationBtnEl);
+        } else {
+            this.navigationBar?.classList.add('nav-bar_auth');
+            mobileMenuEl.append(this.navigationBar, logoutBtnEl);
+        }
+
+        return mobileMenuEl;
+    }
+
     private createCartIcon(): HTMLElement {
-        const cartIconInstance = new IconWithCounter(cartIcon, 0);
+        const cartIconInstance = new IconWithCounter(cartIcon, 'clear', 0);
         const cartIconEl = cartIconInstance.getComponent();
 
         // поменять на лиснер изменения в сторе корзины
@@ -100,20 +158,23 @@ export default class Header extends Component {
     }
 
     private createUserIcon(): HTMLElement {
-        const userIconEl = htmlToElement(`<a class="user-icon">${userIcon}</a>`);
+        const userIconEl = createElement({ tag: 'div', classes: ['header__user-icon'] });
+        const userButtonEl = new IconButton({ icon: userIcon, type: 'clear' }).getComponent();
+        const accountMenuEl = this.createAccountMenu();
 
-        userIconEl.addEventListener('click', () =>
-            this.routeAction.changePage({ addHistory: true, page: PageName.ACCOUNT })
-        );
+        userIconEl.append(userButtonEl, accountMenuEl);
+
+        userIconEl.addEventListener('click', () => {
+            userIconEl.classList.toggle('header__user-icon_active');
+            accountMenuEl.classList.toggle('header__sub-menu_active');
+        });
+
         return userIconEl;
     }
 
     private createloginButton(): HTMLElement {
-        const loginBtnEl = createElement({
-            tag: 'div',
-            classes: ['button'],
-            text: 'Login',
-        });
+        const loginButton = new Button('text', 'nav-login', 'Login');
+        const loginBtnEl = loginButton.getComponent();
 
         loginBtnEl.addEventListener('click', () => {
             this.userAction.changeUserType(false); // удалить после проверки
@@ -123,11 +184,8 @@ export default class Header extends Component {
     }
 
     private createRegistrationButton(): HTMLElement {
-        const registrationBtnEl = createElement({
-            tag: 'div',
-            classes: ['button'],
-            text: 'Registration',
-        });
+        const registrationBtn = new Button('bordered', 'nav-registration', 'Registration');
+        const registrationBtnEl = registrationBtn.getComponent();
 
         registrationBtnEl.addEventListener('click', () => {
             this.routeAction.changePage({ addHistory: true, page: PageName.REGISTRATION });
@@ -136,13 +194,38 @@ export default class Header extends Component {
     }
 
     private createAccountMenu(): HTMLElement {
-        const logoutBtnEl = createElement({
-            tag: 'div',
-            classes: ['button'],
-            text: 'Logout',
-        });
+        const accountMenuEl = createElement({ tag: 'div', classes: ['header__sub-menu'] });
+        const logoutBtnEl = this.createLogoutButton();
+        const navBar = new NavigationBar(
+            this.appStore,
+            [{ page: PageName.ACCOUNT, text: 'Account' }],
+            'dark'
+        ).getComponent();
 
-        logoutBtnEl.addEventListener('click', () => this.userAction.changeUserType(true));
+        accountMenuEl.append(navBar, logoutBtnEl);
+        return accountMenuEl;
+    }
+
+    private createLogoutButton(): HTMLElement {
+        const logoutBtn = new Button('bordered', 'nav-logout', 'Logout');
+        const logoutBtnEl = logoutBtn.getComponent();
+        logoutBtnEl.classList.add('button_bordered_negative');
+
+        logoutBtnEl.addEventListener('click', () => {
+            this.userAction.changeUserType(true);
+            this.routeAction.changePage({ addHistory: true, page: PageName.INDEX });
+        });
         return logoutBtnEl;
+    }
+
+    private handleMobileChange(event: MediaQueryList | MediaQueryListEvent): boolean {
+        if (event.matches) {
+            this.isMobile = true;
+            this.render();
+        } else {
+            this.isMobile = false;
+            this.render();
+        }
+        return event.matches;
     }
 }

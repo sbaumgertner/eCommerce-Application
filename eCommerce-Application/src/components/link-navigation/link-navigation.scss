@@ -1,7 +1,5 @@
 @import "../../styles/tokens.scss";
 
-
-
 .nav-link {
     padding: 8px 16px;
     cursor: pointer;
@@ -21,6 +19,7 @@
 
         text-align: center;
         @include font-h6;
+        white-space: nowrap;
     }
 
     &_light {
