@@ -1,0 +1,37 @@
+@import "../../styles/tokens.scss";
+@import "../input/input.scss";
+
+.form {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    @include font-overline;
+    padding: 0 16px;
+}
+
+.error {
+    height: 24px;
+    color: $color-secondary-10;
+}
+
+.form-item.success .input {
+    border-color: $color-primary-40;
+}
+
+.form-item.error .input {
+    border-color: $color-secondary-10;
+}
+
+::-webkit-input-placeholder {
+    @include font-text;
+    color: $color-neutral-60; 
+    opacity:1;
+}

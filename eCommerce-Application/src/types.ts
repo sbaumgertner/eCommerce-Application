@@ -12,6 +12,7 @@ export type Page = {
 
 export enum ActionType {
     ROUTE_CHANGE = 'ROUTE_CHANGE',
+    REGISTRATION = 'REGISTRATION',
 }
 
 export type Action = {
@@ -21,6 +22,7 @@ export type Action = {
 
 export enum StoreEventType {
     PAGE_CHANGE = 'PAGE_CHANGE',
+    REGISTRATION_ERROR = 'REGISTRATION_ERROR',
 }
 
 export type ElementParams = {
@@ -28,6 +30,14 @@ export type ElementParams = {
     classes: string[];
     id?: string;
     text?: string;
+};
+
+export type InputElementParams = {
+    classes: string[];
+    id?: string;
+    type: string;
+    name: string;
+    placeholder?: string;
 };
 
 export type CreatorGithubInfo = {
