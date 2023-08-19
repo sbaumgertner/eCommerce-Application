@@ -6,10 +6,11 @@ import { AppStore } from '../../store/app-store';
 import { Page } from '../abstract/page';
 import { StoreEventType } from '../../types';
 import InputField from '../../components/input-field/input-field';
-import { Button } from '../../components/button/button';
+import { Button, IconButton } from '../../components/button/button';
 import { LoginAction } from '../../store/action/loginAction';
 import { LoginStore } from '../../store/login-store';
 import LoginWrapper from '../../components/login-wrapper/login-wrapper';
+import eyeClosedIcon from '../../assets/icons/icon-eye-close.svg';
 
 export class LoginPage extends Page {
     private appStore: AppStore;
@@ -35,6 +36,7 @@ export class LoginPage extends Page {
         this.html = document.createElement('div');
         this.html.className = 'login-page';
         this.html.append(this.createWrapper());
+        this.createPasswordButton();
         this.addEventListeners();
     }
 
@@ -47,6 +49,19 @@ export class LoginPage extends Page {
         const div = createElement({ tag: 'div', classes: ['registration-fields'] });
         div.append(this.emailField.getComponent(), this.passwordField.getComponent());
         return div;
+    }
+
+    private createPasswordButton(): void {
+        const passwordButton = new IconButton({ icon: eyeClosedIcon, type: 'clear' }).getComponent();
+        passwordButton.classList.add('eye-button');
+        this.passwordField.getComponent().append(passwordButton);
+        passwordButton.addEventListener('click', (): void => {
+            if ((document.querySelectorAll('.input')[1] as HTMLInputElement).type === 'password') {
+                (document.querySelectorAll('.input')[1] as HTMLInputElement).type = 'text';
+            } else {
+                (document.querySelectorAll('.input')[1] as HTMLInputElement).type = 'password';
+            }
+        });
     }
 
     public addEventListeners(): void {

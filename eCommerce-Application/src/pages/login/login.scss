@@ -9,8 +9,13 @@
     background-position: center;
     padding: 64px;
     min-height: calc(100vh - 200px);
-  }
+}
 
+.eye-button {
+    position: absolute;
+    top: 60%;
+    right: 5%;
+}
 
 
 @media (max-width: $max-tablet) {
@@ -21,5 +26,8 @@
 @media (max-width: $max-mobile) {
     .login-page {
         padding: 16px;
+    }
+    .eye-button {
+        right: 10%;
     }
 }
