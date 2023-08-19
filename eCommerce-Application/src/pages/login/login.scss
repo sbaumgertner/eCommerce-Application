@@ -1,7 +1,6 @@
 @import "../../styles/tokens.scss";
 
 .login-page {
-<<<<<<< HEAD
     display: flex;
     justify-content: center;
     align-items: center;
@@ -11,19 +10,9 @@
     padding: 64px;
     min-height: calc(100vh - 200px);
   }
-=======
 
-    &__wrapper {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: url("../../assets/img/image-04.jpg") no-repeat;
-        background-size: cover;
-        background-position: center;
-        padding: 64px;
-        min-height: 798px;
-    }
 
+<<<<<<< HEAD
     &__form-wrapper {
         position: relative;
         display: flex;
@@ -60,6 +49,8 @@
     }
 }
 >>>>>>> b727df6 (feat: add login-store)
+=======
+>>>>>>> b9c9d82 (fix: fix login page styles errors)
 
 @media (max-width: $max-tablet) {
     .login-page {
@@ -70,10 +61,13 @@
     .login-page {
         padding: 16px;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     } 
     .form-wrapper__image {
         left: 40%;
 >>>>>>> b727df6 (feat: add login-store)
+=======
+>>>>>>> b9c9d82 (fix: fix login page styles errors)
     }
 }
