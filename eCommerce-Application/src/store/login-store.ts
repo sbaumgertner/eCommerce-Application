@@ -43,7 +43,7 @@ export class LoginStore extends Store {
         if (!resultPassword.isValid) {
             this.passwordError = resultPassword.error;
         }
-        if (resultEmail.isValid && resultPassword.isValid) {
+        if (resultEmail.isValid) {
             customerAPI
                 .loginCustommer()
                 .then(() => {
