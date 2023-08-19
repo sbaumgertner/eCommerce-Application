@@ -6,7 +6,7 @@ import { RouteAction } from '../../store/action/routeAction';
 import { AppStore } from '../../store/app-store';
 
 export default class NavigationBar extends Component {
-    private appStore: AppStore;
+    protected appStore: AppStore;
     private routeAction: RouteAction = new RouteAction();
     private selectedEl?: HTMLElement;
     private navEl: HTMLElement[] = [];
@@ -18,8 +18,12 @@ export default class NavigationBar extends Component {
         };
         super(navigationBarParams);
         this.appStore = appStore;
-        this.appStore.addChangeListener(StoreEventType.PAGE_CHANGE, this.onStoreChange.bind(this));
         this.render(linksProps, color);
+        this.init();
+    }
+
+    protected init(): void {
+        this.appStore.addChangeListener(StoreEventType.PAGE_CHANGE, this.onStoreChange.bind(this));
     }
 
     public render(linksProps: LinkProps[], color: 'light' | 'dark' = 'dark'): void {

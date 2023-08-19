@@ -1,6 +1,6 @@
 import { AppDispatcher } from '../dispatcher';
 
-export abstract class Action {
+export abstract class AbstractAction {
     dispatcher: AppDispatcher;
 
     constructor() {
