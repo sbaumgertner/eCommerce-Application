@@ -10,3 +10,12 @@
   padding: 64px;
   min-height: calc(100vh - 200px);
 }
+
+.input-row {
+  display: flex;
+  gap: 16px;
+}
+
+.hidden {
+  display: none !important;
+}

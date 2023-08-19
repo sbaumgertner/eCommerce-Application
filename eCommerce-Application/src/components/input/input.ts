@@ -1,7 +1,7 @@
 import { InputElementParams } from '../../types';
 import Component from '../abstract/component';
 
-export default class InputElement extends Component {
+export default class Input extends Component {
     constructor(inputParams: InputElementParams) {
         super({ tag: 'input', classes: inputParams.classes, id: inputParams.id });
 

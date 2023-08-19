@@ -1,0 +1,23 @@
+@import "../../styles/tokens.scss";
+
+.checkbox-wrapper {
+  display: flex;
+  margin: 16px 0;
+  gap: 16px;
+}
+
+.checkbox {
+  width: 24px;
+  height: 24px;
+  border: 5px solid $color-neutral-98;
+  outline: 1px solid $color-primary-60;
+  border-radius: 4px;
+  background-color: $color-neutral-98;
+  &_checked {
+    background-color: $color-primary-60;
+  }
+}
+
+.checkbox-label {
+  color: $color-neutral-30;
+}

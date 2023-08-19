@@ -3,21 +3,41 @@ import { Validation, ValidationResult } from '../utils/validation';
 import { Store } from './abstract/store';
 import { RegistrationActionData } from './action/registrationAction';
 
-export class RegistrationStore extends Store {
-    private firstNameError?: string;
+export type RegValidationErrors = Partial<RegistrationActionData>;
 
-    public getFirstNameError(): string {
-        return this.firstNameError || '';
+export class RegistrationStore extends Store {
+    private validationErrors: RegValidationErrors;
+
+    constructor() {
+        super();
+        this.validationErrors = {};
+    }
+
+    public getValidationErrors(): RegValidationErrors | undefined {
+        return this.validationErrors;
+    }
+
+    private validateData(data: RegistrationActionData): void {
+        this.validationErrors = {};
+        let result: ValidationResult = Validation.checkText(data.firstName);
+        if (!result.isValid) {
+            this.validationErrors.firstName = result.error;
+        }
+        result = Validation.checkText(data.lastName);
+        if (!result.isValid) {
+            this.validationErrors.lastName = result.error;
+        }
     }
 
     private onRegistration(jsonData: string): void {
         const data: RegistrationActionData = JSON.parse(jsonData);
-        const firstName = data.firstName;
-        const result: ValidationResult = Validation.checkText(firstName);
-        if (!result.isValid) {
-            this.firstNameError = result.error;
-            this.emit(StoreEventType.REGISTRATION_ERROR);
-        }
+        this.validateData(data);
+        //const firstName = data.firstName;
+        //const result: ValidationResult = Validation.checkText(firstName);
+        //if (!result.isValid) {
+        //    this.firstNameError = result.error;
+        this.emit(StoreEventType.REGISTRATION_ERROR);
+        //}
     }
 
     protected actionCallback(action: Action): void {
