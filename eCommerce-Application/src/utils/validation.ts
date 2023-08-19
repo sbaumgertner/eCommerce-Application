@@ -26,10 +26,10 @@ export class Validation {
             /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if (regex.test(value)) {
             return { isValid: true };
-        } else if (value.includes(' ') || value != value.trim() || value == '') {
-            return { isValid: false, error: ValidationError.EMAIL_ERROR };
         }
-        return { isValid: false, error: ValidationError.EMAIL_ERROR };
+        if (value.includes(' ') || value != value.trim() || value == '') {
+            return { isValid: false, error: ValidationError.EMAIL_ERROR };
+        } else return { isValid: false, error: ValidationError.EMAIL_ERROR };
     }
 
     public static checkPassword(value: string): ValidationResult {

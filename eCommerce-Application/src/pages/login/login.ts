@@ -8,7 +8,6 @@ import { StoreEventType } from '../../types';
 import InputField from '../../components/input-field/input-field';
 import { Button } from '../../components/button/button';
 import { LoginAction } from '../../store/action/loginAction';
-<<<<<<< HEAD
 import { LoginStore } from '../../store/login-store';
 import LoginWrapper from '../../components/login-wrapper/login-wrapper';
 
@@ -19,16 +18,6 @@ export class LoginPage extends Page {
     private loginStore: LoginStore;
     private emailField: InputField;
     private passwordField: InputField;
-=======
-
-const NavLinks: PageName[] = [PageName.LOGIN, PageName.REGISTRATION];
-
-export class LoginPage extends Page {
-    private appStore: AppStore;
-    private menuEl: NavigationBar;
-    private loginButton: Button;
-    private loginAction: LoginAction = new LoginAction();
->>>>>>> b727df6 (feat: add login-store)
 
     constructor(appStore: AppStore) {
         super();
@@ -61,19 +50,14 @@ export class LoginPage extends Page {
     }
 
     public addEventListeners(): void {
-<<<<<<< HEAD
         this.button.getComponent().addEventListener('click', () => {
             this.loginAction.login({ email: this.emailField.getValue(), password: this.passwordField.getValue() });
-=======
-        this.loginButton.getComponent().addEventListener('click', () => {
-            this.loginAction.login({ email: 'string@jnn.com', password: 'Password' });
->>>>>>> b727df6 (feat: add login-store)
         });
     }
 
     protected onStoreChange(): void {
         this.emailField.setError(this.loginStore.getEmailError());
         this.passwordField.setError(this.loginStore.getPasswordError());
-        this.emailField.setError(this.loginStore.getLoginError());
+        //this.emailField.setError(this.loginStore.getLoginError());
     }
 }

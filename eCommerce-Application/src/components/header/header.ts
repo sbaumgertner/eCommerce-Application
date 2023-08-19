@@ -177,7 +177,6 @@ export default class Header extends Component {
         const loginBtnEl = loginButton.getComponent();
 
         loginBtnEl.addEventListener('click', () => {
-            this.userAction.changeUserType(false); // удалить после проверки
             this.routeAction.changePage({ addHistory: true, page: PageName.LOGIN });
         });
         return loginBtnEl;
