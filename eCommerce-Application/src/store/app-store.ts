@@ -6,11 +6,13 @@ import { Store } from './abstract/store';
 export class AppStore extends Store {
     private currentPage: PageName;
     private router: Router;
+    private isAnonUser: boolean;
 
     constructor(router: Router) {
         super();
         this.router = router;
         this.currentPage = PageName.INDEX;
+        this.isAnonUser = !!JSON.parse(localStorage.getItem('isAnonUser') as string);
     }
 
     public getCurrentPage(): PageName {
@@ -26,10 +28,24 @@ export class AppStore extends Store {
         this.emit(StoreEventType.PAGE_CHANGE);
     }
 
+    public getIsAnonUser(): boolean {
+        return this.isAnonUser;
+    }
+
+    private onUserTypeChange(jsonData: string): void {
+        const data: boolean = JSON.parse(jsonData);
+        this.isAnonUser = data;
+        localStorage.setItem('isAnonUser', jsonData);
+        this.emit(StoreEventType.USER_TYPE_CHANGE);
+    }
+
     protected actionCallback(action: Action): void {
         switch (action.actionType) {
             case ActionType.ROUTE_CHANGE:
                 this.onRouteChange(action.data);
+                break;
+            case ActionType.USER_TYPE_CHANGE:
+                this.onUserTypeChange(action.data);
                 break;
         }
     }

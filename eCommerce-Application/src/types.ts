@@ -2,6 +2,10 @@ export enum PageName {
     INDEX = 'INDEX',
     LOGIN = 'LOGIN',
     REGISTRATION = 'REGISTRATION',
+    ACCOUNT = 'ACCOUNT',
+    CATALOG = 'CATALOG',
+    CART = 'CART',
+    ABOUT_US = 'ABOUT_US',
     NOT_FOUND = 'NOT_FOUND',
 }
 
@@ -12,6 +16,7 @@ export type Page = {
 
 export enum ActionType {
     ROUTE_CHANGE = 'ROUTE_CHANGE',
+    USER_TYPE_CHANGE = 'USER_TYPE_CHANGE',
     REGISTRATION = 'REGISTRATION',
 }
 
@@ -22,6 +27,7 @@ export type Action = {
 
 export enum StoreEventType {
     PAGE_CHANGE = 'PAGE_CHANGE',
+    USER_TYPE_CHANGE = 'USER_TYPE_CHANGE',
     REGISTRATION_ERROR = 'REGISTRATION_ERROR',
 }
 
@@ -43,4 +49,9 @@ export type InputElementParams = {
 export type CreatorGithubInfo = {
     name: string;
     link: string;
+};
+
+export type LinkProps = {
+    page: PageName;
+    text: string;
 };
