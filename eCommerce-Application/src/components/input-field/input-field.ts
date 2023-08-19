@@ -50,17 +50,4 @@ export default class InputField extends Component {
         this.error.innerText = error;
         this.input.setError(error.length > 0);
     }
-
-    /*private createInput(nameInput: string, typeInput: string, placeholder: string): HTMLElement {
-        const input = new InputElement(typeInput, ['input'], nameInput, placeholder)//createElement({ tag: 'input', classes: ['input'] });
-        input.setAttribute('name', this.nameInput);
-        input.setAttribute('type', this.typeInput);
-        input.setAttribute('placeholder', this.placeholder);
-        return input;
-    }*/
-
-    /*private createError(): HTMLElement {
-        const error = createElement({ tag: 'div', classes: ['error'] });
-        return error;
-    }*/
 }
