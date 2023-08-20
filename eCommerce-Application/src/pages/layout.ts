@@ -1,7 +1,7 @@
 import { PageName, StoreEventType } from '../types';
 import { AppStore } from '../store/app-store';
 import Header from '../components/header/header';
-import { MainPage } from './main-page';
+import { HomePage } from './home/home';
 
 import { NotFoundPage } from './notfound/notfound';
 import { LoginPage } from './login/login';
@@ -18,16 +18,19 @@ export class Layout extends Page {
     private footer: Footer;
     private loginPage: LoginPage;
     private notFound = new NotFoundPage();
+    private home: HomePage;
     private mainEl: HTMLElement;
 
     constructor(appStore: AppStore) {
         super();
         this.appStore = appStore;
 
-        this.header = new Header(this.appStore);
-        this.main = new MainPage();
-        this.footer = new Footer(this.appStore);
+        this.home = new HomePage(this.appStore);
         this.loginPage = new LoginPage(this.appStore);
+
+        this.header = new Header(this.appStore);
+        this.main = this.home;
+        this.footer = new Footer(this.appStore);
 
         this.mainEl = document.createElement('main');
         this.appStore.addChangeListener(StoreEventType.PAGE_CHANGE, this.onStoreChange.bind(this));
@@ -37,7 +40,7 @@ export class Layout extends Page {
         const page: PageName = this.appStore.getCurrentPage();
         switch (page) {
             case PageName.INDEX:
-                this.updateMainView(new MainPage());
+                this.updateMainView(this.home);
                 break;
             case PageName.LOGIN:
                 this.updateMainView(this.loginPage);
