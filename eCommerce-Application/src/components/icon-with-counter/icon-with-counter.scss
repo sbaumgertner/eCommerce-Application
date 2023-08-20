@@ -1,0 +1,18 @@
+@import "../../styles/tokens.scss";
+
+.icon-count {
+  display: inline-block;
+  position: relative;
+
+  &_count::after {
+    content: attr(data-count);
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    padding: 0 4px;
+    border-radius: 8px;
+    background: $color-secondary-60;
+    color: $color-secondary-100;
+    @include font-caption;
+  }
+}

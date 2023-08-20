@@ -1,6 +1,6 @@
 import { PageName, StoreEventType } from '../types';
 import { AppStore } from '../store/app-store';
-import { Header } from '../components/header/header';
+import Header from '../components/header/header';
 import { MainPage } from './main-page';
 
 import { NotFoundPage } from './notfound/notfound';
@@ -17,6 +17,7 @@ export class Layout extends Page {
     private main: Page;
     private footer: Footer;
     private loginPage: LoginPage;
+    private notFound = new NotFoundPage();
     private mainEl: HTMLElement;
 
     constructor(appStore: AppStore) {
@@ -44,8 +45,20 @@ export class Layout extends Page {
             case PageName.REGISTRATION:
                 this.updateMainView(new RegisterPage(this.appStore));
                 break;
+            case PageName.ACCOUNT:
+                this.updateMainView(this.notFound);
+                break;
+            case PageName.CART:
+                this.updateMainView(this.notFound);
+                break;
+            case PageName.CATALOG:
+                this.updateMainView(this.notFound);
+                break;
+            case PageName.ABOUT_US:
+                this.updateMainView(this.notFound);
+                break;
             case PageName.NOT_FOUND:
-                this.updateMainView(new NotFoundPage());
+                this.updateMainView(this.notFound);
                 break;
         }
     }
@@ -62,6 +75,6 @@ export class Layout extends Page {
         this.footer.render();
         this.main.render();
         this.mainEl.append(this.main.getHtml());
-        document.body.append(this.header.getHtml(), this.mainEl, this.footer.getComponent());
+        document.body.append(this.header.getComponent(), this.mainEl, this.footer.getComponent());
     }
 }

@@ -1,5 +1,5 @@
 import './footer.scss';
-import { CreatorGithubInfo, ElementParams, PageName } from '../../types';
+import { CreatorGithubInfo, ElementParams, LinkProps, PageName } from '../../types';
 import Component from '../abstract/component';
 import createElement from '../../utils/create-element';
 import htmlToElement from '../../utils/html-to-element';
@@ -25,7 +25,16 @@ const CreatorsGithubInfo: CreatorGithubInfo[] = [
         link: 'https://github.com/Illia-Sakharau',
     },
 ];
-const FooterNavLinks: PageName[] = [PageName.LOGIN, PageName.REGISTRATION];
+const FooterNavLinks: LinkProps[] = [
+    {
+        page: PageName.CATALOG,
+        text: 'Catalog',
+    },
+    {
+        page: PageName.ABOUT_US,
+        text: 'About us',
+    },
+];
 
 export default class Footer extends Component {
     private appStore: AppStore;

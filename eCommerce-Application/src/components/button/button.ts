@@ -1,6 +1,7 @@
 import './button.scss';
 import { ElementParams } from '../../types';
 import Component from '../abstract/component';
+import htmlToElement from '../../utils/html-to-element';
 
 export class Button extends Component {
     constructor(type: 'filled' | 'bordered' | 'text', id?: string, text?: string) {
@@ -30,5 +31,26 @@ export class Button extends Component {
 
     public enable(): void {
         this.getComponent().disabled = false;
+    }
+}
+
+export type IconButtonParams = {
+    icon: string;
+    type: 'filled' | 'bordered' | 'clear';
+    id?: string;
+};
+
+export class IconButton extends Component {
+    constructor(params: IconButtonParams) {
+        const { icon, type, id } = params;
+        const componentParams: ElementParams = {
+            tag: 'button',
+            classes: ['button', 'button-icon', `button_${type}`],
+        };
+        if (id) {
+            componentParams.id = id;
+        }
+        super(componentParams);
+        this.componentElem.append(htmlToElement(`<div class="button__icon">${icon}</div>`));
     }
 }

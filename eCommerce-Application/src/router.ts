@@ -6,6 +6,10 @@ export const pages: Page[] = [
     { name: PageName.INDEX, url: 'index' },
     { name: PageName.LOGIN, url: 'login' },
     { name: PageName.REGISTRATION, url: 'registration' },
+    { name: PageName.ACCOUNT, url: 'account' },
+    { name: PageName.CART, url: 'cart' },
+    { name: PageName.CATALOG, url: 'catalog' },
+    { name: PageName.ABOUT_US, url: 'about-us' },
     { name: PageName.NOT_FOUND, url: 'not_found' },
 ];
 
