@@ -27,6 +27,10 @@ export class RegistrationStore extends Store {
         if (!result.isValid) {
             this.validationErrors.lastName = result.error;
         }
+        result = Validation.checkText(data.lastName);
+        if (!result.isValid) {
+            this.validationErrors.lastName = result.error;
+        }
     }
 
     private onRegistration(jsonData: string): void {

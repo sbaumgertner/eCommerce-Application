@@ -20,7 +20,7 @@
     border-color: $color-primary-60;
   } 
   &_invalid {
-    color: $color-secondary-40;
-    border-color: $color-secondary-40;
+    color: $color-secondary-40 !important;
+    border-color: $color-secondary-40 !important;
   }
 }

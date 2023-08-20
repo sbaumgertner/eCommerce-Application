@@ -11,6 +11,7 @@ import { RegistrationAction, RegistrationActionData } from '../../store/action/r
 import { StoreEventType } from '../../types';
 import { AddressFields } from '../../components/address-fields/address-fields';
 import { Checkbox } from '../../components/checkbox/checkbox';
+import { Validation } from '../../utils/validation';
 
 export class RegisterPage extends Page {
     private appStore: AppStore;
@@ -83,6 +84,12 @@ export class RegisterPage extends Page {
         this.addressCheckbox.getComponent().addEventListener('click', () => {
             this.billingAddress.getComponent().classList.toggle('hidden');
         });
+
+        this.firstNameField.addValidation(Validation.checkText);
+        this.lastNameField.addValidation(Validation.checkText);
+        this.birthDateField.addValidation(Validation.checkDate);
+        this.emailField.addValidation(Validation.checkEmail);
+        this.passwordField.addValidation(Validation.checkPassword);
     }
 
     private sendRegistrationData(): void {
