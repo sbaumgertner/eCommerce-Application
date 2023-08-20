@@ -1,7 +1,7 @@
 import { ActionType } from '../../types';
-import { Action } from '../abstract/action';
+import { AbstractAction } from '../abstract/action';
 
-export class UserTypeAction extends Action {
+export class UserTypeAction extends AbstractAction {
     public changeUserType(data: boolean): void {
         this.dispatcher.handleAction({ actionType: ActionType.USER_TYPE_CHANGE, data: JSON.stringify(data) });
     }
