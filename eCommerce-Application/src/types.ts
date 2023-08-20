@@ -59,7 +59,6 @@ export type CreatorGithubInfo = {
     link: string;
 };
 
-
 export type AddressData = {
     country: string;
     zip: string;
