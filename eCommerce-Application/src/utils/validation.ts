@@ -4,7 +4,7 @@ export enum ValidationError {
     PASSWORD_ERROR_1 = 'Password is required',
     PASSWORD_ERROR_2 = 'Password must be at least 8 characters',
     PASSWORD_ERROR_3 = 'Password must be at least one uppercase letter (A-Z) and at least one lowercase letter (a-z)',
-    PASSWORD_ERROR_4 = 'Password must be at least one digit (0-9) and at least one special character (e.g., !@#$%^&*)',
+    PASSWORD_ERROR_4 = 'Password must be at least one digit (0-9) and at least one special character',
 }
 
 export type ValidationResult = {

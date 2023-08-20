@@ -3,6 +3,7 @@ import { ElementParams } from '../../types';
 import createElement from '../../utils/create-element';
 import Component from '../abstract/component';
 import Input from '../input/input';
+import { ValidationResult } from '../../utils/validation';
 
 export default class InputField extends Component {
     private input: Input;
@@ -49,5 +50,22 @@ export default class InputField extends Component {
     public setError(error: string): void {
         this.error.innerText = error;
         this.input.setError(error.length > 0);
+    }
+
+    public addValidation(validationFunc: (s: string) => ValidationResult): void {
+        this.input.getComponent().addEventListener('input', () => {
+            this.checkValidation(validationFunc);
+        });
+        this.input.getComponent().addEventListener('focus', () => {
+            this.checkValidation(validationFunc);
+        });
+        //this.input.getComponent().addEventListener('change', () => {
+        //    this.checkValidation(validationFunc);
+        //});
+    }
+
+    private checkValidation(validationFunc: (s: string) => ValidationResult): void {
+        const result: ValidationResult = validationFunc(this.getValue());
+        this.setError(result.error || '');
     }
 }

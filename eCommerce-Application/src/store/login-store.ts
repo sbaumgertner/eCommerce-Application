@@ -6,44 +6,47 @@ import CustomerAPI from '../api/customerAPI';
 import { Validation, ValidationResult } from '../utils/validation';
 import { RouteAction } from './action/routeAction';
 
+export type LoginValidationErrors = Partial<LoginActionData>;
+
 export class LoginStore extends Store {
-    private emailError?: string;
-    private passwordError?: string;
+    private validationErrors: LoginValidationErrors;
     private loginError?: string;
     private routeAction: RouteAction;
 
     constructor() {
         super();
+        this.validationErrors = {};
         this.routeAction = new RouteAction();
     }
 
-    public getEmailError(): string {
-        return this.emailError || '';
-    }
-
-    public getPasswordError(): string {
-        return this.passwordError || '';
+    public getValidationErrors(): LoginValidationErrors | undefined {
+        return this.validationErrors;
     }
 
     public getLoginError(): string {
         return this.loginError || '';
     }
 
+    private validateData(data: LoginActionData): boolean {
+        this.validationErrors = {};
+        this.loginError = '';
+        let result: ValidationResult = Validation.checkEmail(data.email);
+        if (!result.isValid) {
+            this.validationErrors.email = result.error;
+        }
+        result = Validation.checkPassword(data.password);
+        if (!result.isValid) {
+            this.validationErrors.password = result.error;
+        }
+        return result.isValid;
+    }
+
     private onLogin(jsonData: string): void {
         const data: LoginActionData = JSON.parse(jsonData);
-        const email = data.email;
-        const password = data.password;
-        const customerAPI = new CustomerAPI(email, password);
-        const resultEmail: ValidationResult = Validation.checkEmail(email);
-        const resultPassword: ValidationResult = Validation.checkPassword(password);
-        if (!resultEmail.isValid) {
-            this.emailError = resultEmail.error;
-            //this.emit(StoreEventType.LOGIN_ERROR);
-        }
-        if (!resultPassword.isValid) {
-            this.passwordError = resultPassword.error;
-        }
-        if (resultEmail.isValid) {
+        const customerAPI = new CustomerAPI(data.email, data.password);
+
+        this.validateData(data);
+        if (this.validateData(data) == true) {
             customerAPI
                 .loginCustommer()
                 .then(() => {
@@ -54,6 +57,7 @@ export class LoginStore extends Store {
                     this.emit(StoreEventType.LOGIN_ERROR);
                 });
         }
+
         this.emit(StoreEventType.LOGIN_ERROR);
     }
 
