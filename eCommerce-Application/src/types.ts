@@ -46,9 +46,26 @@ export type InputElementParams = {
     placeholder?: string;
 };
 
+export type SelectElementParams = {
+    classes: string[];
+    id?: string;
+    name?: string;
+    placeholder?: string;
+    options: Map<string, string>;
+};
+
 export type CreatorGithubInfo = {
     name: string;
     link: string;
+};
+
+
+export type AddressData = {
+    country: string;
+    zip: string;
+    state: string;
+    city: string;
+    street: string;
 };
 
 export type LinkProps = {

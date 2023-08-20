@@ -10,6 +10,12 @@
 .form-item {
     display: flex;
     flex-direction: column;
+    width: 100%;
+    padding: 17px 0;
+
+    &_disabled {
+        opacity: 0.5;
+    }
 }
 
 .label {
@@ -18,7 +24,7 @@
 }
 
 .error {
-    height: 24px;
+    line-height: 24px;
     color: $color-secondary-10;
 }
 
@@ -27,7 +33,7 @@
 }
 
 .form-item.error .input {
-    border-color: $color-secondary-10;
+    border-color: $color-secondary-40;
 }
 
 ::-webkit-input-placeholder {
