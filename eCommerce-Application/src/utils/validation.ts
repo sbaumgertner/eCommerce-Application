@@ -6,7 +6,7 @@ export enum ValidationError {
     PASSWORD_ERROR_1 = 'Password is required',
     PASSWORD_ERROR_2 = 'Password must be at least 8 characters',
     PASSWORD_ERROR_3 = 'Password must be at least one uppercase letter (A-Z) and at least one lowercase letter (a-z)',
-    PASSWORD_ERROR_4 = 'Password must be at least one digit (0-9) and at least one special character (e.g., !@#$%^&*)',
+    PASSWORD_ERROR_4 = 'Password must be at least one digit (0-9) and at least one special character',
     DATE_FORMAT_ERROR = 'Must match the format DD.MM.YYYY',
     DATE_AGE_ERROR = 'Must be more than 10 years old',
     COUNTRY_ERROR = 'Must be selected from the list',
@@ -34,10 +34,10 @@ export class Validation {
             /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if (regex.test(value)) {
             return { isValid: true };
-        } else if (value.includes(' ') || value != value.trim() || value == '') {
-            return { isValid: false, error: ValidationError.EMAIL_ERROR };
         }
-        return { isValid: false, error: ValidationError.EMAIL_ERROR };
+        if (value.includes(' ') || value != value.trim() || value == '') {
+            return { isValid: false, error: ValidationError.EMAIL_ERROR };
+        } else return { isValid: false, error: ValidationError.EMAIL_ERROR };
     }
 
     public static checkPassword(value: string): ValidationResult {

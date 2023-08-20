@@ -1,4 +1,4 @@
-import { getApiRootForPasswordFlow } from './client';
+import { getApiRootForPasswordFlow, myToken } from './client';
 
 export default class CustomerAPI {
     private username: string;
@@ -20,6 +20,10 @@ export default class CustomerAPI {
                     password: this.password,
                 },
             })
-            .execute();
+            .execute()
+            .then(() => {
+                const token = myToken.get().token;
+                localStorage.setItem('token', token);
+            });
     }
 }

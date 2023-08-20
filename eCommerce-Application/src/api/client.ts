@@ -22,7 +22,7 @@ const CPT_SCOPES = [
 ];
 const ANONYMOUS_ID = 'idAnonym1';
 
-const myToken = new MyToken();
+export const myToken = new MyToken();
 
 // Configure authMiddlewareOptions
 const authMiddlewareOptions: AuthMiddlewareOptions = {

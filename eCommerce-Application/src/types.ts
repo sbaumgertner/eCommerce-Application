@@ -18,6 +18,7 @@ export enum ActionType {
     ROUTE_CHANGE = 'ROUTE_CHANGE',
     USER_TYPE_CHANGE = 'USER_TYPE_CHANGE',
     REGISTRATION = 'REGISTRATION',
+    LOGIN = 'LOGIN',
 }
 
 export type Action = {
@@ -29,6 +30,7 @@ export enum StoreEventType {
     PAGE_CHANGE = 'PAGE_CHANGE',
     USER_TYPE_CHANGE = 'USER_TYPE_CHANGE',
     REGISTRATION_ERROR = 'REGISTRATION_ERROR',
+    LOGIN_ERROR = 'LOGIN_ERROR',
 }
 
 export type ElementParams = {
