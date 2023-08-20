@@ -10,6 +10,9 @@
   &:disabled {
     opacity: 0.5;
     cursor: default;
+    &:hover {
+      box-shadow: none !important;
+    }
   }
 
   &_filled {

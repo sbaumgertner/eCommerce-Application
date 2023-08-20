@@ -34,7 +34,7 @@ export class Select extends Component {
     }
 
     public getValue(): string {
-        return '';
+        return this.getComponent().value;
     }
 
     public setError(isError: boolean): void {

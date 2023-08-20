@@ -42,8 +42,10 @@ export class RegisterPage extends Page {
         this.passwordField = new InputField('password', 'password', 'PASSWORD', 'Create your password');
 
         this.shippingAddress = new AddressFields('Shipping address');
+        this.shippingAddress.addValidations();
         this.addressCheckbox = new Checkbox('Use different billing address', 'address-checkbox');
         this.billingAddress = new AddressFields('Billing address');
+        this.billingAddress.addValidations();
 
         this.registrationStore.addChangeListener(StoreEventType.REGISTRATION_ERROR, this.onStoreChange.bind(this));
     }
@@ -113,6 +115,19 @@ export class RegisterPage extends Page {
         //if (errors.firstName) {
         this.firstNameField.setError(errors.firstName || '');
         this.lastNameField.setError(errors.lastName || '');
+        this.birthDateField.setError(errors.birthDate || '');
+        this.emailField.setError(errors.email || '');
+        this.passwordField.setError(errors.password || '');
+
+        const emptyAdress = {
+            country: '',
+            zip: '',
+            state: '',
+            city: '',
+            street: '',
+        };
+        this.shippingAddress.setErrors(errors.shippingAddress || emptyAdress);
+        this.billingAddress.setErrors(errors.billingAddress || emptyAdress);
         //}
         //this.firstNameField.setError(this.registrationStore.getFirstNameError());
     }
