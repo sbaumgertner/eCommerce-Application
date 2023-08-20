@@ -6,9 +6,12 @@ import { AppStore } from '../../store/app-store';
 import { Page } from '../abstract/page';
 import createElement from '../../utils/create-element';
 import InputField from '../../components/input-field/input-field';
-import { RegistrationStore } from '../../store/registration-store';
-import { RegistrationAction } from '../../store/action/registrationAction';
+import { RegValidationErrors, RegistrationStore } from '../../store/registration-store';
+import { RegistrationAction, RegistrationActionData } from '../../store/action/registrationAction';
 import { StoreEventType } from '../../types';
+import { AddressFields } from '../../components/address-fields/address-fields';
+import { Checkbox } from '../../components/checkbox/checkbox';
+import { Validation } from '../../utils/validation';
 
 export class RegisterPage extends Page {
     private appStore: AppStore;
@@ -16,6 +19,13 @@ export class RegisterPage extends Page {
     private registrationAction: RegistrationAction;
 
     private firstNameField: InputField;
+    private lastNameField: InputField;
+    private birthDateField: InputField;
+    private emailField: InputField;
+    private passwordField: InputField;
+    private shippingAddress: AddressFields;
+    private addressCheckbox: Checkbox;
+    private billingAddress: AddressFields;
     private button: Button;
 
     constructor(appStore: AppStore) {
@@ -25,7 +35,18 @@ export class RegisterPage extends Page {
         this.registrationAction = new RegistrationAction();
         this.button = new Button('filled', 'registration-button', 'Registration');
 
-        this.firstNameField = new InputField('text', 'firstname', 'FIRST NAME', 'Enter your First name');
+        this.firstNameField = new InputField('text', 'firstname', 'FIRST NAME', 'Enter your Last name');
+        this.lastNameField = new InputField('text', 'lastname', 'LAST NAME', 'Enter your First name');
+        this.birthDateField = new InputField('date', 'birthdate', 'DATE OF BIRTH', 'Enter your birth date');
+        this.emailField = new InputField('email', 'email', 'EMAIL', 'Enter your email');
+        this.passwordField = new InputField('password', 'password', 'PASSWORD', 'Create your password');
+
+        this.shippingAddress = new AddressFields('Shipping address');
+        this.shippingAddress.addValidations();
+        this.addressCheckbox = new Checkbox('Use different billing address', 'address-checkbox');
+        this.billingAddress = new AddressFields('Billing address');
+        this.billingAddress.addValidations();
+
         this.registrationStore.addChangeListener(StoreEventType.REGISTRATION_ERROR, this.onStoreChange.bind(this));
     }
 
@@ -42,18 +63,72 @@ export class RegisterPage extends Page {
     }
 
     private createFields(): HTMLElement {
-        const div = createElement({ tag: 'div', classes: ['registration-fields'] });
-        div.append(this.firstNameField.getComponent());
-        return div;
+        const fields: HTMLElement = createElement({ tag: 'div', classes: ['registration-fields'] });
+        const inputRow: HTMLElement = createElement({ tag: 'div', classes: ['input-row'] });
+        inputRow.append(this.firstNameField.getComponent(), this.lastNameField.getComponent());
+        fields.append(
+            inputRow,
+            this.birthDateField.getComponent(),
+            this.emailField.getComponent(),
+            this.passwordField.getComponent(),
+            this.shippingAddress.getComponent(),
+            this.addressCheckbox.getComponent(),
+            this.billingAddress.getComponent()
+        );
+        this.billingAddress.getComponent().classList.add('hidden');
+        return fields;
     }
 
     public addEventListeners(): void {
         this.button.getComponent().addEventListener('click', () => {
-            this.registrationAction.registration({ firstName: this.firstNameField.getValue() });
+            this.sendRegistrationData();
         });
+        this.addressCheckbox.getComponent().addEventListener('click', () => {
+            this.billingAddress.getComponent().classList.toggle('hidden');
+        });
+
+        this.firstNameField.addValidation(Validation.checkText);
+        this.lastNameField.addValidation(Validation.checkText);
+        this.birthDateField.addValidation(Validation.checkDate);
+        this.emailField.addValidation(Validation.checkEmail);
+        this.passwordField.addValidation(Validation.checkPassword);
+    }
+
+    private sendRegistrationData(): void {
+        const data: RegistrationActionData = {
+            firstName: this.firstNameField.getValue(),
+            lastName: this.lastNameField.getValue(),
+            birthDate: this.birthDateField.getValue(),
+            email: this.emailField.getValue(),
+            password: this.passwordField.getValue(),
+            shippingAddress: this.shippingAddress.getAddressData(),
+        };
+        if (this.addressCheckbox.getValue()) {
+            data.billingAddress = this.billingAddress.getAddressData();
+        }
+
+        this.registrationAction.registration(data);
     }
 
     protected onStoreChange(): void {
-        this.firstNameField.setError(this.registrationStore.getFirstNameError());
+        const errors: RegValidationErrors = this.registrationStore.getValidationErrors() as RegValidationErrors;
+        //if (errors.firstName) {
+        this.firstNameField.setError(errors.firstName || '');
+        this.lastNameField.setError(errors.lastName || '');
+        this.birthDateField.setError(errors.birthDate || '');
+        this.emailField.setError(errors.email || '');
+        this.passwordField.setError(errors.password || '');
+
+        const emptyAdress = {
+            country: '',
+            zip: '',
+            state: '',
+            city: '',
+            street: '',
+        };
+        this.shippingAddress.setErrors(errors.shippingAddress || emptyAdress);
+        this.billingAddress.setErrors(errors.billingAddress || emptyAdress);
+        //}
+        //this.firstNameField.setError(this.registrationStore.getFirstNameError());
     }
 }

@@ -7,8 +7,8 @@ export default class LoginNavigationBar extends NavigationBar {
         super(
             appStore,
             [
-                { page: PageName.LOGIN, text: PageName.LOGIN },
-                { page: PageName.REGISTRATION, text: PageName.REGISTRATION },
+                { page: PageName.LOGIN, text: 'Login' },
+                { page: PageName.REGISTRATION, text: 'Registration' },
             ],
             'dark'
         );
