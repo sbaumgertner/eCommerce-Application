@@ -60,7 +60,7 @@ export class Validation {
             return { isValid: false, error: ValidationError.DATE_FORMAT_ERROR };
         }
         const diff: number = Number(new Date()) - Number(birthDate);
-        const years: number = diff / 31600800000;
+        const years: number = Math.abs(new Date(diff).getUTCFullYear() - 1970);
         if (years < 10) {
             return { isValid: false, error: ValidationError.DATE_AGE_ERROR };
         }

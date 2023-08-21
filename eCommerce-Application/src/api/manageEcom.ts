@@ -10,6 +10,8 @@ export type CustomerData = {
     //countryCode: string;
     //key: string;
     addresses: BaseAddress[];
+    shippingAddresses: number[];
+    billingAddresses: number[];
     defaultShippingAddress: number;
     defaultBillingAddress: number;
 };

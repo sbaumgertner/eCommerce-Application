@@ -91,6 +91,7 @@ export class RegistrationStore extends Store {
             state: '',
             city: '',
             street: '',
+            // isDefault: true,
         };
 
         let result = Validation.checkCountry(address.country);
@@ -159,8 +160,10 @@ export class RegistrationStore extends Store {
             lastName: data.lastName,
             dateOfBirth: data.birthDate,
             addresses: [shippingAddress, billingAddress],
-            defaultShippingAddress: 0,
-            defaultBillingAddress: 1,
+            shippingAddresses: [0],
+            billingAddresses: [1],
+            defaultShippingAddress: data.shippingAddress.isDefault ? 0 : NaN,
+            defaultBillingAddress: data.billingAddress?.isDefault ? 1 : NaN,
         };
         try {
             await api.createCustomer(apiData);

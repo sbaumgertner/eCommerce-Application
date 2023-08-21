@@ -6,7 +6,35 @@
 }
 
 .address__title {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
   @include font-h5;
   color: $color-neutral-30;
-  padding: 16px 0;
+  padding: 32px 0 16px;
+
+  & .checkbox {
+    &-wrapper {
+      margin: 0;
+    }
+    &-label {
+      color: $color-neutral-60;
+    }
+  }
+
+  @media (max-width: $max-mobile) {
+    flex-direction: column;
+    align-items: start;
+    gap: 8px;
+  }
+}
+
+.input-row {
+  display: flex;
+  gap: 16px;
+
+  @media (max-width: $max-mobile) {
+    flex-direction: column;
+    gap: 0;
+  }
 }

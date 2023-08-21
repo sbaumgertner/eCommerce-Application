@@ -25,4 +25,8 @@ export class Checkbox extends Component {
     public getValue(): boolean {
         return this.checkbox.classList.contains('checkbox_checked');
     }
+
+    public setChecked(): void {
+        this.checkbox.classList.add('checkbox_checked');
+    }
 }
