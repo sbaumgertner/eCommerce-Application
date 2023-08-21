@@ -26,7 +26,7 @@ export class Router {
             } else if (host.includes('127.0.0.1')) {
                 this.basePath = '/eCommerce-Application/eCommerce-Application/dist/';
             } else {
-                this.basePath = '/eCommerce-Application/';
+                this.basePath = '/eCommerce-sprint2-deploy/';
             }
             this.navigate();
         });
