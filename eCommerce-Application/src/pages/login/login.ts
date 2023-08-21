@@ -29,7 +29,7 @@ export class LoginPage extends Page {
         this.loginAction = new LoginAction();
 
         this.button = new Button('filled', 'button-login', 'Login');
-        this.emailField = new InputField('email', 'email', 'Email', 'Enter your e-mail');
+        this.emailField = new InputField('text', 'email', 'Email', 'Enter your e-mail');
         this.passwordField = new InputField('password', 'password', 'Password', 'Enter your password');
         this.loginStore = new LoginStore();
         this.apiError = createElement({ tag: 'div', classes: ['api-error'] });
