@@ -133,7 +133,6 @@ export class RegistrationStore extends Store {
 
     private async apiRegistration(data: RegistrationActionData): Promise<void> {
         const api = new manageEcom();
-
         const shippingAddress: CustomerAddress = {
             country: data.shippingAddress.country,
             streetName: data.shippingAddress.street,
@@ -141,7 +140,6 @@ export class RegistrationStore extends Store {
             city: data.shippingAddress.city,
             region: data.shippingAddress.state,
         };
-
         let billingAddress: CustomerAddress = shippingAddress;
         if (data.billingAddress) {
             billingAddress = {
@@ -152,7 +150,6 @@ export class RegistrationStore extends Store {
                 region: data.billingAddress.state,
             };
         }
-
         const apiData: CustomerData = {
             email: data.email,
             password: data.password,
