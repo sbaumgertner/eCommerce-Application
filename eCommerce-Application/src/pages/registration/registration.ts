@@ -13,7 +13,7 @@ import { AddressFields } from '../../components/address-fields/address-fields';
 import { Checkbox } from '../../components/checkbox/checkbox';
 import { Validation } from '../../utils/validation';
 
-const SUCCESS_REGISTARTION_TEMPLATE = `Congratulations! You havesuccessfully registered in th PlantStore.`;
+const SUCCESS_REGISTARTION_TEMPLATE = `Congratulations! You havesuccessfully registered in the PlantStore.`;
 
 export class RegisterPage extends Page {
     private appStore: AppStore;
