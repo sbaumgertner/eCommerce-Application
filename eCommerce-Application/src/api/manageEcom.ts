@@ -1,15 +1,22 @@
+import { BaseAddress } from '@commercetools/platform-sdk';
 import { getApiRootForCredentialFlow } from './client';
 
-type CustomerData = {
+export type CustomerData = {
     email: string;
     password: string;
     firstName: string;
     lastName: string;
-    countryCode: string;
-    key: string;
+    dateOfBirth: string;
+    //countryCode: string;
+    //key: string;
+    addresses: BaseAddress[];
+    defaultShippingAddress: number;
+    defaultBillingAddress: number;
 };
 
-export default class manageEcom {
+export type CustomerAddress = BaseAddress;
+
+export class manageEcom {
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     createCustomer(customerData: CustomerData) {
         try {

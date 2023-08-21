@@ -1,12 +1,32 @@
+import { manageEcom, CustomerData, CustomerAddress } from '../api/manageEcom';
 import { Action, ActionType, AddressData, StoreEventType } from '../types';
 import { Validation, ValidationResult } from '../utils/validation';
 import { Store } from './abstract/store';
 import { RegistrationActionData } from './action/registrationAction';
 
 export type RegValidationErrors = Partial<RegistrationActionData>;
+export type RegSummaryErrors = {
+    message: string;
+    detailed?: string[];
+};
+type ApiRegistrationError = {
+    status: number;
+    message: string;
+    name: string;
+    body: {
+        errors?: ApiDetailedError[];
+    };
+};
+type ApiDetailedError = {
+    code: string;
+    message: string;
+    field?: string;
+    detailedErrorMessage?: string;
+};
 
 export class RegistrationStore extends Store {
     private validationErrors: RegValidationErrors;
+    private summaryErrors?: RegSummaryErrors;
 
     constructor() {
         super();
@@ -17,7 +37,11 @@ export class RegistrationStore extends Store {
         return this.validationErrors;
     }
 
-    private validateData(data: RegistrationActionData): void {
+    public getSummaryErrors(): RegSummaryErrors | undefined {
+        return this.summaryErrors;
+    }
+
+    private validateData(data: RegistrationActionData): boolean {
         this.validationErrors = {};
         let result: ValidationResult = Validation.checkText(data.firstName);
         if (!result.isValid) {
@@ -43,11 +67,19 @@ export class RegistrationStore extends Store {
         if (!result.isValid) {
             this.validationErrors.password = result.error;
         }
+        let isValid: boolean = Object.values(this.validationErrors).length === 0;
 
         this.validationErrors.shippingAddress = this.validateAddress(data.shippingAddress);
+        if (!Object.values(this.validationErrors.shippingAddress).every((item) => item === '')) {
+            isValid = false;
+        }
         if (data.billingAddress) {
             this.validationErrors.billingAddress = this.validateAddress(data.billingAddress);
+            if (!Object.values(this.validationErrors.billingAddress).every((item) => item === '')) {
+                isValid = false;
+            }
         }
+        return isValid;
     }
 
     private validateAddress(address: AddressData): AddressData {
@@ -82,10 +114,86 @@ export class RegistrationStore extends Store {
         return addressErrors;
     }
 
-    private onRegistration(jsonData: string): void {
+    private async onRegistration(jsonData: string): Promise<void> {
         const data: RegistrationActionData = JSON.parse(jsonData);
-        this.validateData(data);
+        const isValid: boolean = this.validateData(data);
+        if (isValid) {
+            this.summaryErrors = undefined;
+            await this.apiRegistration(data);
+        } else {
+            this.summaryErrors = {
+                message: 'Please fill in the highlighted fields correctly!',
+            };
+        }
         this.emit(StoreEventType.REGISTRATION_ERROR);
+    }
+
+    private async apiRegistration(data: RegistrationActionData): Promise<void> {
+        const api = new manageEcom();
+
+        const shippingAddress: CustomerAddress = {
+            country: data.shippingAddress.country,
+            streetName: data.shippingAddress.street,
+            postalCode: data.shippingAddress.zip,
+            city: data.shippingAddress.city,
+            region: data.shippingAddress.state,
+        };
+
+        let billingAddress: CustomerAddress = shippingAddress;
+        if (data.billingAddress) {
+            billingAddress = {
+                country: data.billingAddress.country,
+                streetName: data.billingAddress.street,
+                postalCode: data.billingAddress.zip,
+                city: data.billingAddress.city,
+                region: data.billingAddress.state,
+            };
+        }
+
+        const apiData: CustomerData = {
+            email: data.email,
+            password: data.password,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            dateOfBirth: data.birthDate,
+            addresses: [shippingAddress, billingAddress],
+            defaultShippingAddress: 0,
+            defaultBillingAddress: 1,
+        };
+        try {
+            await api.createCustomer(apiData);
+        } catch (err) {
+            this.handleApiErrors(err as ApiRegistrationError);
+        }
+    }
+
+    private handleApiErrors(error: ApiRegistrationError): void {
+        if (
+            error.status === 400 ||
+            error.body.errors?.at(0)?.field === 'email' ||
+            error.body.errors?.at(0)?.code === 'DuplicateField'
+        ) {
+            this.summaryErrors = {
+                message: `Sorry.${error.message} Try to log in or use another email address`,
+            };
+            this.validationErrors.email = error.message;
+        } else if (error.status >= 400 && error.status < 500) {
+            this.summaryErrors = {
+                message: `Sorry, somthing wrong with input data.`,
+            };
+            if (error.body.errors) {
+                this.summaryErrors.detailed = [];
+                for (let i = 0; i < error.body.errors.length; i += 1) {
+                    this.summaryErrors.detailed.push(
+                        error.body.errors[i].detailedErrorMessage || error.body.errors[i].message
+                    );
+                }
+            }
+        } else {
+            this.summaryErrors = {
+                message: `Sorry, somthing went wrong. Try again later.`,
+            };
+        }
     }
 
     protected actionCallback(action: Action): void {

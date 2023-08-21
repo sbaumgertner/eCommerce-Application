@@ -13,6 +13,8 @@ import { AddressFields } from '../../components/address-fields/address-fields';
 import { Checkbox } from '../../components/checkbox/checkbox';
 import { Validation } from '../../utils/validation';
 
+const SUCCESS_REGISTARTION_TEMPLATE = `Congratulations! You havesuccessfully registered in th PlantStore.`;
+
 export class RegisterPage extends Page {
     private appStore: AppStore;
     private registrationStore: RegistrationStore;
@@ -26,13 +28,24 @@ export class RegisterPage extends Page {
     private shippingAddress: AddressFields;
     private addressCheckbox: Checkbox;
     private billingAddress: AddressFields;
+    private errorsField: HTMLElement;
     private button: Button;
+    private successField: HTMLElement;
 
     constructor(appStore: AppStore) {
         super();
         this.appStore = appStore;
         this.registrationStore = new RegistrationStore();
         this.registrationAction = new RegistrationAction();
+
+        this.errorsField = createElement({ tag: 'div', classes: ['registration-errors'] });
+        this.successField = createElement({
+            tag: 'div',
+            classes: ['registration-success'],
+            text: SUCCESS_REGISTARTION_TEMPLATE,
+        });
+        this.successField.classList.add('hidden');
+
         this.button = new Button('filled', 'registration-button', 'Registration');
 
         this.firstNameField = new InputField('text', 'firstname', 'FIRST NAME', 'Enter your Last name');
@@ -73,10 +86,14 @@ export class RegisterPage extends Page {
             this.passwordField.getComponent(),
             this.shippingAddress.getComponent(),
             this.addressCheckbox.getComponent(),
-            this.billingAddress.getComponent()
+            this.billingAddress.getComponent(),
+            this.errorsField
         );
         this.billingAddress.getComponent().classList.add('hidden');
-        return fields;
+
+        const filedsWrapper: HTMLElement = createElement({ tag: 'div', classes: ['fields-wrapper'] });
+        filedsWrapper.append(fields, this.successField);
+        return filedsWrapper;
     }
 
     public addEventListeners(): void {
@@ -110,9 +127,14 @@ export class RegisterPage extends Page {
         this.registrationAction.registration(data);
     }
 
+    private showSuccess(): void {
+        this.getHtml().querySelector('.registration-fields')?.classList.add('hidden');
+        this.button.getComponent().classList.add('hidden');
+        this.successField.classList.remove('hidden');
+    }
+
     protected onStoreChange(): void {
         const errors: RegValidationErrors = this.registrationStore.getValidationErrors() as RegValidationErrors;
-        //if (errors.firstName) {
         this.firstNameField.setError(errors.firstName || '');
         this.lastNameField.setError(errors.lastName || '');
         this.birthDateField.setError(errors.birthDate || '');
@@ -128,7 +150,23 @@ export class RegisterPage extends Page {
         };
         this.shippingAddress.setErrors(errors.shippingAddress || emptyAdress);
         this.billingAddress.setErrors(errors.billingAddress || emptyAdress);
-        //}
-        //this.firstNameField.setError(this.registrationStore.getFirstNameError());
+
+        const summaryErrors = this.registrationStore.getSummaryErrors();
+        this.errorsField.innerHTML = '';
+        if (summaryErrors) {
+            this.errorsField.append(
+                createElement({ tag: 'p', classes: ['errors-header'], text: summaryErrors.message })
+            );
+            if (summaryErrors.detailed) {
+                this.errorsField.append(createElement({ tag: 'p', classes: ['p'], text: 'Detailed information:' }));
+                for (let i = 0; i < summaryErrors.detailed.length; i += 1) {
+                    this.errorsField.append(
+                        createElement({ tag: 'p', classes: ['p'], text: summaryErrors.detailed[i] })
+                    );
+                }
+            }
+        } else {
+            this.showSuccess();
+        }
     }
 }

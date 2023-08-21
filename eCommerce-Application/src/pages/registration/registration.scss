@@ -19,3 +19,18 @@
 .hidden {
   display: none !important;
 }
+
+.registration-errors {
+  color: $color-secondary-40;
+}
+
+.errors-header {
+  font-size: 24px;
+  line-height: 30px;
+}
+
+.registration-success {
+  font-size: 32px;
+  color: $color-primary-60;
+  line-height: 40px;
+}
