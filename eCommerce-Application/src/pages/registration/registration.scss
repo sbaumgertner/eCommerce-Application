@@ -1,0 +1,21 @@
+@import '../../styles/tokens.scss';
+
+.registration-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url("../../assets/img/image-04.jpg") no-repeat;
+  background-size: cover;
+  background-position: center;
+  padding: 64px;
+  min-height: calc(100vh - 200px);
+}
+
+.input-row {
+  display: flex;
+  gap: 16px;
+}
+
+.hidden {
+  display: none !important;
+}

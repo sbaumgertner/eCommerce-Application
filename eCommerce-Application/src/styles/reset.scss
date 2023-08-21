@@ -1,0 +1,42 @@
+@import "./tokens.scss";
+
+
+/* General */
+
+* {
+  box-sizing: border-box;
+  padding: 0px;
+	margin: 0px;
+	border: none;
+  @include font-text
+}
+
+
+/* Links */
+
+a, a:link, a:visited  {
+  text-decoration: none;
+}
+
+a:hover  {
+  text-decoration: none;
+}
+
+
+/* Headers */
+
+h2 {
+  @include font-h2
+}
+h3 {
+  @include font-h3
+}
+h4 {
+  @include font-h4
+}
+h5 {
+  @include font-h5
+}
+h6 {
+  @include font-h6
+}
