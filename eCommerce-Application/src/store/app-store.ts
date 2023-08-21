@@ -12,7 +12,7 @@ export class AppStore extends Store {
         super();
         this.router = router;
         this.currentPage = PageName.INDEX;
-        this.isAnonUser = !!JSON.parse(localStorage.getItem('isAnonUser') as string);
+        this.isAnonUser = !localStorage.getItem('token');
     }
 
     public getCurrentPage(): PageName {
@@ -35,7 +35,6 @@ export class AppStore extends Store {
     private onUserTypeChange(jsonData: string): void {
         const data: boolean = JSON.parse(jsonData);
         this.isAnonUser = data;
-        localStorage.setItem('isAnonUser', jsonData);
         this.emit(StoreEventType.USER_TYPE_CHANGE);
     }
 
