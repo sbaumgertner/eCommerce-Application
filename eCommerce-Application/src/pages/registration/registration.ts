@@ -12,8 +12,10 @@ import { StoreEventType } from '../../types';
 import { AddressFields } from '../../components/address-fields/address-fields';
 import { Checkbox } from '../../components/checkbox/checkbox';
 import { Validation } from '../../utils/validation';
+import { LoginAction } from '../../store/action/loginAction';
 
-const SUCCESS_REGISTARTION_TEMPLATE = `Congratulations! You havesuccessfully registered in the PlantStore.`;
+const SUCCESS_REGISTARTION_TEMPLATE = `Congratulations! You have successfully registered in the PlantStore.
+You will be automatically redirected to the Home page.`;
 
 export class RegisterPage extends Page {
     private appStore: AppStore;
@@ -131,6 +133,12 @@ export class RegisterPage extends Page {
         this.getHtml().querySelector('.registration-fields')?.classList.add('hidden');
         this.button.getComponent().classList.add('hidden');
         this.successField.classList.remove('hidden');
+        setTimeout(() => {
+            new LoginAction().login({
+                email: this.registrationStore.getEmail(),
+                password: this.registrationStore.getPassword(),
+            });
+        }, 2000);
     }
 
     protected onStoreChange(): void {

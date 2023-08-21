@@ -9,9 +9,9 @@
   background-position: center;
   padding: 64px;
   min-height: calc(100vh - 200px);
+
   @media (max-width: $max-mobile) {
     padding: 16px;
-  }
 }
 
 .hidden {

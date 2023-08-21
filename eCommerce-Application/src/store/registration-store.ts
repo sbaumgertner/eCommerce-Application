@@ -27,6 +27,8 @@ type ApiDetailedError = {
 export class RegistrationStore extends Store {
     private validationErrors: RegValidationErrors;
     private summaryErrors?: RegSummaryErrors;
+    private email?: string;
+    private password?: string;
 
     constructor() {
         super();
@@ -165,6 +167,8 @@ export class RegistrationStore extends Store {
         };
         try {
             await api.createCustomer(apiData);
+            this.email = data.email;
+            this.password = data.password;
         } catch (err) {
             this.handleApiErrors(err as ApiRegistrationError);
         }
@@ -205,5 +209,13 @@ export class RegistrationStore extends Store {
                 this.onRegistration(action.data);
                 break;
         }
+    }
+
+    public getEmail(): string {
+        return this.email || '';
+    }
+
+    public getPassword(): string {
+        return this.password || '';
     }
 }

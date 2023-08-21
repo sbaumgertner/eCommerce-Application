@@ -18,7 +18,7 @@ module.exports = (_env, options) => {
         output: {
             path: path.join(__dirname, '/dist'),
             filename: 'script.js',
-            publicPath: '/',
+            publicPath: isProduction ? '/eCommerce-sprint2-deploy/' : '/',
         },
         module: {
             rules: [
@@ -35,7 +35,7 @@ module.exports = (_env, options) => {
                     test: /\.(png|jpe?g|gif)$/i,
                     type: 'asset/resource',
                     generator: {
-                        filename: 'img/[name][ext]',
+                        filename: './img/[name][ext]',
                     },
                 },
                 {
