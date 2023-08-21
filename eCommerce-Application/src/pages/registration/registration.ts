@@ -147,6 +147,7 @@ export class RegisterPage extends Page {
             state: '',
             city: '',
             street: '',
+            isDefault: true,
         };
         this.shippingAddress.setErrors(errors.shippingAddress || emptyAdress);
         this.billingAddress.setErrors(errors.billingAddress || emptyAdress);

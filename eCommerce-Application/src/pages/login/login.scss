@@ -8,7 +8,10 @@
     background-size: cover;
     background-position: center;
     padding: 64px;
-    min-height: calc(100vh - 200px);
+    min-height: calc(100vh - 80px);
+    @media (max-width: $max-mobile) {
+      padding: 16px;
+    }
 }
 
 .api-error {

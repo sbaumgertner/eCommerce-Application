@@ -67,6 +67,7 @@ export type AddressData = {
     state: string;
     city: string;
     street: string;
+    isDefault?: boolean;
 };
 
 export type LinkProps = {
