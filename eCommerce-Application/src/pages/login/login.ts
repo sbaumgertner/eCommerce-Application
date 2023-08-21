@@ -34,13 +34,13 @@ export class LoginPage extends Page {
         this.loginStore = new LoginStore();
         this.apiError = createElement({ tag: 'div', classes: ['api-error'] });
         this.loginStore.addChangeListener(StoreEventType.LOGIN_ERROR, this.onStoreChange.bind(this));
+        this.createPasswordButton();
     }
 
     public render(): void {
         this.html = document.createElement('div');
         this.html.className = 'login-page';
         this.html.append(this.createWrapper());
-        this.createPasswordButton();
         this.addEventListeners();
     }
 
@@ -66,9 +66,9 @@ export class LoginPage extends Page {
     public addEventListeners(): void {
         this.button.getComponent().addEventListener('click', () => {
             this.loginAction.login({ email: this.emailField.getValue(), password: this.passwordField.getValue() });
-            this.emailField.addValidation(Validation.checkEmail);
-            this.passwordField.addValidation(Validation.checkPassword);
         });
+        this.emailField.addValidation(Validation.checkEmail);
+        this.passwordField.addValidation(Validation.checkPassword);
     }
 
     protected onStoreChange(): void {

@@ -3,6 +3,24 @@ import { Router } from '../router';
 import { Action, ActionType, PageName, StoreEventType } from '../types';
 import { Store } from './abstract/store';
 
+const pagesForLoggedInUser: PageName[] = [
+    PageName.ABOUT_US,
+    PageName.ACCOUNT,
+    PageName.CART,
+    PageName.CATALOG,
+    PageName.INDEX,
+    PageName.NOT_FOUND,
+];
+const pagesForAnonUser: PageName[] = [
+    PageName.ABOUT_US,
+    PageName.CART,
+    PageName.CATALOG,
+    PageName.INDEX,
+    PageName.NOT_FOUND,
+    PageName.LOGIN,
+    PageName.REGISTRATION,
+];
+
 export class AppStore extends Store {
     private currentPage: PageName;
     private router: Router;
@@ -12,7 +30,7 @@ export class AppStore extends Store {
         super();
         this.router = router;
         this.currentPage = PageName.INDEX;
-        this.isAnonUser = !!JSON.parse(localStorage.getItem('isAnonUser') as string);
+        this.isAnonUser = !localStorage.getItem('token');
     }
 
     public getCurrentPage(): PageName {
@@ -21,7 +39,14 @@ export class AppStore extends Store {
 
     private onRouteChange(jsonData: string): void {
         const data: RouteActionData = JSON.parse(jsonData);
-        this.currentPage = data.page;
+        if (
+            (this.isAnonUser && pagesForAnonUser.includes(data.page)) ||
+            (!this.isAnonUser && pagesForLoggedInUser.includes(data.page))
+        ) {
+            this.currentPage = data.page;
+        } else {
+            this.currentPage = PageName.INDEX;
+        }
         if (data.addHistory) {
             this.router.addHistory(this.currentPage);
         }
@@ -35,7 +60,6 @@ export class AppStore extends Store {
     private onUserTypeChange(jsonData: string): void {
         const data: boolean = JSON.parse(jsonData);
         this.isAnonUser = data;
-        localStorage.setItem('isAnonUser', jsonData);
         this.emit(StoreEventType.USER_TYPE_CHANGE);
     }
 

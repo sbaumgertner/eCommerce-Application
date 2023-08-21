@@ -1,8 +1,10 @@
+import { UserTypeAction } from '../store/action/userTypeAction';
 import { getApiRootForPasswordFlow, myToken } from './client';
 
 export default class CustomerAPI {
     private username: string;
     private password: string;
+    private userAction: UserTypeAction = new UserTypeAction();
 
     constructor(username: string, password: string) {
         this.username = username;
@@ -24,6 +26,7 @@ export default class CustomerAPI {
             .then(() => {
                 const token = myToken.get().token;
                 localStorage.setItem('token', token);
+                this.userAction.changeUserType(false);
             });
     }
 }
