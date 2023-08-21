@@ -4,9 +4,7 @@ export enum ValidationError {
     TEXT_ERROR = 'Must contain at least one character and no special characters or numbers',
     EMAIL_ERROR = 'Provide a valid email address',
     PASSWORD_ERROR_1 = 'Password is required',
-    PASSWORD_ERROR_2 = 'Password must be at least 8 characters',
-    PASSWORD_ERROR_3 = 'Password must be at least one uppercase letter (A-Z) and at least one lowercase letter (a-z)',
-    PASSWORD_ERROR_4 = 'Password must be at least one digit (0-9) and at least one special character',
+    PASSWORD_ERROR_2 = 'Password must be at least 8 characters, at least one uppercase letter (A-Z), at least one lowercase letter (a-z), at least one digit (0-9)',
     DATE_FORMAT_ERROR = 'Must match the format DD.MM.YYYY',
     DATE_AGE_ERROR = 'Must be more than 10 years old',
     COUNTRY_ERROR = 'Must be selected from the list',
@@ -43,12 +41,12 @@ export class Validation {
     public static checkPassword(value: string): ValidationResult {
         if (value === '') {
             return { isValid: false, error: ValidationError.PASSWORD_ERROR_1 };
-        } else if (value.length < 8) {
+        } else if (value.length < 8 || value != value.trim()) {
             return { isValid: false, error: ValidationError.PASSWORD_ERROR_2 };
         } else if (/[a-z]/g.test(value) == false || /[A-Z]/g.test(value) == false) {
-            return { isValid: false, error: ValidationError.PASSWORD_ERROR_3 };
-        } else if (/[0-9]/g.test(value) == false || /[!@#$%^&*]/g.test(value) == false) {
-            return { isValid: false, error: ValidationError.PASSWORD_ERROR_4 };
+            return { isValid: false, error: ValidationError.PASSWORD_ERROR_2 };
+        } else if (/[0-9]/g.test(value) == false) {
+            return { isValid: false, error: ValidationError.PASSWORD_ERROR_2 };
         } else {
             return { isValid: true };
         }
