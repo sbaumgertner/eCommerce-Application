@@ -45,7 +45,8 @@ export class AppStore extends Store {
         ) {
             this.currentPage = data.page;
         } else {
-            window.location.href = window.location.origin;
+            this.currentPage = PageName.INDEX;
+            data.addHistory = true;
         }
         if (data.addHistory) {
             this.router.addHistory(this.currentPage);
