@@ -3,6 +3,8 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const EslingPlugin = require('eslint-webpack-plugin');
+const { merge } = require('webpack-merge');
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 module.exports = (_env, options) => {
     const isProduction = options.mode === 'production';
@@ -10,20 +12,20 @@ module.exports = (_env, options) => {
     const config = {
         mode: isProduction ? 'production' : 'development',
         devtool: 'inline-source-map',
-        watch: !isProduction,
-        entry: ['./src/script'],
+        entry: isProduction ? ['./src/script', './src/script-gh-spa.js'] : ['./src/script'],
         resolve: {
             extensions: ['.ts', '.js', '.json'],
         },
         output: {
             path: path.join(__dirname, '/dist'),
             filename: 'script.js',
+            publicPath: isProduction ? '/eCommerce-sprint2-deploy/' : '/',
         },
         module: {
             rules: [
                 { test: /\.ts$/i, use: 'ts-loader' },
                 {
-                    test: /\.css$/i,
+                    test: /\.scss$/i,
                     use: ['style-loader', 'css-loader', 'sass-loader'],
                 },
                 {
@@ -31,11 +33,15 @@ module.exports = (_env, options) => {
                     loader: 'html-loader',
                 },
                 {
-                    test: /\.(png|jpe?g|gif|svg)$/i,
+                    test: /\.(png|jpe?g|gif)$/i,
                     type: 'asset/resource',
                     generator: {
-                        filename: 'img/[name][ext]',
+                        filename: './img/[name][ext]',
                     },
+                },
+                {
+                    test: /\.svg$/i,
+                    type: 'asset/source',
                 },
                 {
                     test: /\.(woff|woff2|eot|ttf|otf)$/i,
@@ -50,10 +56,27 @@ module.exports = (_env, options) => {
         plugins: [
             new CleanWebpackPlugin(),
             new HtmlWebpackPlugin({
+                filename: 'index.html',
                 template: './src/index.html',
             }),
             new EslingPlugin({ extensions: 'ts' }),
+            new FaviconsWebpackPlugin('./src/assets/icons/fav-icon.svg'),
         ],
     };
+
+    if (isProduction) {
+        config.plugins.push(
+            new HtmlWebpackPlugin({
+                filename: '404.html',
+                template: './src/404.html',
+            })
+        );
+    }
+
+    if (!isProduction) {
+        const envConfig = require('./webpack.dev.config');
+        return merge(config, envConfig);
+    }
+
     return config;
 };

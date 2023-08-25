@@ -1,0 +1,86 @@
+@import '../../styles/tokens.scss';
+
+.button {
+  padding: 8px 24px;
+  text-align: center;
+  border-radius: 12px;
+  @include font-text;
+  cursor: pointer;
+  
+  &:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: default;
+    &:hover {
+      box-shadow: none !important;
+    }
+  }
+
+  &-icon {
+    padding: 8px;
+  }
+  &__icon {
+    display: flex;
+  }
+
+  &_filled {
+    background-color: $color-primary-60;
+    color: $color-primary-100;
+    border: none;
+
+    & svg {
+      fill: $color-primary-100;
+    }
+
+    &:hover {
+      box-shadow: 0px 0px 32px 0px $color-primary-98 inset;
+    }
+  }
+
+  &_bordered {
+    background: none;
+    color: $color-primary-40;
+    border: 1px solid $color-neutral-60;
+
+    & svg {
+      fill: $color-neutral-30;
+    }
+
+    &:hover {
+      box-shadow: 0px 0px 32px 0px $color-primary-98 inset;
+    }
+
+    &_negative {
+      color: $color-secondary-40;
+      border-color: $color-secondary-40;
+      & svg {
+        fill: $color-secondary-40;
+      }
+      &:hover {
+        box-shadow: 0px 0px 32px 0px $color-secondary-98 inset;
+      }
+    }
+  }
+
+  &_text {
+    color: $color-neutral-30;
+    background: none;
+    border: none;
+
+    &:hover {
+      text-shadow: 0px 0px 16px $color-primary-40;
+    }
+  }
+
+  &_clear {    
+    background: none;
+
+    & svg {
+      fill: $color-neutral-30;
+    }
+    
+    &:hover {
+        background: $grad-primary-40;
+    }
+  }
+}
