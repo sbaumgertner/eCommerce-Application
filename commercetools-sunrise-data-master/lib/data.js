@@ -1,16 +1,16 @@
-import { deleteAllCarts } from './carts'
+// import { deleteAllCarts } from './carts'
 import {
   deleteAllCategories,
   importCategories
 } from './categories'
 import { deleteChannels, importChannels } from './channels'
 import { deleteStores, importStores } from './stores'
-import {
-  deleteAllCustomers,
-  deleteCustomerGroups,
-  importCustomerGroups,
-  importCustomers
-} from './customers'
+// import {
+//   deleteAllCustomers,
+//   deleteCustomerGroups,
+//   importCustomerGroups,
+//   importCustomers
+// } from './customers'
 import { deleteInventory, importInventory } from './inventory'
 import {
   deleteAllLineItemStates,
@@ -20,7 +20,7 @@ import {
   importProductStates,
   deleteAllProductStates
 } from './product-states'
-import { deleteAllOrders, importOrders } from './orders'
+// import { deleteAllOrders, importOrders } from './orders'
 import {
   deleteAllProducts,
   importProductTypes,
@@ -53,12 +53,12 @@ const deleteAllData = () => {
     deleteAllProductTypes,
     deleteAllCategories,
     deleteInventory,
-    deleteAllOrders,
-    deleteAllCarts,
+    // deleteAllOrders,
+    // deleteAllCarts,
     deleteAllLineItemStates,
     deleteAllProductStates,
-    deleteAllCustomers,
-    deleteCustomerGroups,
+    // deleteAllCustomers,
+    // deleteCustomerGroups,
     deleteStores,
     deleteAllShippingMethods,
     deleteAllZones,
@@ -81,15 +81,15 @@ const importAllData = () => {
     importProductStates,
     importStores,
     importShippingMethods,
-    importCustomerGroups,
-    importCustomers,
+    // importCustomerGroups,
+    // importCustomers,
     importCategories,
     importProductTypes,
     importProducts,
     // importing 150k inventory items takes too long
     //   it can be imported with npm run import:inventory
     importInventory,
-    importOrders,
+    // importOrders,
     importProductDiscounts
   ].reduce(taskReducer, Promise.resolve())
 }
