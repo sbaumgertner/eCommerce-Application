@@ -1,6 +1,6 @@
 key,externalId,name.en,slug.en,parentId,orderHint,webImageUrl,iosImageUrl
-c1,1,Alocasia,locasia,,0.001,,
-c2,2,Cactus,cactus,,0.002,,
-c3,3,Monstera,monstera,,0.003,,
+c1,1,Alocasia,alocasia,,0.001,https://gekkk.co/storage/v/893f56c1f4c3593030fb8bfa51f1213b.png,
+c2,2,Cactus,cactus,,0.002,https://img.freepik.com/free-vector/saguaro-cactus-plant-white-background_1308-78292.jpg?w=1800&t=st=1693222663~exp=1693223263~hmac=c697dfd2f378f4343a8fad162d0a25e6c8d35d0b3509fc3c71e0ae261287c993,
+c3,3,Monstera,monstera,,0.003,https://lh3.googleusercontent.com/pw/AIL4fc80RXAjfE1ROb_nUam19JOs7uW5aacia3qvBH3i6NiCIdSy-aGAt96YFU_wY3XJ4zNGeoJ1341PBtAa75hq5EGMIG80W2wciLPdTJ43fiSRH4jspEKCSpclBCcZgRk0kkeZ8y8U2j0t_OFjYab_xImJ=w248-h328-s-no,
 c4,4,Philodendron,philodendron,,0.004,,
 c5,5,Syngonium,syngonium,,0.005,,
