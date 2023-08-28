@@ -1,4 +1,4 @@
-import { BaseAddress } from '@commercetools/platform-sdk';
+import { BaseAddress, ClientResponse, Customer } from '@commercetools/platform-sdk';
 import { getApiRootForCredentialFlow } from './client';
 
 export type CustomerData = {
@@ -59,5 +59,104 @@ export class manageEcom {
                 }
             })
             .catch(console.error);
+    }
+
+    async getCustomerById(): Promise<ClientResponse<Customer>> {
+        const id = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: id as string,
+            })
+            .get()
+            .execute();
+    }
+
+    async updateCustomer(
+        version: number,
+        id: string,
+        firstName: string,
+        lastName: string,
+        dateOfBirth: string
+    ): Promise<ClientResponse<Customer>> {
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: id,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'setFirstName',
+                            firstName: firstName,
+                        },
+                        {
+                            action: 'setLastName',
+                            lastName: lastName,
+                        },
+                        {
+                            action: 'setDateOfBirth',
+                            dateOfBirth: dateOfBirth,
+                        },
+                    ],
+                },
+            })
+            .execute();
+    }
+
+    async changeCustomerEmail(version: number, id: string, email: string): Promise<ClientResponse<Customer>> {
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: id,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'changeEmail',
+                            email: email,
+                        },
+                    ],
+                },
+            })
+            .execute();
+    }
+
+    async getCustomerFistName(): Promise<string> {
+        let firstName = '';
+        const id = localStorage.getItem('id');
+        getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: id as string,
+            })
+            .get()
+            .execute()
+            .then((data) => {
+                firstName = data.body.firstName as string;
+            });
+
+        return firstName;
+    }
+
+    async getCustomerLastName(): Promise<string> {
+        let lastName = '';
+        const id = localStorage.getItem('id');
+        getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: id as string,
+            })
+            .get()
+            .execute()
+            .then((data) => {
+                lastName = data.body.lastName as string;
+            });
+
+        return lastName;
     }
 }
