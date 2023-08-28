@@ -12,7 +12,7 @@ import {
   importCustomerGroups,
   importCustomers
 } from './customers'
-import { deleteInventory } from './inventory'
+import { deleteInventory, importInventory } from './inventory'
 import { deleteAllLineItemStates } from './lineitem-states'
 import { deleteAllOrders } from './orders'
 import {
@@ -135,10 +135,10 @@ const importAllData = () => {
     importCategories,
     importProductTypes,
     importCIProducts,
-    importProductDiscounts
+    importProductDiscounts,
     // importing 150k inventory items takes too long
     //   it can be imported with npm run import:inventory
-    // importInventory,
+    importInventory
     // importOrders
   ].reduce(taskReducer, Promise.resolve())
 }

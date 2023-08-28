@@ -11,7 +11,7 @@ import {
   importCustomerGroups,
   importCustomers
 } from './customers'
-import { deleteInventory } from './inventory'
+import { deleteInventory, importInventory } from './inventory'
 import {
   deleteAllLineItemStates,
   importLineItemStates
@@ -38,6 +38,8 @@ import {
 import { deleteTypes, importTypes } from './types'
 import { deleteAllZones, importZones } from './zones'
 import { importProjectData } from './project-setup'
+import { deleteAllProductDiscounts, importProductDiscounts } from './product-discount'
+
 const nconf = require('nconf')
 
 const taskReducer = (result, fn) => result.then(fn)
@@ -46,6 +48,7 @@ const deleteAllData = () => {
   // eslint-disable-next-line no-console
   console.log('--Deleting all project data--')
   return [
+    deleteAllProductDiscounts,
     deleteAllProducts,
     deleteAllProductTypes,
     deleteAllCategories,
@@ -85,8 +88,9 @@ const importAllData = () => {
     importProducts,
     // importing 150k inventory items takes too long
     //   it can be imported with npm run import:inventory
-    // importInventory,
-    importOrders
+    importInventory,
+    importOrders,
+    importProductDiscounts
   ].reduce(taskReducer, Promise.resolve())
 }
 

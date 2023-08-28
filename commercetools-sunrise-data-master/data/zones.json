@@ -3,16 +3,9 @@
     "name": "Europe",
     "description": "",
     "locations": [
-      { "country": "AT"},
-      { "country": "DE"},
-      { "country": "NL"}
-    ]
-  },
-  {
-    "name": "United States",
-    "description": "",
-    "locations": [
-      { "country": "US"}
+      { "country": "BY"},
+      { "country": "GE"},
+      { "country": "RU"}
     ]
   }
 ]

@@ -22,17 +22,15 @@ export const importProductDiscounts = () =>
         type: 'relative',
         permyriad: 5000
       },
-      predicate: 'sku = "M0E20000000DX1Y"',
+      predicate: 'attributes.isOnSale = true',
       name: {
-        en: 'test',
-        de: ''
+        en: 'testPlants'
       },
       description: {
-        en: 'test',
-        de: ''
+        en: 'testPlants'
       },
       isActive: true,
-      sortOrder: '0.1',
+      sortOrder: '0.001',
       references: [],
       attributeTypes: {}
     }

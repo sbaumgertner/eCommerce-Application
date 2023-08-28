@@ -1,13 +1,12 @@
 [{
-    "name": "Standard EU",
-    "key": "std-EU",
+    "name": "Standard",
+    "key": "std",
     "localizedDescription": {
-        "en":"Delivery in 5-6 working days",
-        "de":"Lieferung in 5-6 Werktagen"
+        "en":"Delivery in 5-6 working days"
     },
     "taxCategory": {
         "typeId": "tax-category",
-        "id": "EU"
+        "id": 1
     },
     "zoneRates": [
         {
@@ -18,11 +17,11 @@
             "shippingRates": [
                 {
                     "price": {
-                        "currencyCode": "EUR",
+                        "currencyCode": "USD",
                         "centAmount": 300
                     },
                     "freeAbove": {
-                        "currencyCode": "EUR",
+                        "currencyCode": "USD",
                         "centAmount": 20000
                     },
                     "tiers": []
@@ -33,84 +32,20 @@
     "isDefault": true
 },
 {
-    "name": "Express EU",
-    "key": "express-EU",
+    "name": "Express",
+    "key": "express",
     "localizedDescription": {
-        "en":"Same day delivery",
-        "de":"Lieferung am selben Tag"
+        "en":"Same day delivery"
     },
     "taxCategory": {
         "typeId": "tax-category",
-        "id": "EU"
+        "id": 1
     },
     "zoneRates": [
         {
             "zone": {
                 "typeId": "zone",
                 "id": "Europe"
-            },
-            "shippingRates": [
-                {
-                    "price": {
-                        "currencyCode": "EUR",
-                        "centAmount": 1000
-                    },
-                    "tiers": []
-                }
-            ]
-        }
-    ],
-    "isDefault": false
-},{
-    "name": "Standard US",
-    "key": "std-US",
-    "localizedDescription": {
-        "en":"Delivery in 5-6 working days",
-        "de":"Lieferung in 5-6 Werktagen"
-    },
-    "taxCategory": {
-        "typeId": "tax-category",
-        "id": 1
-    },
-    "zoneRates": [
-        {
-            "zone": {
-                "typeId": "zone",
-                "id": "United States"
-            },
-            "shippingRates": [
-                {
-                    "price": {
-                        "currencyCode": "USD",
-                        "centAmount": 300
-                    },
-                    "freeAbove": {
-                        "currencyCode": "USD",
-                        "centAmount": 20000
-                    },
-                    "tiers": []
-                }
-            ]
-        }
-    ],
-    "isDefault": false
-},
-{
-    "name": "Express US",
-    "key": "express-US",
-    "localizedDescription": {
-        "en":"Same day delivery",
-        "de":"Lieferung am selben Tag"
-    },
-    "taxCategory": {
-        "typeId": "tax-category",
-        "id": 1
-    },
-    "zoneRates": [
-        {
-            "zone": {
-                "typeId": "zone",
-                "id": "United States"
             },
             "shippingRates": [
                 {

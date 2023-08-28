@@ -1,16 +1,13 @@
 {
   "currencies": [
-    "EUR",
     "USD"
   ],
   "countries": [
-    "DE",
-    "AT",
-    "US",
-    "NL"
+    "BY",
+    "GE",
+    "RU"
   ],
   "languages": [
-    "EN",
-    "DE"
+    "EN"
   ]
 }

@@ -2,7 +2,6 @@
   {
     "key": "physicalStore",
     "name": {
-      "de": "Ladengeschäft",
       "en": "Physical Store"
     },
     "resourceTypeIds": [
@@ -12,8 +11,7 @@
       {
         "name": "imageUrl",
         "label": {
-          "en": "Image URL",
-          "de": "Bild URL"
+          "en": "Image URL"
         },
         "required": true,
         "type": {
@@ -24,7 +22,6 @@
       {
         "name": "openingTimes",
         "label": {
-          "de": "Öffnungszeiten",
           "en": "Opening Times"
         },
         "required": true,
