@@ -12,6 +12,7 @@ export enum PageName {
 export type Page = {
     name: PageName;
     url: string;
+    hasResourse?: boolean;
 };
 
 export enum ActionType {
