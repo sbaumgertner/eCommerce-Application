@@ -78,6 +78,13 @@
     & svg {
       fill: $color-neutral-30;
     }
+
+    &.negative {
+      color: $color-secondary-40;
+      & svg {
+        fill: $color-secondary-40;
+      }
+    }
     
     &:hover {
         background: $grad-primary-40;
