@@ -1,0 +1,119 @@
+@import "../../styles/tokens.scss";
+
+.account-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: url("../../assets/img/image-01.jpg") no-repeat;
+    background-size: cover;
+    background-position: center;
+    padding: 64px;
+    gap: 16px;
+    min-height: calc(100vh - 80px);
+    @media (max-width: $max-tablet) {
+        padding: 32px;
+      }
+    @media (max-width: $max-mobile) {
+      padding: 16px;
+    }
+
+    >* {
+        display: flex;
+        flex-direction: column;
+        width: 640px;
+        padding: 32px;
+        border-radius: 32px;
+        background-color: $color-neutral-100;
+    }
+}
+
+.section-email {
+    &__head {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    &__info {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .head-title {
+        @include font-h3;
+        color: $color-neutral-30;
+    }
+}
+
+.section-info {
+    &__head {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 32px;
+    }
+
+    &__info {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .head-title {
+        @include font-h5;
+        color: $color-neutral-30;
+    }
+
+    .label {
+        color: $color-neutral-60;
+        @include font-overline;
+        padding-left: 0;
+        margin-bottom: 6px;
+    }
+    
+    .info {
+        color: $color-neutral-10;
+        @include font-text;
+        margin-bottom: 16px;
+    }
+}
+
+.section-address {
+    &__head {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        border-bottom: 1px solid $color-neutral-90;
+        padding-bottom: 32px;
+    }
+
+    &__content {
+        margin-bottom: 32px;
+    }
+
+    &__info {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .head-title {
+        @include font-h5;
+        color: $color-neutral-30;
+    }
+
+    .address-wrapper {
+        border-bottom: 1px solid $color-neutral-90;
+    }
+
+    #new-address-button {
+       width: 100%;
+    }
+
+
+}
