@@ -1,7 +1,7 @@
 import { AppStore } from '../../store/app-store';
 import { Page } from '../abstract/page';
 
-export class CartPage extends Page {
+export class ProductPage extends Page {
     private appStore: AppStore;
 
     constructor(appStore: AppStore) {
@@ -11,10 +11,10 @@ export class CartPage extends Page {
 
     public render(): void {
         this.html = document.createElement('div');
-        this.html.className = 'cart-page';
+        this.html.className = 'product-page';
 
         const resource: string = this.appStore.getCurrentPageResource();
 
-        this.html.textContent = 'Cart ' + resource;
+        this.html.textContent = 'Product ' + resource;
     }
 }

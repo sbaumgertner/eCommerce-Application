@@ -14,6 +14,7 @@ const pagesForLoggedInUser: PageName[] = [
 const pagesForAnonUser: PageName[] = [
     PageName.ABOUT_US,
     PageName.CART,
+    PageName.PRODUCT,
     PageName.CATALOG,
     PageName.INDEX,
     PageName.NOT_FOUND,

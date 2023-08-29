@@ -4,6 +4,7 @@ export enum PageName {
     REGISTRATION = 'REGISTRATION',
     ACCOUNT = 'ACCOUNT',
     CATALOG = 'CATALOG',
+    PRODUCT = 'PRODUCT',
     CART = 'CART',
     ABOUT_US = 'ABOUT_US',
     NOT_FOUND = 'NOT_FOUND',

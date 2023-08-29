@@ -14,16 +14,16 @@ export class CatalogPage extends Page {
     public render(): void {
         this.html = document.createElement('div');
         this.html.className = 'account-page';
-        this.html.append(this.createCart('1'), this.createCart('2'));
+        this.html.append(this.createProduct('1'), this.createProduct('2'));
     }
 
-    private createCart(id: string): HTMLElement {
-        const cart = createElement({ tag: 'div', classes: ['cart'] });
-        cart.dataset.id = id;
-        cart.textContent = 'cart ' + id;
-        cart.addEventListener('click', () => {
-            this.routeAction.changePage({ addHistory: true, page: PageName.CART, resource: id });
+    private createProduct(id: string): HTMLElement {
+        const product = createElement({ tag: 'div', classes: ['product'] });
+        product.dataset.id = id;
+        product.textContent = 'product ' + id;
+        product.addEventListener('click', () => {
+            this.routeAction.changePage({ addHistory: true, page: PageName.PRODUCT, resource: id });
         });
-        return cart;
+        return product;
     }
 }
