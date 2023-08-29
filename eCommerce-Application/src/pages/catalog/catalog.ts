@@ -9,13 +9,27 @@ import { IconButton } from '../../components/button/button';
 
 import arrowDownIcon from '../../assets/icons/icon-arrow-down.svg';
 import resetIcon from '../../assets/icons/icon-reset.svg';
+import { getCategories } from '../../api/categories';
+import { Loader } from '../../components/loader/loader';
 
 export class CatalogPage extends Page {
     private routeAction: RouteAction;
+    private categoriesBarEl = createElement({ tag: 'section', classes: ['categories-bar'] });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private categoriesData: any;
 
     constructor() {
         super();
         this.routeAction = new RouteAction();
+        this.setCategoriesData();
+    }
+
+    private async setCategoriesData(): Promise<unknown> {
+        const data = (await getCategories()).results;
+        this.categoriesData = data;
+        this.createCategoriesBar();
+        return data;
     }
 
     public render(): void {
@@ -34,14 +48,33 @@ export class CatalogPage extends Page {
     }
 
     private createCategoriesBar(): HTMLElement {
-        const categoriesBarEl = createElement({ tag: 'section', classes: ['categories-bar'] });
+        const categoriesBarEl = this.categoriesBarEl;
+        categoriesBarEl.innerHTML = '';
         const wrapperEl = createElement({ tag: 'div', classes: ['wrapper', 'categories-bar__wrapper'] });
-        const listEl = createElement({ tag: 'div', classes: ['categories-bar__list'], text: 'CATEGORIES_LIST' });
+        const loaderEl = new Loader().getComponent();
+        const listEl = createElement({ tag: 'div', classes: ['categories-bar__list'] });
         const headerEl = this.createBlockHeader('Categories', listEl);
 
-        wrapperEl.append(headerEl, listEl);
+        if (this.categoriesData) {
+            this.fillCategoriesList(listEl);
+            wrapperEl.append(headerEl, loaderEl);
+            // wrapperEl.append(headerEl, listEl);
+        } else {
+            wrapperEl.append(headerEl, loaderEl);
+        }
         categoriesBarEl.append(wrapperEl);
         return categoriesBarEl;
+    }
+
+    private fillCategoriesList(listEl: HTMLElement): void {
+        this.categoriesData.forEach((element: { name: { en: string } }) => {
+            const chepsEl = createElement({
+                tag: 'div',
+                classes: ['chips'],
+                text: element.name.en,
+            });
+            listEl.append(chepsEl);
+        });
     }
 
     private createMainContent(): HTMLElement {
