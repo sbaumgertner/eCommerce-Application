@@ -4,6 +4,7 @@ import { AbstractAction } from '../abstract/action';
 export type RouteActionData = {
     addHistory: boolean;
     page: PageName;
+    resource?: string;
 };
 
 export class RouteAction extends AbstractAction {

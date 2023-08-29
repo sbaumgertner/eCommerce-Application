@@ -4,6 +4,7 @@ export enum PageName {
     REGISTRATION = 'REGISTRATION',
     ACCOUNT = 'ACCOUNT',
     CATALOG = 'CATALOG',
+    PRODUCT = 'PRODUCT',
     CART = 'CART',
     ABOUT_US = 'ABOUT_US',
     NOT_FOUND = 'NOT_FOUND',
@@ -12,6 +13,7 @@ export enum PageName {
 export type Page = {
     name: PageName;
     url: string;
+    hasResourse?: boolean;
 };
 
 export enum ActionType {
