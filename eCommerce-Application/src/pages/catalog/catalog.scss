@@ -17,6 +17,11 @@
     padding-bottom: 32px;
     gap: 16px;
   }
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
 
   @media (max-width: $max-mobile) {
     &__wrapper {

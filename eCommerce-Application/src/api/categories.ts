@@ -7,4 +7,5 @@ export const getCategories = () => {
         .get()
         .execute()
         .then((resp) => resp.body);
+    // .catch(getCategories());
 };

@@ -6,11 +6,12 @@ import { PageName } from '../../types';
 import createElement from '../../utils/create-element';
 import { Page } from '../abstract/page';
 import { IconButton } from '../../components/button/button';
+import { getCategories } from '../../api/categories';
+import { Loader } from '../../components/loader/loader';
+import { Chips } from '../../components/chips/chips';
 
 import arrowDownIcon from '../../assets/icons/icon-arrow-down.svg';
 import resetIcon from '../../assets/icons/icon-reset.svg';
-import { getCategories } from '../../api/categories';
-import { Loader } from '../../components/loader/loader';
 
 export class CatalogPage extends Page {
     private routeAction: RouteAction;
@@ -28,6 +29,7 @@ export class CatalogPage extends Page {
     private async setCategoriesData(): Promise<unknown> {
         const data = (await getCategories()).results;
         this.categoriesData = data;
+        console.log(data);
         this.createCategoriesBar();
         return data;
     }
@@ -57,8 +59,7 @@ export class CatalogPage extends Page {
 
         if (this.categoriesData) {
             this.fillCategoriesList(listEl);
-            wrapperEl.append(headerEl, loaderEl);
-            // wrapperEl.append(headerEl, listEl);
+            wrapperEl.append(headerEl, listEl);
         } else {
             wrapperEl.append(headerEl, loaderEl);
         }
@@ -68,11 +69,11 @@ export class CatalogPage extends Page {
 
     private fillCategoriesList(listEl: HTMLElement): void {
         this.categoriesData.forEach((element: { name: { en: string } }) => {
-            const chepsEl = createElement({
-                tag: 'div',
-                classes: ['chips'],
-                text: element.name.en,
-            });
+            const name = element.name.en;
+            const chepsEl = new Chips(
+                name,
+                `https://raw.githubusercontent.com/Illia-Sakharau/img-for-final-task/main/cat-${name.toLowerCase()}.png`
+            ).getComponent();
             listEl.append(chepsEl);
         });
     }
