@@ -12,12 +12,13 @@ import { Chips } from '../../components/chips/chips';
 
 import arrowDownIcon from '../../assets/icons/icon-arrow-down.svg';
 import resetIcon from '../../assets/icons/icon-reset.svg';
+import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
 
 export class CatalogPage extends Page {
     private routeAction: RouteAction;
     private categoriesBarEl = createElement({ tag: 'section', classes: ['categories-bar'] });
     private currentCategories =
-        window.location.pathname.split('/').length === 2 ? 'all' : window.location.pathname.split('/')[2];
+        window.location.pathname.split('/').length === 2 ? 'all plants' : window.location.pathname.split('/')[2];
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private categoriesData: any;
@@ -38,7 +39,6 @@ export class CatalogPage extends Page {
     public render(): void {
         this.html = document.createElement('div');
         this.html.append(this.createSearchBar(), this.createCategoriesBar(), this.createMainContent());
-        console.log(this.currentCategories);
     }
 
     private createSearchBar(): HTMLElement {
@@ -127,12 +127,12 @@ export class CatalogPage extends Page {
     private createInnerHeader(): HTMLElement {
         const headerEl = createElement({ tag: 'div', classes: ['catalog-header'] });
         const wrapperEl = createElement({ tag: 'div', classes: ['catalog-header__wrapper'] });
-        const breadcrumbsEl = createElement({
-            tag: 'div',
-            classes: ['catalog-header__breadcrumbs'],
-            text: 'BREADCRUMBS',
+        const breadcrumbsEl = new Breadcrumbs(window.location.pathname).getComponent();
+        const titleEl = createElement({
+            tag: 'h3',
+            classes: ['catalog-header__title'],
+            text: this.currentCategories[0].toUpperCase() + this.currentCategories.slice(1),
         });
-        const titleEl = createElement({ tag: 'h3', classes: ['catalog-header__title'], text: 'All Plants' });
         const sortEl = createElement({ tag: 'div', classes: ['catalog-header__sort'], text: 'SORT' });
 
         wrapperEl.append(breadcrumbsEl, titleEl);
