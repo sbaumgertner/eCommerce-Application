@@ -13,26 +13,38 @@ import { Chips } from '../../components/chips/chips';
 import arrowDownIcon from '../../assets/icons/icon-arrow-down.svg';
 import resetIcon from '../../assets/icons/icon-reset.svg';
 import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
+import { getProducts } from '../../api/products';
 
 export class CatalogPage extends Page {
     private routeAction: RouteAction;
     private categoriesBarEl = createElement({ tag: 'section', classes: ['categories-bar'] });
+    private innerEl = createElement({ tag: 'div', classes: ['catalog-inner'] });
     private currentCategories =
         window.location.pathname.split('/').length === 2 ? 'all plants' : window.location.pathname.split('/')[2];
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private categoriesData: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private productsData: any;
 
     constructor() {
         super();
         this.routeAction = new RouteAction();
         this.setCategoriesData();
+        this.setProductsData();
     }
 
     private async setCategoriesData(): Promise<unknown> {
         const data = (await getCategories()).results;
         this.categoriesData = data;
         this.createCategoriesBar();
+        return data;
+    }
+    private async setProductsData(): Promise<unknown> {
+        const data = (await getProducts()).results;
+        console.log(data);
+        this.productsData = data;
+        this.createInner();
         return data;
     }
 
@@ -53,11 +65,12 @@ export class CatalogPage extends Page {
 
     private createCategoriesBar(): HTMLElement {
         const categoriesBarEl = this.categoriesBarEl;
-        categoriesBarEl.innerHTML = '';
         const wrapperEl = createElement({ tag: 'div', classes: ['wrapper', 'categories-bar__wrapper'] });
         const loaderEl = new Loader().getComponent();
         const listEl = createElement({ tag: 'div', classes: ['categories-bar__list'] });
         const headerEl = this.createBlockHeader('Categories', listEl);
+
+        categoriesBarEl.innerHTML = '';
 
         if (this.categoriesData) {
             this.fillCategoriesList(listEl);
@@ -113,12 +126,19 @@ export class CatalogPage extends Page {
     }
 
     private createInner(): HTMLElement {
-        const innerEl = createElement({ tag: 'div', classes: ['catalog-inner'] });
+        const innerEl = this.innerEl;
         const headerEl = this.createInnerHeader();
         const cardGridEl = createElement({ tag: 'div', classes: ['catalog-inner__grid'], text: 'GRID' });
         const paginationEl = createElement({ tag: 'div', classes: ['catalog-inner__pagination'], text: 'PAGINATION' });
+        const loaderEl = new Loader().getComponent();
 
-        cardGridEl.append(this.createProduct('1'), this.createProduct('2'));
+        innerEl.innerHTML = '';
+
+        if (this.productsData) {
+            cardGridEl.append(this.createProduct('1'), this.createProduct('2'));
+        } else {
+            cardGridEl.append(loaderEl);
+        }
 
         innerEl.append(headerEl, cardGridEl, paginationEl);
         return innerEl;
