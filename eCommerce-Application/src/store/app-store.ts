@@ -21,6 +21,7 @@ const pagesForAnonUser: PageName[] = [
     PageName.LOGIN,
     PageName.REGISTRATION,
 ];
+const CategoriesArr = ['alocasia', 'cactus', 'monstera', 'philodendron', 'syngonium'];
 
 export class AppStore extends Store {
     private currentPage: PageName;
@@ -53,7 +54,7 @@ export class AppStore extends Store {
             (this.isAnonUser && pagesForAnonUser.includes(data.page)) ||
             (!this.isAnonUser && pagesForLoggedInUser.includes(data.page))
         ) {
-            if (data.resource && !this.hasResource(data.resource)) {
+            if (data.resource && !this.hasResource(data.page, data.resource)) {
                 this.currentPage = PageName.NOT_FOUND;
             } else {
                 this.currentPage = data.page;
@@ -69,9 +70,18 @@ export class AppStore extends Store {
         this.emit(StoreEventType.PAGE_CHANGE);
     }
 
-    private hasResource(resource: string): boolean {
-        if (!['1', '2'].includes(resource)) {
-            return false;
+    private hasResource(page: PageName, resource: string): boolean {
+        switch (page) {
+            case PageName.CATALOG:
+                if (!CategoriesArr.includes(resource)) {
+                    return false;
+                }
+                break;
+            case PageName.PRODUCT:
+                if (!['1', '2'].includes(resource)) {
+                    return false;
+                }
+                break;
         }
         return true;
     }

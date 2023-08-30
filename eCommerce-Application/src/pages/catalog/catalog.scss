@@ -31,7 +31,7 @@
     &__list {
       display: none;
       &.visible {
-        display: initial;
+        display: flex;
       }
     }
   }

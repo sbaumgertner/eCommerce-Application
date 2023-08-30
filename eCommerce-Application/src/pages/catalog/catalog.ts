@@ -16,6 +16,8 @@ import resetIcon from '../../assets/icons/icon-reset.svg';
 export class CatalogPage extends Page {
     private routeAction: RouteAction;
     private categoriesBarEl = createElement({ tag: 'section', classes: ['categories-bar'] });
+    private currentCategories =
+        window.location.pathname.split('/').length === 2 ? 'all' : window.location.pathname.split('/')[2];
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private categoriesData: any;
@@ -29,7 +31,6 @@ export class CatalogPage extends Page {
     private async setCategoriesData(): Promise<unknown> {
         const data = (await getCategories()).results;
         this.categoriesData = data;
-        console.log(data);
         this.createCategoriesBar();
         return data;
     }
@@ -37,6 +38,7 @@ export class CatalogPage extends Page {
     public render(): void {
         this.html = document.createElement('div');
         this.html.append(this.createSearchBar(), this.createCategoriesBar(), this.createMainContent());
+        console.log(this.currentCategories);
     }
 
     private createSearchBar(): HTMLElement {
@@ -69,11 +71,21 @@ export class CatalogPage extends Page {
 
     private fillCategoriesList(listEl: HTMLElement): void {
         this.categoriesData.forEach((element: { name: { en: string } }) => {
-            const name = element.name.en;
-            const chepsEl = new Chips(
-                name,
-                `https://raw.githubusercontent.com/Illia-Sakharau/img-for-final-task/main/cat-${name.toLowerCase()}.png`
-            ).getComponent();
+            const name = element.name.en.toLocaleLowerCase();
+            const cheps = new Chips(
+                element.name.en,
+                `https://raw.githubusercontent.com/Illia-Sakharau/img-for-final-task/main/cat-${name}.png`
+            );
+            const chepsEl = cheps.getComponent();
+
+            if (name === this.currentCategories) {
+                cheps.setActive();
+            }
+            chepsEl.addEventListener('click', () => {
+                this.currentCategories = name;
+                this.routeAction.changePage({ addHistory: true, page: PageName.CATALOG, resource: name });
+            });
+
             listEl.append(chepsEl);
         });
     }

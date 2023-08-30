@@ -9,7 +9,7 @@ export const pages: Page[] = [
     { name: PageName.ACCOUNT, url: 'account' },
     { name: PageName.CART, url: 'cart' },
     { name: PageName.PRODUCT, url: 'product', hasResourse: true },
-    { name: PageName.CATALOG, url: 'catalog' },
+    { name: PageName.CATALOG, url: 'catalog', hasResourse: true },
     { name: PageName.ABOUT_US, url: 'about-us' },
     { name: PageName.NOT_FOUND, url: 'not_found' },
 ];
@@ -53,7 +53,7 @@ export class Router {
             pageName = PageName.NOT_FOUND;
         } else {
             const page: Page | undefined = pages.find((item) => item.url === url_arr[0]); //?.name;
-            if (!page || Boolean(page.hasResourse) != url_arr.length > 1) {
+            if (!page || (Boolean(page.hasResourse) != url_arr.length > 1 && page.name === PageName.PRODUCT)) {
                 pageName = PageName.NOT_FOUND;
             } else {
                 pageName = page?.name || PageName.NOT_FOUND;
