@@ -81,9 +81,7 @@
       {
         "name": "baseId",
         "label": {
-          "de": "BasisID",
-          "en": "BaseID",
-          "it": "BaseID"
+          "en": "BaseID"
         },
         "isRequired": true,
         "type": {
