@@ -19,6 +19,9 @@ export enum ActionType {
     USER_TYPE_CHANGE = 'USER_TYPE_CHANGE',
     REGISTRATION = 'REGISTRATION',
     LOGIN = 'LOGIN',
+    CHANGE_PASSWORD = 'CHANGE_PASSWORD',
+    CHANGE_EMAIL = 'CHANGE_EMAIL',
+    CHANGE_COMMON_INFO = 'CHANGE_COMMON_INFO',
 }
 
 export type Action = {
@@ -31,6 +34,7 @@ export enum StoreEventType {
     USER_TYPE_CHANGE = 'USER_TYPE_CHANGE',
     REGISTRATION_ERROR = 'REGISTRATION_ERROR',
     LOGIN_ERROR = 'LOGIN_ERROR',
+    ACCOUNT_ERROR = 'ACCOUNT_ERROR',
 }
 
 export type ElementParams = {

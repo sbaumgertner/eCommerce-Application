@@ -72,17 +72,17 @@ export class manageEcom {
             .execute();
     }
 
-    async updateCustomer(
+    async chageCustomerCommonInfo(
         version: number,
-        id: string,
         firstName: string,
         lastName: string,
         dateOfBirth: string
     ): Promise<ClientResponse<Customer>> {
+        const id = localStorage.getItem('id');
         return getApiRootForCredentialFlow()
             .customers()
             .withId({
-                ID: id,
+                ID: id as string,
             })
             .post({
                 body: {
@@ -106,11 +106,12 @@ export class manageEcom {
             .execute();
     }
 
-    async changeCustomerEmail(version: number, id: string, email: string): Promise<ClientResponse<Customer>> {
+    async changeCustomerEmail(version: number, email: string): Promise<ClientResponse<Customer>> {
+        const id = localStorage.getItem('id');
         return getApiRootForCredentialFlow()
             .customers()
             .withId({
-                ID: id,
+                ID: id as string,
             })
             .post({
                 body: {
@@ -158,5 +159,22 @@ export class manageEcom {
             });
 
         return lastName;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    async changeCustomerPassword(version: number, currentPassword: string, newPassword: string) {
+        const ID = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .password()
+            .post({
+                body: {
+                    id: ID as string,
+                    version: version,
+                    currentPassword: currentPassword,
+                    newPassword: newPassword,
+                },
+            })
+            .execute();
     }
 }

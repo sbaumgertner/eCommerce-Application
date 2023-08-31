@@ -107,7 +107,7 @@
         color: $color-neutral-30;
     }
 
-    .address-wrapper {
+    .address-item {
         border-bottom: 1px solid $color-neutral-90;
     }
 
@@ -116,4 +116,9 @@
     }
 
 
+}
+.api-error {
+    height: 24px;
+    color: $color-secondary-10;
+    margin: 0px;
 }
