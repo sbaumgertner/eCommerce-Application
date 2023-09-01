@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import './account.scss';
 
 import { AppStore } from '../../store/app-store';
@@ -5,29 +6,23 @@ import { Page } from '../abstract/page';
 import createElement from '../../utils/create-element';
 import { Button, IconButton } from '../../components/button/button';
 import bottonEdit from '../../assets/icons/icon-edit.svg';
+import bottonDelete from '../../assets/icons/icon-delete.svg';
 import iconShipping from '../../assets/icons/icon-shipping.svg';
 import iconBilling from '../../assets/icons/icon-billing.svg';
-import { manageEcom } from '../../api/manageEcom';
 import PopUp from '../../components/pop-up/popUp';
 import InputField from '../../components/input-field/input-field';
 import { Validation } from '../../utils/validation';
 import { AccountStore } from '../../store/account-store';
 import ClosePasswordButton from '../../components/button/passwordButton/openButton';
 import OpenPasswordButton from '../../components/button/passwordButton/closeButton';
-import { AcountAction } from '../../store/action/accountAction';
+import { AcountAction, NewAddressActionData } from '../../store/action/accountAction';
 import { StoreEventType } from '../../types';
-//import { StoreEventType } from '../../types';
-
-// import InputField from '../../components/input-field/input-field';
-// import { LoginAction } from '../../store/action/loginAction';
-// import { LoginStore, LoginValidationErrors } from '../../store/login-store';
-// import LoginWrapper from '../../components/login-wrapper/login-wrapper';
-// import { Validation } from '../../utils/validation';
-// import OpenPasswordButton from '../../components/button/passwordButton/closeButton';
+import { addRemoveClasslist } from '../../utils/add-remove-classlist';
+import { AddressFields } from '../../components/address-fields/address-fields';
+import { Checkbox } from '../../components/checkbox/checkbox';
 
 export class AccountPage extends Page {
     private appStore: AppStore;
-    private manageEcom: manageEcom;
     private buttonEditPassword: Button;
     private buttonAddress: Button;
     private accountStore: AccountStore;
@@ -38,6 +33,9 @@ export class AccountPage extends Page {
     private firstNameField: InputField;
     private lastNameField: InputField;
     private birthDateField: InputField;
+    private newAddressFields: AddressFields;
+    private shippingAddressCheckbox: Checkbox;
+    private billingAddressCheckbox: Checkbox;
     private emailInfo: HTMLElement;
     private firstName: HTMLElement;
     private lastName: HTMLElement;
@@ -45,21 +43,23 @@ export class AccountPage extends Page {
     private buttonSavePassword: Button;
     private buttonSaveEmail: Button;
     private buttonSaveCommonInfo: Button;
+    private buttonSaveNewAddress: Button;
     private editEmailButton: IconButton;
     private apiError: HTMLElement;
+    //private adresses;
 
     constructor(appStore: AppStore) {
         super();
         this.appStore = appStore;
         this.accountStore = new AccountStore();
         this.accountAction = new AcountAction();
-        this.manageEcom = new manageEcom();
         this.buttonEditPassword = new Button('bordered', 'button-edit', 'Edit Password');
         this.editEmailButton = new IconButton({ icon: bottonEdit, type: 'clear' });
         this.buttonAddress = new Button('bordered', 'new-address-button', 'Add new address');
         this.buttonSavePassword = new Button('filled', 'popup__save', 'Save');
         this.buttonSaveEmail = new Button('filled', 'popup__save', 'Save');
         this.buttonSaveCommonInfo = new Button('filled', 'popup__save', 'Save');
+        this.buttonSaveNewAddress = new Button('filled', 'popup__save', 'Save');
         this.apiError = createElement({ tag: 'div', classes: ['api-error'] });
 
         this.currentPasswordField = new InputField(
@@ -73,12 +73,16 @@ export class AccountPage extends Page {
         this.firstNameField = new InputField('text', 'firstname', 'FIRST NAME', 'Change your Last name');
         this.lastNameField = new InputField('text', 'lastname', 'LAST NAME', 'Change your First name');
         this.birthDateField = new InputField('date', 'birthdate', 'DATE OF BIRTH', 'Change your birth date');
+        this.newAddressFields = new AddressFields('New address');
         this.emailInfo = createElement({ tag: 'div', classes: ['email-info'] });
         this.firstName = createElement({ tag: 'div', classes: ['info'] });
         this.lastName = createElement({ tag: 'div', classes: ['info'] });
         this.birthDate = createElement({ tag: 'div', classes: ['info'] });
         this.getPasswordEyeButtons(this.currentPasswordField.getComponent(), this.currentPasswordField.getComponent());
         this.getPasswordEyeButtons(this.newPasswordField.getComponent(), this.newPasswordField.getComponent());
+        this.shippingAddressCheckbox = new Checkbox('Use as shipping address', 'shipping-address-checkbox');
+        this.shippingAddressCheckbox.setChecked();
+        this.billingAddressCheckbox = new Checkbox('Use as billing address', 'billing-address-checkbox');
 
         this.accountStore.addChangeListener(StoreEventType.ACCOUNT_ERROR, this.onStoreChange.bind(this));
     }
@@ -133,10 +137,11 @@ export class AccountPage extends Page {
         return popUp.getComponent();
     }
 
-    private getEmailPasswordPopUp(): HTMLElement {
+    private getEmailPopUp(): HTMLElement {
         const popUpContent = createElement({ tag: 'div', classes: ['popup__content'] });
         popUpContent.append(this.emailField.getComponent());
         const popUp = new PopUp('Change email', popUpContent, this.apiError, this.buttonSaveEmail.getComponent());
+        (this.emailField.getComponent().querySelector('.input') as HTMLInputElement).value = this.emailInfo.innerHTML;
         return popUp.getComponent();
     }
 
@@ -199,6 +204,11 @@ export class AccountPage extends Page {
             this.apiError,
             this.buttonSaveCommonInfo.getComponent()
         );
+        (this.firstNameField.getComponent().querySelector('.input') as HTMLInputElement).value =
+            this.firstName.innerHTML;
+        (this.lastNameField.getComponent().querySelector('.input') as HTMLInputElement).value = this.lastName.innerHTML;
+        (this.birthDateField.getComponent().querySelector('.input') as HTMLInputElement).value =
+            this.birthDate.innerHTML;
         return popUp.getComponent();
     }
 
@@ -211,32 +221,139 @@ export class AccountPage extends Page {
         sectionHead.append(title, button.getComponent());
 
         const sectionInfo = createElement({ tag: 'div', classes: ['section-address__content'] });
-        this.accountStore.getCustomerInfo().then((data) => {
-            for (let i = 0; i < data.body.addresses.length; i += 1) {
-                const addressItem = createElement({ tag: 'div', classes: ['address-item'] });
-                const address = createElement({ tag: 'div', classes: ['address-info'] });
-                const buttons = createElement({ tag: 'div', classes: ['address-buttons'] });
-                const addressShippingIcon = new IconButton({ icon: iconShipping, type: 'clear' });
-                const addressBillingIcon = new IconButton({ icon: iconBilling, type: 'clear' });
-                buttons.append(addressShippingIcon.getComponent(), addressBillingIcon.getComponent());
-                address.innerHTML = `${data.body.addresses[i].streetName} ${data.body.addresses[i].city} ${data.body.addresses[i].postalCode} ${data.body.addresses[i].country}`;
-                addressItem.append(address, buttons);
-                sectionInfo.append(addressItem);
-            }
-        });
+        sectionInfo.append(this.createDefaultAddresses(), this.createAllAddresses());
 
         section.append(sectionHead, sectionInfo, this.buttonAddress.getComponent());
 
         return section;
     }
 
+    private createDefaultAddresses(): HTMLElement {
+        const defaultAdresses = createElement({ tag: 'div', classes: ['address-default'] });
+
+        this.accountStore.getCustomerInfo().then((data) => {
+            for (let i = 0; i < data.body.addresses.length; i += 1) {
+                if (
+                    data.body.addresses[i].id == data.body.defaultShippingAddressId ||
+                    data.body.addresses[i].id == data.body.defaultBillingAddressId
+                ) {
+                    const addressItem = createElement({ tag: 'div', classes: ['address-item'] });
+                    addressItem.id = data.body.addresses[i].id as string;
+                    const address = createElement({ tag: 'div', classes: ['address-info'] });
+                    const buttons = createElement({ tag: 'div', classes: ['address-buttons'] });
+                    const addressShippingIcon = new IconButton({ icon: iconShipping, type: 'clear' });
+                    const addressBillingIcon = new IconButton({ icon: iconBilling, type: 'clear' });
+                    addressShippingIcon.getComponent().classList.add('round');
+                    if (addressItem.id == data.body.defaultShippingAddressId) {
+                        addRemoveClasslist(addressShippingIcon.getComponent(), address);
+                    }
+                    if (addressItem.id == data.body.defaultBillingAddressId) {
+                        addRemoveClasslist(addressBillingIcon.getComponent(), address);
+                    }
+                    buttons.append(addressShippingIcon.getComponent(), addressBillingIcon.getComponent());
+                    address.innerHTML = `${data.body.addresses[i].streetName} ${data.body.addresses[i].city} ${data.body.addresses[i].postalCode} ${data.body.addresses[i].country}`;
+                    addressItem.append(address, buttons);
+                    defaultAdresses.append(addressItem);
+                }
+            }
+        });
+
+        return defaultAdresses;
+    }
+
+    // eslint-disable-next-line max-lines-per-function
+    private createAllAddresses(): HTMLElement {
+        const allAdresses = createElement({ tag: 'div', classes: ['address-all'] });
+        this.accountStore.getCustomerInfo().then((data) => {
+            for (let i = 0; i < data.body.addresses.length; i += 1) {
+                const addressItem = createElement({ tag: 'div', classes: ['address-item'] });
+                addressItem.id = data.body.addresses[i].id as string;
+                const address = createElement({ tag: 'div', classes: ['address-info'] });
+                const buttons = createElement({ tag: 'div', classes: ['address-buttons'] });
+                const addressShippingIcon = new IconButton({ icon: iconShipping, type: 'clear' });
+                const addressBillingIcon = new IconButton({ icon: iconBilling, type: 'clear' });
+                data.body.shippingAddressIds?.forEach((id) => {
+                    if (id == addressItem.id) {
+                        buttons.append(addressShippingIcon.getComponent());
+                    }
+                });
+                data.body.billingAddressIds?.forEach((id) => {
+                    if (id == addressItem.id) {
+                        buttons.append(addressBillingIcon.getComponent());
+                    }
+                });
+                const buttonEdit = new IconButton({ icon: bottonEdit, type: 'clear' });
+                buttonEdit.getComponent().classList.add('edit-address-button');
+                buttonEdit.getComponent().id = addressItem.id;
+                const buttonDelete = new IconButton({ icon: bottonDelete, type: 'clear' });
+                buttonDelete.getComponent().id = addressItem.id;
+                buttonDelete.getComponent().classList.add('delete-address-button');
+                address.innerHTML = `${data.body.addresses[i].streetName} ${data.body.addresses[i].city} ${data.body.addresses[i].postalCode} ${data.body.addresses[i].country}`;
+                addressItem.append(address, buttons, buttonEdit.getComponent(), buttonDelete.getComponent());
+
+                allAdresses.append(addressItem);
+            }
+            this.deleteAddress();
+        });
+        return allAdresses;
+    }
+
+    private createNewAddressPopUp(): HTMLElement {
+        const popUpContent = createElement({ tag: 'div', classes: ['popup__content'] });
+        popUpContent.append(
+            this.newAddressFields.getComponent(),
+            this.shippingAddressCheckbox.getComponent(),
+            this.billingAddressCheckbox.getComponent()
+        );
+        const popUp = new PopUp('', popUpContent, this.apiError, this.buttonSaveNewAddress.getComponent());
+
+        return popUp.getComponent();
+    }
+
+    private sendNewAddressData(): void {
+        const data: NewAddressActionData = {};
+
+        if (this.shippingAddressCheckbox.getValue()) {
+            data.shippingAddress = this.newAddressFields.getAddressData();
+        }
+        if (this.billingAddressCheckbox.getValue()) {
+            data.billingAddress = this.newAddressFields.getAddressData();
+        }
+
+        this.accountAction.addNewAddress(data);
+    }
+
+    private deleteAddress(): void {
+        const buttons = document.querySelectorAll('.delete-address-button');
+        console.log(buttons);
+        buttons.forEach((button) => {
+            button.addEventListener('click', () => {
+                console.log('Hello!');
+                this.accountAction.deleteAddress({ id: button.id });
+            });
+        });
+    }
+
+    // eslint-disable-next-line max-lines-per-function
     public addEventListeners(): void {
         this.buttonEditPassword.getComponent().addEventListener('click', () => {
             this.html?.append(this.getEditPasswordPopUp());
         });
 
         this.editEmailButton.getComponent().addEventListener('click', () => {
-            this.html?.append(this.getEmailPasswordPopUp());
+            this.html?.append(this.getEmailPopUp());
+        });
+
+        this.buttonAddress.getComponent().addEventListener('click', () => {
+            this.html?.append(this.createNewAddressPopUp());
+        });
+
+        this.billingAddressCheckbox.getComponent().addEventListener('click', () => {
+            (document.querySelector('#shipping-address-checkbox') as HTMLElement).classList.remove('checkbox_checked');
+        });
+
+        this.shippingAddressCheckbox.getComponent().addEventListener('click', () => {
+            (document.querySelector('#billing-address-checkbox') as HTMLElement).classList.remove('checkbox_checked');
         });
 
         this.buttonSavePassword.getComponent().addEventListener('click', () => {
@@ -263,20 +380,29 @@ export class AccountPage extends Page {
             });
         });
 
+        this.buttonSaveNewAddress.getComponent().addEventListener('click', () => {
+            this.apiError.textContent = '';
+            this.sendNewAddressData();
+        });
+
         this.currentPasswordField.addValidation(Validation.checkPassword);
         this.newPasswordField.addValidation(Validation.checkPassword);
         this.emailField.addValidation(Validation.checkEmail);
         this.firstNameField.addValidation(Validation.checkText);
         this.lastNameField.addValidation(Validation.checkText);
         this.birthDateField.addValidation(Validation.checkDate);
+        this.newAddressFields.addValidations();
     }
 
     protected onStoreChange(): void {
         this.apiError.textContent = this.accountStore.getAccountError();
 
-        this.accountStore.getEmailInfo(this.emailInfo);
+        this.emailInfo.innerHTML = this.accountStore.getEmailInfo(this.emailInfo);
         this.accountStore.getFirstName(this.firstName);
         this.accountStore.getLastName(this.lastName);
         this.accountStore.getDateOfBirth(this.birthDate);
+        // if (this.accountStore.getAdresses()) {
+        //     location.reload();
+        // }
     }
 }

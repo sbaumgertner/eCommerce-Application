@@ -108,7 +108,9 @@
     }
 
     .address-item {
+        position: relative;
         border-bottom: 1px solid $color-neutral-90;
+        height: 62px;
     }
 
     #new-address-button {
@@ -121,4 +123,27 @@
     height: 24px;
     color: $color-secondary-10;
     margin: 0px;
+}
+
+.default {
+    @include font-text-bold;
+    font-weight: 900;
+}
+
+.round {
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+}
+
+.delete-address-button {
+    position: absolute;
+    right: 20px;
+    top: 8px;
+}
+
+.edit-address-button {
+    position: absolute;
+    right: 60px;
+    top: 10px;
 }

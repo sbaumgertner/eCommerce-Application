@@ -19,17 +19,17 @@ export default class PopUp extends Component {
     ): HTMLElement {
         const popUp = createElement({ tag: 'div', classes: ['popup'] });
         const popUpTitle = createElement({ tag: 'h5', classes: ['popup__title'], text: title });
-        //const popUpContent = createElement({ tag: 'div', classes: ['popup__content'] });
         const closeButton = createElement({ tag: 'div', classes: ['popup__close'] });
         this.closePopUp(closeButton);
-        //const popUpButton = new Button('filled', 'popup__save', 'Save');
         popUp.append(popUpTitle, closeButton, content, errorMessage, button);
+        //(document.body.parentNode as HTMLElement).style.overflow = 'hidden';
         return popUp;
     }
 
     private closePopUp(button: HTMLElement): void {
         button.addEventListener('click', () => {
             this.componentElem.remove();
+            //(document.body.parentNode as HTMLElement).style.overflow = 'visible';
         });
     }
 }

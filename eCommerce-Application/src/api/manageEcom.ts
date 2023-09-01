@@ -177,4 +177,47 @@ export class manageEcom {
             })
             .execute();
     }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    async addNewAddress(version: number, adressData: CustomerAddress) {
+        const ID = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: ID as string,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'addAddress',
+                            address: adressData,
+                        },
+                    ],
+                },
+            })
+            .execute();
+    }
+
+    async removeAddress(version: number, adressId: string): Promise<ClientResponse<Customer>> {
+        const ID = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: ID as string,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'removeAddress',
+                            addressId: adressId,
+                        },
+                    ],
+                },
+            })
+            .execute();
+    }
 }

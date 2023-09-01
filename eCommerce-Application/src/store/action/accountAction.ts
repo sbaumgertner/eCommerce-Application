@@ -12,6 +12,15 @@ export type AccountActionData = {
     billingAddress?: AddressData;
 };
 
+export type NewAddressActionData = {
+    shippingAddress?: AddressData;
+    billingAddress?: AddressData;
+};
+
+export type addressID = {
+    id: string;
+};
+
 export class AcountAction extends AbstractAction {
     public changePassword(data: AccountActionData): void {
         this.dispatcher.handleAction({ actionType: ActionType.CHANGE_PASSWORD, data: JSON.stringify(data) });
@@ -23,5 +32,13 @@ export class AcountAction extends AbstractAction {
 
     public changeCommonInfo(data: AccountActionData): void {
         this.dispatcher.handleAction({ actionType: ActionType.CHANGE_COMMON_INFO, data: JSON.stringify(data) });
+    }
+
+    public addNewAddress(data: AccountActionData): void {
+        this.dispatcher.handleAction({ actionType: ActionType.ADD_NEW_ADDRESS, data: JSON.stringify(data) });
+    }
+
+    public deleteAddress(data: addressID): void {
+        this.dispatcher.handleAction({ actionType: ActionType.DELETE_ADDRESS, data: JSON.stringify(data) });
     }
 }

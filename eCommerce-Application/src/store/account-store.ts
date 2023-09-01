@@ -1,8 +1,8 @@
 import { Action, ActionType, StoreEventType } from '../types';
 import { Store } from './abstract/store';
 
-import { manageEcom } from '../api/manageEcom';
-import { AccountActionData } from './action/accountAction';
+import { CustomerAddress, manageEcom } from '../api/manageEcom';
+import { AccountActionData, addressID } from './action/accountAction';
 import { getSuccessMessage } from '../utils/getSuccessMessage';
 
 export type AccountValidationErrors = Partial<AccountActionData>;
@@ -26,6 +26,7 @@ export class AccountStore extends Store {
     private birthDate: string;
     private email: string;
     private version: number;
+    private adresses: object[];
 
     constructor() {
         super();
@@ -35,6 +36,7 @@ export class AccountStore extends Store {
         this.lastName = '';
         this.birthDate = '';
         this.email = '';
+        this.adresses = [];
         this.version = this.getVersionAPI();
     }
 
@@ -43,11 +45,13 @@ export class AccountStore extends Store {
         return this.manageEcom.getCustomerById();
     }
 
-    public getEmailInfo(emailInfo: HTMLElement): void {
+    public getEmailInfo(emailInfo: HTMLElement): string {
         this.getCustomerInfo().then((data) => {
             emailInfo.innerHTML = data.body.email;
             this.email = emailInfo.innerHTML;
         });
+
+        return this.email;
     }
 
     public getFullCustomerName(fullName: HTMLElement): void {
@@ -85,22 +89,18 @@ export class AccountStore extends Store {
         });
     }
 
+    public getAdresses(): object {
+        this.getCustomerInfo().then((data) => {
+            data.body.addresses.forEach((item) => {
+                this.adresses.push(item);
+            });
+        });
+        return this.adresses;
+    }
+
     public getAccountError(): string {
         return this.changeError || '';
     }
-
-    // private validateData(data: AccountActionData): boolean {
-    //     this.validationErrors = {};
-    //     this.loginError = '';
-
-    //     let result: ValidationResult;
-    //     result = Validation.checkPassword(data.currentPassword);
-    //     if (!result.isValid) {
-    //         this.validationErrors.currentPassword = result.error;
-    //     }
-
-    //     return result.isValid;
-    // }
 
     private getVersionAPI(): number {
         try {
@@ -137,11 +137,12 @@ export class AccountStore extends Store {
                 this.changeError = '';
                 this.email = data.email as string;
                 getSuccessMessage('The email has been changed successfuly');
+                //(document.body.parentNode as HTMLElement).style.overflow = 'visible';
             })
             .catch((error) => {
                 this.changeError = error.message;
-                this.emit(StoreEventType.ACCOUNT_ERROR);
             });
+        this.emit(StoreEventType.ACCOUNT_ERROR);
     }
 
     private onChangeCommonInfo(jsonData: string): void {
@@ -157,14 +158,91 @@ export class AccountStore extends Store {
             .then(() => {
                 this.changeError = '';
                 getSuccessMessage('The common information has been changed successfuly');
+                //(document.body.parentNode as HTMLElement).style.overflow = 'visible';
                 this.firstName = data.firstName as string;
                 this.lastName = data.lastName as string;
                 this.birthDate = data.birthDate as string;
+                this.emit(StoreEventType.ACCOUNT_ERROR);
             })
             .catch((error) => {
                 this.changeError = error.message;
-                this.emit(StoreEventType.ACCOUNT_ERROR);
             });
+        this.emit(StoreEventType.ACCOUNT_ERROR);
+    }
+
+    // eslint-disable-next-line max-lines-per-function
+    private onAddNewAddress(jsonData: string): void {
+        const data: AccountActionData = JSON.parse(jsonData);
+
+        let shippingAddress: CustomerAddress = {
+            country: '',
+        };
+        if (data.shippingAddress) {
+            shippingAddress = {
+                country: data.shippingAddress.country,
+                streetName: data.shippingAddress.street,
+                postalCode: data.shippingAddress.zip,
+                city: data.shippingAddress.city,
+                region: data.shippingAddress.state,
+            };
+            const version = this.getVersionAPI();
+            this.manageEcom
+                .addNewAddress(version, shippingAddress)
+                .then(() => {
+                    this.changeError = '';
+                    getSuccessMessage('The address is added');
+                    //(document.body.parentNode as HTMLElement).style.overflow = 'visible';
+                })
+                .catch((error) => {
+                    this.changeError = error.message;
+                });
+            this.emit(StoreEventType.ACCOUNT_ERROR);
+        }
+        let billingAddress: CustomerAddress = {
+            country: '',
+        };
+        if (data.billingAddress) {
+            billingAddress = {
+                country: data.billingAddress.country,
+                streetName: data.billingAddress.street,
+                postalCode: data.billingAddress.zip,
+                city: data.billingAddress.city,
+                region: data.billingAddress.state,
+            };
+            const version = this.getVersionAPI();
+            this.manageEcom
+                .addNewAddress(version, billingAddress)
+                .then(() => {
+                    this.changeError = '';
+                    getSuccessMessage('The address is added');
+                    //(document.body.parentNode as HTMLElement).style.overflow = 'visible';
+                    this.adresses.push(shippingAddress);
+                    this.emit(StoreEventType.ACCOUNT_ERROR);
+                })
+                .catch((error) => {
+                    this.changeError = error.message;
+                });
+        }
+
+        this.emit(StoreEventType.ACCOUNT_ERROR);
+    }
+
+    private onDeleteAddress(jsonData: string): void {
+        const data: addressID = JSON.parse(jsonData);
+        const version = this.getVersionAPI();
+        this.manageEcom
+            .removeAddress(version, data.id)
+            .then(() => {
+                this.changeError = '';
+                getSuccessMessage('The address has been removed successfuly');
+                //(document.body.parentNode as HTMLElement).style.overflow = 'visible';
+
+                this.emit(StoreEventType.ACCOUNT_ERROR);
+            })
+            .catch((error) => {
+                this.changeError = error.message;
+            });
+        this.emit(StoreEventType.ACCOUNT_ERROR);
     }
 
     protected actionCallback(action: Action): void {
@@ -177,6 +255,12 @@ export class AccountStore extends Store {
                 break;
             case ActionType.CHANGE_COMMON_INFO:
                 this.onChangeCommonInfo(action.data);
+                break;
+            case ActionType.ADD_NEW_ADDRESS:
+                this.onAddNewAddress(action.data);
+                break;
+            case ActionType.DELETE_ADDRESS:
+                this.onDeleteAddress(action.data);
                 break;
         }
     }
