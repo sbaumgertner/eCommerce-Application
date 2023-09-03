@@ -3,6 +3,7 @@ import './product-card.scss';
 import createElement from '../../utils/create-element';
 import Component from '../abstract/component';
 import { Button } from '../button/button';
+import { EcomProductData } from '../../types';
 
 type ProductCardData = {
     name: string;
@@ -15,23 +16,11 @@ type ProductCardData = {
     url: string;
 };
 
-const testData = {
-    name: 'Thai Constellation',
-    category: 'Monstera',
-    mainPrice: 3950,
-    salePrice: 2999,
-    age: 'Baby',
-    imgURL: 'https://plnts.com/_next/image?url=https%3A%2F%2Fwebshop.plnts.com%2Fmedia%2Fcatalog%2Fproduct%2Fcache%2Faa5d334f459227518b6c3cf7ea9d29ed%2Fp%2Fl%2Fpl_m_014-thumbnail_5.jpg&w=1080&q=80',
-    description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
-    url: '/product/1',
-};
-
 export class ProductCard extends Component {
-    constructor() {
+    constructor(productData: ProductCardData) {
         super({ tag: 'a', classes: ['product-card'] });
-        this.componentElem.setAttribute('href', testData.url);
-        this.render(testData);
+        this.componentElem.setAttribute('href', productData.url);
+        this.render(productData);
     }
 
     public render(productInfo: ProductCardData): void {
@@ -115,4 +104,32 @@ export class ProductCard extends Component {
         btnBarEl.append(addToCardBtnEl);
         return btnBarEl;
     }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function productDataAdapter(product: EcomProductData, categoriesData: any[]): ProductCardData {
+    const name = product.masterData.current.name.en;
+    const category = categoriesData.find(
+        (catigory: { id: string }) => catigory.id === product.masterData.current.categories[0].id
+    ).name.en;
+    const mainPrice = product.masterData.current.masterVariant.prices[0].value.centAmount;
+    const salePrice = product.masterData.current.masterVariant.prices[0].discounted?.value.centAmount;
+    const ageData = product.masterData.current.masterVariant.attributes.find(
+        (attr: { name: string }) => attr.name === 'agePlants'
+    );
+    const age = ageData ? ageData.value.label : '';
+    const imgURL = product.masterData.current.masterVariant.images[0].url;
+    const description = product.masterData.current.metaDescription.en;
+    const url = product.masterData.current.slug.en;
+
+    return {
+        name,
+        category,
+        mainPrice,
+        salePrice,
+        age,
+        imgURL,
+        description,
+        url,
+    };
 }

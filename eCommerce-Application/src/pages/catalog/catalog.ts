@@ -1,7 +1,7 @@
 import './catalog.scss';
 
 import { RouteAction } from '../../store/action/routeAction';
-import { PageName } from '../../types';
+import { EcomProductData, PageName } from '../../types';
 
 import createElement from '../../utils/create-element';
 import { Page } from '../abstract/page';
@@ -14,7 +14,7 @@ import arrowDownIcon from '../../assets/icons/icon-arrow-down.svg';
 import resetIcon from '../../assets/icons/icon-reset.svg';
 import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
 import { getProducts } from '../../api/products';
-import { ProductCard } from '../../components/product-card/product-card';
+import { ProductCard, productDataAdapter } from '../../components/product-card/product-card';
 
 export class CatalogPage extends Page {
     private routeAction: RouteAction;
@@ -25,25 +25,26 @@ export class CatalogPage extends Page {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private categoriesData: any;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private productsData: any;
+
+    private productsData: EcomProductData[] = [];
 
     constructor() {
         super();
         this.routeAction = new RouteAction();
         this.setCategoriesData();
-        this.setProductsData();
     }
 
     private async setCategoriesData(): Promise<unknown> {
         const data = (await getCategories()).results;
+        console.log(data);
         this.categoriesData = data;
         this.createCategoriesBar();
+        this.setProductsData();
         return data;
     }
     private async setProductsData(): Promise<unknown> {
-        const data = (await getProducts({ queryArgs: { limit: 12, offset: 0 } })).results;
-        console.log(data);
+        const data = (await getProducts({ queryArgs: { limit: 12, offset: 0 } }))
+            .results as unknown as EcomProductData[];
         this.productsData = data;
         this.createInner();
         return data;
@@ -136,10 +137,9 @@ export class CatalogPage extends Page {
         innerEl.innerHTML = '';
 
         if (this.productsData) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            this.productsData.forEach((product: any) => {
-                const productCard = new ProductCard();
-                console.log(product);
+            this.productsData.forEach((product) => {
+                const productData = productDataAdapter(product, this.categoriesData);
+                const productCard = new ProductCard(productData);
                 cardGridEl.append(productCard.getComponent());
             });
         } else {
