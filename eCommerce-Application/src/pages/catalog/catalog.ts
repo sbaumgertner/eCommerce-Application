@@ -129,17 +129,18 @@ export class CatalogPage extends Page {
     private createInner(): HTMLElement {
         const innerEl = this.innerEl;
         const headerEl = this.createInnerHeader();
-        const cardGridEl = createElement({ tag: 'div', classes: ['catalog-inner__grid'], text: 'GRID' });
+        const cardGridEl = createElement({ tag: 'div', classes: ['catalog-inner__grid'] });
         const paginationEl = createElement({ tag: 'div', classes: ['catalog-inner__pagination'], text: 'PAGINATION' });
         const loaderEl = new Loader().getComponent();
 
         innerEl.innerHTML = '';
-        cardGridEl.append(new ProductCard().getComponent());
 
         if (this.productsData) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             this.productsData.forEach((product: any) => {
-                cardGridEl.append(this.createProduct(`${product.masterData.current.name.en}`));
+                const productCard = new ProductCard();
+                console.log(product);
+                cardGridEl.append(productCard.getComponent());
             });
         } else {
             cardGridEl.append(loaderEl);
@@ -182,16 +183,5 @@ export class CatalogPage extends Page {
             headerEl.append(titleEl, btnEl);
         }
         return headerEl;
-    }
-
-    // delete
-    private createProduct(id: string): HTMLElement {
-        const product = createElement({ tag: 'div', classes: ['product'] });
-        product.dataset.id = id;
-        product.textContent = 'product ' + id;
-        product.addEventListener('click', () => {
-            this.routeAction.changePage({ addHistory: true, page: PageName.PRODUCT, resource: id });
-        });
-        return product;
     }
 }
