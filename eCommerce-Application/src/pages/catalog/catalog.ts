@@ -14,6 +14,7 @@ import arrowDownIcon from '../../assets/icons/icon-arrow-down.svg';
 import resetIcon from '../../assets/icons/icon-reset.svg';
 import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
 import { getProducts } from '../../api/products';
+import { ProductCard } from '../../components/product-card/product-card';
 
 export class CatalogPage extends Page {
     private routeAction: RouteAction;
@@ -133,6 +134,7 @@ export class CatalogPage extends Page {
         const loaderEl = new Loader().getComponent();
 
         innerEl.innerHTML = '';
+        cardGridEl.append(new ProductCard().getComponent());
 
         if (this.productsData) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any

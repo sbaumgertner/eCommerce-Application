@@ -30,7 +30,11 @@ export default class Breadcrumbs extends Component {
         let arr = path.split('/');
         arr[0] = 'Home';
         arr = arr.map((linkText) => {
-            return linkText[0].toUpperCase() + linkText.slice(1);
+            if (linkText[0]) {
+                return linkText[0].toUpperCase() + linkText.slice(1);
+            } else {
+                return '';
+            }
         });
         return arr;
     }
