@@ -16,6 +16,7 @@ import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
 import { getProducts } from '../../api/products';
 import { ProductCard, productDataAdapter } from '../../components/product-card/product-card';
 import { AppStore } from '../../store/app-store';
+import { Pagination } from '../../components/pagination/pagination';
 
 export class CatalogPage extends Page {
     private routeAction: RouteAction;
@@ -23,13 +24,17 @@ export class CatalogPage extends Page {
     private innerEl = createElement({ tag: 'div', classes: ['catalog-inner'] });
     private currentCategories =
         window.location.pathname.split('/').length === 2 ? 'all plants' : window.location.pathname.split('/')[2];
+    private currentPage = 1;
+    private maxCardPerPage = 12;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private categoriesData: any = [];
     private productsData: EcomProductData[] | undefined;
+    private totalProducts = 0;
 
     constructor(private appStore: AppStore) {
         super();
+        this.html = document.createElement('div');
         this.routeAction = new RouteAction();
         this.appStore.addChangeListener(StoreEventType.PAGE_CHANGE, this.onStoreChange.bind(this));
     }
@@ -43,19 +48,26 @@ export class CatalogPage extends Page {
     }
     private async setProductsData(): Promise<unknown> {
         const filter = this.createFilterReqest();
-        const queryArgs = filter === '' ? { limit: 12, offset: 0 } : { filter, limit: 12, offset: 0 };
-        const data = (await getProducts({ queryArgs })).results as unknown as EcomProductData[];
-        this.productsData = data;
+        const queryArgs =
+            filter === ''
+                ? { limit: this.maxCardPerPage, offset: (this.currentPage - 1) * this.maxCardPerPage }
+                : { filter, limit: this.maxCardPerPage, offset: (this.currentPage - 1) * this.maxCardPerPage };
+        const data = await getProducts({ queryArgs });
+        this.totalProducts = data.total || 0;
+        this.productsData = data.results as unknown as EcomProductData[];
         this.createInner();
         return data;
     }
 
     public render(): void {
-        this.html = document.createElement('div');
-        this.categoriesData = undefined;
-        this.productsData = undefined;
-        this.setCategoriesData();
-        this.html.append(this.createSearchBar(), this.createCategoriesBar(), this.createMainContent());
+        if (this.html) {
+            this.html.innerHTML = '';
+            this.categoriesData = undefined;
+            this.productsData = undefined;
+            this.totalProducts = 0;
+            this.setCategoriesData();
+            this.html.append(this.createSearchBar(), this.createCategoriesBar(), this.createMainContent());
+        }
     }
 
     private createFilterReqest(): string {
@@ -118,8 +130,14 @@ export class CatalogPage extends Page {
                 cheps.setActive();
             }
             chepsEl.addEventListener('click', () => {
-                this.currentCategories = name;
-                this.routeAction.changePage({ addHistory: true, page: PageName.CATALOG, resource: name });
+                this.currentPage = 1;
+                if (this.currentCategories === name) {
+                    this.currentCategories = 'all plants';
+                    this.routeAction.changePage({ addHistory: true, page: PageName.CATALOG });
+                } else {
+                    this.currentCategories = name;
+                    this.routeAction.changePage({ addHistory: true, page: PageName.CATALOG, resource: name });
+                }
             });
 
             listEl.append(chepsEl);
@@ -151,12 +169,18 @@ export class CatalogPage extends Page {
     private createInner(): HTMLElement {
         const innerEl = this.innerEl;
         const headerEl = this.createInnerHeader();
-        const cardGridEl = createElement({ tag: 'div', classes: ['catalog-inner__grid'] });
-        const paginationEl = createElement({ tag: 'div', classes: ['catalog-inner__pagination'], text: 'PAGINATION' });
-        const loaderEl = new Loader().getComponent();
+        const cardGridEl = this.createProductGrid();
+        const paginationEl = this.createPagination();
 
         innerEl.innerHTML = '';
 
+        innerEl.append(headerEl, cardGridEl, paginationEl);
+        return innerEl;
+    }
+
+    private createProductGrid(): HTMLElement {
+        const cardGridEl = createElement({ tag: 'div', classes: ['catalog-inner__grid'] });
+        const loaderEl = new Loader().getComponent();
         if (this.productsData) {
             this.productsData.forEach((product) => {
                 const productData = productDataAdapter(product, this.categoriesData);
@@ -167,8 +191,31 @@ export class CatalogPage extends Page {
             cardGridEl.append(loaderEl);
         }
 
-        innerEl.append(headerEl, cardGridEl, paginationEl);
-        return innerEl;
+        return cardGridEl;
+    }
+
+    private createPagination(): HTMLElement {
+        const currentPage = this.currentPage;
+        const maxPage = Math.ceil(this.totalProducts / this.maxCardPerPage);
+        const paginationEl = new Pagination(currentPage, maxPage);
+        paginationEl.setFirstPageHandler(() => {
+            this.currentPage = 1;
+            this.render();
+        });
+        paginationEl.setPrevPageHandler(() => {
+            this.currentPage -= 1;
+            this.render();
+        });
+        paginationEl.setNextPageHandler(() => {
+            this.currentPage += 1;
+            this.render();
+        });
+        paginationEl.setLastPageHandler(() => {
+            this.currentPage = maxPage;
+            this.render();
+        });
+
+        return paginationEl.getComponent();
     }
 
     private createInnerHeader(): HTMLElement {
@@ -178,7 +225,9 @@ export class CatalogPage extends Page {
         const titleEl = createElement({
             tag: 'h3',
             classes: ['catalog-header__title'],
-            text: this.currentCategories[0].toUpperCase() + this.currentCategories.slice(1),
+            text: `${this.currentCategories[0].toUpperCase() + this.currentCategories.slice(1)} (${
+                this.totalProducts
+            })`,
         });
         const sortEl = createElement({ tag: 'div', classes: ['catalog-header__sort'], text: 'SORT' });
 
