@@ -108,25 +108,37 @@ export class ProductCard extends Component {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function productDataAdapter(product: EcomProductData, categoriesData: any[]): ProductCardData {
-    const name = product.name.en;
-    const category = categoriesData.find((catigory: { id: string }) => catigory.id === product.categories[0].id).name
-        .en;
-    const mainPrice = product.masterVariant.prices[0].value.centAmount;
-    const salePrice = product.masterVariant.prices[0].discounted?.value.centAmount;
-    const ageData = product.masterVariant.attributes.find((attr: { name: string }) => attr.name === 'agePlants');
-    const age = ageData ? ageData.value.label : '';
-    const imgURL = product.masterVariant.images[0].url;
-    const description = product.metaDescription.en;
-    const url = `/product/${product.slug.en}`;
+    try {
+        const name = product.name.en;
+        const category = categoriesData.find((catigory: { id: string }) => catigory.id === product.categories[0].id)
+            .name.en;
+        const mainPrice = product.masterVariant.prices[0].value.centAmount;
+        const salePrice = product.masterVariant.prices[0].discounted?.value.centAmount;
+        const ageData = product.masterVariant.attributes.find((attr: { name: string }) => attr.name === 'agePlants');
+        const age = ageData ? ageData.value.label : '';
+        const imgURL = product.masterVariant.images[0].url;
+        const description = product.metaDescription.en;
+        const url = `/product/${product.slug.en}`;
 
-    return {
-        name,
-        category,
-        mainPrice,
-        salePrice,
-        age,
-        imgURL,
-        description,
-        url,
-    };
+        return {
+            name,
+            category,
+            mainPrice,
+            salePrice,
+            age,
+            imgURL,
+            description,
+            url,
+        };
+    } catch (error) {
+        return {
+            name: '',
+            category: '',
+            mainPrice: 0,
+            age: '',
+            imgURL: '',
+            description: '',
+            url: '',
+        };
+    }
 }
