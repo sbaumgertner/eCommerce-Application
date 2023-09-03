@@ -78,30 +78,26 @@ export type LinkProps = {
 };
 
 export type EcomProductData = {
-    masterData: {
-        current: {
-            name: { en: string };
-            categories: { id: string }[];
-            masterVariant: {
-                prices: {
-                    value: { centAmount: number };
-                    discounted: {
-                        value: { centAmount: number };
-                    };
-                }[];
-                attributes: {
-                    name: string;
-                    value: {
-                        key: string;
-                        label: string;
-                    };
-                }[];
-                images: {
-                    url: string;
-                }[];
+    name: { en: string };
+    categories: { id: string }[];
+    masterVariant: {
+        prices: {
+            value: { centAmount: number };
+            discounted: {
+                value: { centAmount: number };
             };
-            metaDescription: { en: string };
-            slug: { en: string };
-        };
+        }[];
+        attributes: {
+            name: string;
+            value: {
+                key: string;
+                label: string;
+            };
+        }[];
+        images: {
+            url: string;
+        }[];
     };
+    metaDescription: { en: string };
+    slug: { en: string };
 };

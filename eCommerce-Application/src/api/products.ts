@@ -24,7 +24,8 @@ type GetProductsMethodArgs = {
 
 export function getProducts(methodArgs: GetProductsMethodArgs) {
     return getApiRootForCredentialFlow()
-        .products()
+        .productProjections()
+        .search()
         .get(methodArgs)
         .execute()
         .then((resp) => resp.body);

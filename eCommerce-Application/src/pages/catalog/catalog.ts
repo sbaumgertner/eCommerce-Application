@@ -1,7 +1,7 @@
 import './catalog.scss';
 
 import { RouteAction } from '../../store/action/routeAction';
-import { EcomProductData, PageName } from '../../types';
+import { EcomProductData, PageName, StoreEventType } from '../../types';
 
 import createElement from '../../utils/create-element';
 import { Page } from '../abstract/page';
@@ -15,6 +15,7 @@ import resetIcon from '../../assets/icons/icon-reset.svg';
 import Breadcrumbs from '../../components/breadcrumbs/breadcrumbs';
 import { getProducts } from '../../api/products';
 import { ProductCard, productDataAdapter } from '../../components/product-card/product-card';
+import { AppStore } from '../../store/app-store';
 
 export class CatalogPage extends Page {
     private routeAction: RouteAction;
@@ -24,27 +25,26 @@ export class CatalogPage extends Page {
         window.location.pathname.split('/').length === 2 ? 'all plants' : window.location.pathname.split('/')[2];
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private categoriesData: any;
+    private categoriesData: any = [];
+    private productsData: EcomProductData[] | undefined;
 
-    private productsData: EcomProductData[] = [];
-
-    constructor() {
+    constructor(private appStore: AppStore) {
         super();
         this.routeAction = new RouteAction();
-        this.setCategoriesData();
+        this.appStore.addChangeListener(StoreEventType.PAGE_CHANGE, this.onStoreChange.bind(this));
     }
 
     private async setCategoriesData(): Promise<unknown> {
         const data = (await getCategories()).results;
-        console.log(data);
         this.categoriesData = data;
         this.createCategoriesBar();
         this.setProductsData();
         return data;
     }
     private async setProductsData(): Promise<unknown> {
-        const data = (await getProducts({ queryArgs: { limit: 12, offset: 0 } }))
-            .results as unknown as EcomProductData[];
+        const filter = this.createFilterReqest();
+        const queryArgs = filter === '' ? { limit: 12, offset: 0 } : { filter, limit: 12, offset: 0 };
+        const data = (await getProducts({ queryArgs })).results as unknown as EcomProductData[];
         this.productsData = data;
         this.createInner();
         return data;
@@ -52,7 +52,28 @@ export class CatalogPage extends Page {
 
     public render(): void {
         this.html = document.createElement('div');
+        this.categoriesData = undefined;
+        this.productsData = undefined;
+        this.setCategoriesData();
         this.html.append(this.createSearchBar(), this.createCategoriesBar(), this.createMainContent());
+    }
+
+    private createFilterReqest(): string {
+        let filterReqest = '';
+        try {
+            if (this.currentCategories && this.currentCategories !== 'all plants') {
+                filterReqest = filterReqest.concat(
+                    `categories.id:"${
+                        this.categoriesData.find(
+                            (cat: { slug: { en: string } }) => cat.slug.en === this.currentCategories
+                        ).id
+                    }"`
+                );
+            }
+        } catch (err) {
+            console.log('');
+        }
+        return filterReqest;
     }
 
     private createSearchBar(): HTMLElement {
@@ -108,7 +129,7 @@ export class CatalogPage extends Page {
     private createMainContent(): HTMLElement {
         const mainContentEl = createElement({ tag: 'section', classes: ['catalog-main'] });
         const wrapperEl = createElement({ tag: 'div', classes: ['wrapper', 'catalog-main__wrapper'] });
-        const filterEl = this.createfilter();
+        const filterEl = this.createFilter();
         const innerEl = this.createInner();
 
         wrapperEl.append(filterEl, innerEl);
@@ -116,7 +137,7 @@ export class CatalogPage extends Page {
         return mainContentEl;
     }
 
-    private createfilter(): HTMLElement {
+    private createFilter(): HTMLElement {
         const filtertEl = createElement({ tag: 'div', classes: ['catalog-filter'] });
         const innerEl = createElement({ tag: 'div', classes: ['catalog-filter__inner'], text: 'FILTERS' });
         const resetBtnEl = new IconButton({ icon: resetIcon, type: 'clear' }).getComponent();
@@ -183,5 +204,11 @@ export class CatalogPage extends Page {
             headerEl.append(titleEl, btnEl);
         }
         return headerEl;
+    }
+
+    protected onStoreChange(): void {
+        this.currentCategories =
+            window.location.pathname.split('/').length === 2 ? 'all plants' : window.location.pathname.split('/')[2];
+        this.render();
     }
 }
