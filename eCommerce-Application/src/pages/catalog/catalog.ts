@@ -41,7 +41,7 @@ export class CatalogPage extends Page {
         return data;
     }
     private async setProductsData(): Promise<unknown> {
-        const data = (await getProducts()).results;
+        const data = (await getProducts({ queryArgs: { limit: 12, offset: 0 } })).results;
         console.log(data);
         this.productsData = data;
         this.createInner();
@@ -135,7 +135,10 @@ export class CatalogPage extends Page {
         innerEl.innerHTML = '';
 
         if (this.productsData) {
-            cardGridEl.append(this.createProduct('1'), this.createProduct('2'));
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            this.productsData.forEach((product: any) => {
+                cardGridEl.append(this.createProduct(`${product.masterData.current.name.en}`));
+            });
         } else {
             cardGridEl.append(loaderEl);
         }
