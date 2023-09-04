@@ -311,11 +311,11 @@ export class AccountPage extends Page {
         const buttonEdit = new IconButton({ icon: bottonEdit, type: 'clear' });
         buttonEdit.getComponent().classList.add('edit-address-button');
         buttonEdit.getComponent().id = addressItem.id;
-        this.editAddress(buttonEdit.getComponent() as HTMLButtonElement);
+        this.editAddress(buttonEdit.getComponent());
         const buttonDelete = new IconButton({ icon: bottonDelete, type: 'clear' });
         buttonDelete.getComponent().id = addressItem.id;
         buttonDelete.getComponent().classList.add('delete-address-button');
-        this.deleteAddress(buttonDelete.getComponent() as HTMLButtonElement);
+        this.deleteAddress(buttonDelete.getComponent());
         address.innerHTML = `${data.body.addresses[i].streetName} ${data.body.addresses[i].city} ${data.body.addresses[i].region} ${data.body.addresses[i].postalCode} ${data.body.addresses[i].country}`;
         addressItem.append(address, buttons, buttonEdit.getComponent(), buttonDelete.getComponent());
 

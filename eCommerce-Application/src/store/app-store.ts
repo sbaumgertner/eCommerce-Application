@@ -22,6 +22,39 @@ const pagesForAnonUser: PageName[] = [
     PageName.LOGIN,
     PageName.REGISTRATION,
 ];
+const CategoriesArr = ['alocasia', 'cactus', 'monstera', 'philodendron', 'syngonium'];
+const ProductIDArr = [
+    '10101',
+    '10102',
+    '10103',
+    '10201',
+    '10202',
+    '10203',
+    '10301',
+    '10302',
+    '10303',
+    '10401',
+    '10402',
+    '10403',
+    '10501',
+    '10502',
+    '10503',
+    '10601',
+    '10602',
+    '10603',
+    '10701',
+    '10702',
+    '10703',
+    '10801',
+    '10802',
+    '10803',
+    '10901',
+    '10902',
+    '10903',
+    '11001',
+    '11002',
+    '11003',
+];
 
 export class AppStore extends Store {
     private currentPage: PageName;
@@ -54,7 +87,7 @@ export class AppStore extends Store {
             (this.isAnonUser && pagesForAnonUser.includes(data.page)) ||
             (!this.isAnonUser && pagesForLoggedInUser.includes(data.page))
         ) {
-            if (data.resource && !this.hasResource(data.resource)) {
+            if (data.resource && !this.hasResource(data.page, data.resource)) {
                 this.currentPage = PageName.NOT_FOUND;
             } else {
                 this.currentPage = data.page;
@@ -70,9 +103,18 @@ export class AppStore extends Store {
         this.emit(StoreEventType.PAGE_CHANGE);
     }
 
-    private hasResource(resource: string): boolean {
-        if (!['10101', '10102'].includes(resource)) {
-            return false;
+    private hasResource(page: PageName, resource: string): boolean {
+        switch (page) {
+            case PageName.CATALOG:
+                if (!CategoriesArr.includes(resource)) {
+                    return false;
+                }
+                break;
+            case PageName.PRODUCT:
+                if (!ProductIDArr.includes(resource)) {
+                    return false;
+                }
+                break;
         }
         return true;
     }

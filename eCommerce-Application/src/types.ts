@@ -84,6 +84,32 @@ export type LinkProps = {
     text: string;
 };
 
+export type EcomProductData = {
+    name: { en: string };
+    categories: { id: string }[];
+    key: string;
+    masterVariant: {
+        prices: {
+            value: { centAmount: number };
+            discounted: {
+                value: { centAmount: number };
+            };
+        }[];
+        attributes: {
+            name: string;
+            value: {
+                key: string;
+                label: string;
+            };
+        }[];
+        images: {
+            url: string;
+        }[];
+    };
+    metaDescription: { en: string };
+    slug: { en: string };
+};
+
 export type ProductData = {
     id: string;
     name: string;
