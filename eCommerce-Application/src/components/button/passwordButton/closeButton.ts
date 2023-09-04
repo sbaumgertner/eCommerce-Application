@@ -9,14 +9,14 @@ export default class OpenPasswordButton extends IconButton {
         this.componentElem.style.display = 'none';
     }
 
-    public closePassword(button: HTMLElement): void {
+    public closePassword(button: HTMLElement, parentEl: HTMLElement): void {
         this.componentElem.addEventListener('click', (): void => {
-            if ((document.querySelector('[name="password"]') as HTMLInputElement).type === 'text') {
-                (document.querySelector('[name="password"]') as HTMLInputElement).type = 'password';
+            if ((parentEl.querySelector('[name="password"]') as HTMLInputElement).type === 'text') {
+                (parentEl.querySelector('[name="password"]') as HTMLInputElement).type = 'password';
                 this.componentElem.style.display = 'none';
                 button.style.display = 'block';
             } else {
-                (document.querySelector('[name="password"]') as HTMLInputElement).type = 'text';
+                (parentEl.querySelector('[name="password"]') as HTMLInputElement).type = 'text';
                 button.style.display = 'none';
             }
         });

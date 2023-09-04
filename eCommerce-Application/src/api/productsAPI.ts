@@ -56,7 +56,7 @@ export class ProductsApi {
     //     });
     //     return prices;
     // }
-
+  
     async getProductByKey(key: string): Promise<ProductData> {
         const data = await getApiRootForCredentialFlow()
             .products()
