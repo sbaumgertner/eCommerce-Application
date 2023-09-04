@@ -6,6 +6,11 @@
   overflow: hidden;
 }
 
+.slider {
+  display: flex;
+  flex-direction: column;
+}
+
 .slider__container {
   position: relative;
   display: flex;
@@ -14,18 +19,19 @@
 .slider__card {
   margin: 4px;
   width: 100%;
-  min-height: 602px;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-
-  @media (max-width: $max-tablet) {
-    min-height: 584px;
-  }
+  height: min(calc(100vh - 210px), calc(100vw / 2 + 1px));
 
   @media (max-width: $max-mobile) {
-    min-height: 344px;
+    height: min(calc(100vh - 140px), 100vw  + 1px);
   }
+}
+
+.modal .slider__card {
+  background-size: contain;
+  height: min(calc(100vh - 312px), 100vw  + 1px);
 }
 
 .slider__controls {
@@ -37,6 +43,10 @@
   @media (max-width: $max-mobile) {
     padding: 0;
   }
+}
+
+.modal .slider__controls {
+  height: 120px;
 }
 
 .slider__numbers {
@@ -60,6 +70,14 @@
   @media (max-width: $max-mobile) {
     gap: 8px;
     justify-content: space-around;
+  }
+}
+
+.modal .slider__numbers {
+  top: -40px;
+  @media (max-width: $max-tablet) {
+    justify-content: center;
+    top: -20px;
   }
 }
 
@@ -94,6 +112,14 @@
   }
   @media (max-width: $max-mobile) {
     justify-content: center;
+  }
+}
+
+.modal .slider__buttons {
+  top: 20px;
+  @media (max-width: $max-tablet) {
+    justify-content: center;
+    top: -20px;
   }
 }
 

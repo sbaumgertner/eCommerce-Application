@@ -9,6 +9,7 @@
   padding: 72px 32px;
   justify-content: center;
   gap: 32px;
+  min-height: calc(100vh - 384px);
 
   @media (max-width: $max-tablet) {
     padding: 32px 32px;

@@ -109,4 +109,19 @@ export class Slider extends Component {
         this.updateButtons();
         this.updateNumbers(prevNumber);
     }
+
+    public setToNumber(num: number): void {
+        const prev = this.currentNumber;
+        this.currentNumber = num;
+        this.sliderContainer.animate([{ transform: `translate(-${(this.currentNumber - 1) * (100 / this.count)}%)` }], {
+            duration: 1,
+            fill: 'forwards',
+        });
+        this.updateButtons();
+        this.updateNumbers(prev);
+    }
+
+    public getCurrentNumber(): number {
+        return this.currentNumber;
+    }
 }

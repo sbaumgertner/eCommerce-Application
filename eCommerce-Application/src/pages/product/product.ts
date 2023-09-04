@@ -6,12 +6,17 @@ import createElement from '../../utils/create-element';
 import { Page } from '../abstract/page';
 import { Button } from '../../components/button/button';
 import { Slider } from '../../components/slider/slider';
+import { Modal } from '../../components/modal/modal';
 
 export class ProductPage extends Page {
     private appStore: AppStore;
     private productStore: ProductStore;
     private data?: ProductData;
     private addButton?: Button;
+
+    private slider?: Slider;
+    private modalSlider?: Slider;
+    private modal?: Modal;
 
     constructor(appStore: AppStore) {
         super();
@@ -28,6 +33,8 @@ export class ProductPage extends Page {
         this.data = this.productStore.getProduct();
 
         this.html.append(this.createContent(), this.createSlider());
+        this.createModal();
+        this.addEventListeners();
     }
 
     private createContent(): HTMLElement {
@@ -114,8 +121,23 @@ export class ProductPage extends Page {
 
     private createSlider(): HTMLElement {
         const sliderWrap = createElement({ tag: 'div', classes: ['product-slider'] });
-        const slider = new Slider(this.data?.images as string[]);
-        sliderWrap.append(slider.getComponent());
+        this.slider = new Slider(this.data?.images as string[]);
+        sliderWrap.append(this.slider.getComponent());
         return sliderWrap;
+    }
+
+    private createModal(): void {
+        this.modalSlider = new Slider(this.data?.images as string[]);
+        this.modal = new Modal(this.modalSlider.getComponent());
+    }
+
+    private addEventListeners(): void {
+        this.slider
+            ?.getComponent()
+            .querySelector('.slider__wrapper')
+            ?.addEventListener('click', () => {
+                this.modalSlider?.setToNumber(this.slider?.getCurrentNumber() as number);
+                this.modal?.openModal();
+            });
     }
 }
