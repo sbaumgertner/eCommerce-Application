@@ -94,7 +94,7 @@
 
   &__list {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     margin-top: 16px;
     gap: 16px;
   }

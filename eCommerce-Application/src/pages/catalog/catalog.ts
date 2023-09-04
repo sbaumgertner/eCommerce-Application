@@ -41,7 +41,7 @@ type CatalogPageData = {
     currentCategories: string;
     currentPage: number;
     maxCardPerPage: number;
-    filters?: {
+    filters: {
         name: string;
         value: string[];
     }[];
@@ -69,6 +69,12 @@ export class CatalogPage extends Page {
                     : window.location.pathname.split('/')[2],
             currentPage: 1,
             maxCardPerPage: 12,
+            filters: [
+                {
+                    name: 'size',
+                    value: [],
+                },
+            ],
         };
         this.appStore.addChangeListener(StoreEventType.PAGE_CHANGE, this.onStoreChange.bind(this));
     }
@@ -110,6 +116,7 @@ export class CatalogPage extends Page {
     private createFilterReqest(): string[] {
         const filterReqest: string[] = [];
         try {
+            // Categories
             if (this.pageInfo.currentCategories && this.pageInfo.currentCategories !== 'all plants') {
                 filterReqest.push(
                     `categories.id:"${
@@ -121,7 +128,9 @@ export class CatalogPage extends Page {
             }
 
             // Plant Size
-            // filterReqest.push(`variants.attributes.agePlants.key:"seed", "mini"`);
+            if (this.pageInfo.filters[0].value.length !== 0) {
+                filterReqest.push(`variants.attributes.sizePlants.key:"${this.pageInfo.filters[0].value.join('","')}"`);
+            }
 
             // const arr = ['seed', 'adult'];
             // // Age of Plants
@@ -235,19 +244,21 @@ export class CatalogPage extends Page {
             const cheps = new Chips(element.value);
             const chepsEl = cheps.getComponent();
 
-            // if (name === this.pageInfo.currentCategories) {
-            //     cheps.setActive();
-            // }
-            // chepsEl.addEventListener('click', () => {
-            //     this.pageInfo.currentPage = 1;
-            //     if (this.pageInfo.currentCategories === name) {
-            //         this.pageInfo.currentCategories = 'all plants';
-            //         this.routeAction.changePage({ addHistory: true, page: PageName.CATALOG });
-            //     } else {
-            //         this.pageInfo.currentCategories = name;
-            //         this.routeAction.changePage({ addHistory: true, page: PageName.CATALOG, resource: name });
-            //     }
-            // });
+            if (this.pageInfo.filters[0].value.includes(element.key)) {
+                cheps.setActive();
+            }
+
+            chepsEl.addEventListener('click', () => {
+                const index = this.pageInfo.filters[0].value.indexOf(element.key);
+                if (index === -1) {
+                    this.pageInfo.filters[0].value.push(element.key);
+                } else {
+                    this.pageInfo.filters[0].value.splice(index, 1);
+                }
+
+                this.setProductsData();
+                this.createInner();
+            });
 
             listEl.append(chepsEl);
         });
