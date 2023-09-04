@@ -70,6 +70,7 @@
 .product-title__image {
   max-width: 192px;
   max-height: 220px;
+  background: url('../../assets/img/cat-blob.png') 50%/contain no-repeat;
   @media (max-width: $max-tablet) {
     max-width: 112px;
     max-height: 168px;
