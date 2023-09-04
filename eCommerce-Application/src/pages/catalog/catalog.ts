@@ -17,6 +17,7 @@ import { getProducts } from '../../api/products';
 import { ProductCard, productDataAdapter } from '../../components/product-card/product-card';
 import { AppStore } from '../../store/app-store';
 import { Pagination } from '../../components/pagination/pagination';
+import InputField from '../../components/input-field/input-field';
 
 const PLANT_SIZE_FILTERS = [
     {
@@ -50,33 +51,44 @@ const PLANT_AGE_FILTERS = [
         value: 'Adult',
     },
 ];
-const emptyFilters = [
+const SORT_VAR = [
     {
-        name: 'size',
-        value: [],
+        text: 'Default',
+        query: '',
     },
     {
-        name: 'age',
-        value: [],
+        text: 'Price (desc)',
+        query: 'price desc',
     },
     {
-        name: 'price',
-        value: [],
+        text: 'Price (asc)',
+        query: 'price asc',
     },
     {
-        name: 'sale',
-        value: false,
+        text: 'Name (zyx...)',
+        query: 'name.en desc',
+    },
+    {
+        text: 'Name (abc...)',
+        query: 'name.en asc',
     },
 ];
+const MIN_PRICE = 1;
+const MAX_PRICE = 37;
 
 type CatalogPageData = {
     currentCategories: string;
     currentPage: number;
     maxCardPerPage: number;
-    filters: {
-        name: string;
-        value: string[] | number[] | boolean;
-    }[];
+    sizeFilters: string[];
+    ageFilters: string[];
+    priceFilters: {
+        min: number;
+        max: number;
+    };
+    saleFilters: boolean;
+    searchText: string;
+    sortBy: string;
 };
 
 export class CatalogPage extends Page {
@@ -101,7 +113,15 @@ export class CatalogPage extends Page {
                     : window.location.pathname.split('/')[2],
             currentPage: 1,
             maxCardPerPage: 12,
-            filters: emptyFilters,
+            sizeFilters: [],
+            ageFilters: [],
+            priceFilters: {
+                min: MIN_PRICE,
+                max: MAX_PRICE,
+            },
+            saleFilters: false,
+            searchText: '',
+            sortBy: SORT_VAR[0].query,
         };
         this.appStore.addChangeListener(StoreEventType.PAGE_CHANGE, this.onStoreChange.bind(this));
     }
@@ -120,6 +140,9 @@ export class CatalogPage extends Page {
         const filter = this.createFilterReqest();
         const queryArgs = {
             filter,
+            'text.en': this.pageInfo.searchText,
+            fuzzy: true,
+            sort: [this.pageInfo.sortBy],
             limit: this.pageInfo.maxCardPerPage,
             offset: (this.pageInfo.currentPage - 1) * this.pageInfo.maxCardPerPage,
         };
@@ -142,8 +165,6 @@ export class CatalogPage extends Page {
 
     private createFilterReqest(): string[] {
         const filterReqest: string[] = [];
-        const plansSizeArr = this.pageInfo.filters[0].value;
-        const plansAgeArr = this.pageInfo.filters[1].value;
         try {
             // Categories
             if (this.pageInfo.currentCategories && this.pageInfo.currentCategories !== 'all plants') {
@@ -156,20 +177,23 @@ export class CatalogPage extends Page {
                 );
             }
             // Plant Size
-            if (Array.isArray(plansSizeArr) && plansSizeArr.length !== 0) {
-                filterReqest.push(`variants.attributes.sizePlants.key:"${plansSizeArr.join('","')}"`);
+            if (this.pageInfo.sizeFilters.length !== 0) {
+                filterReqest.push(`variants.attributes.sizePlants.key:"${this.pageInfo.sizeFilters.join('","')}"`);
             }
             // Plant Age
-            if (Array.isArray(plansAgeArr) && plansAgeArr.length !== 0) {
-                filterReqest.push(`variants.attributes.agePlants.key:"${plansAgeArr.join('","')}"`);
+            if (this.pageInfo.ageFilters.length !== 0) {
+                filterReqest.push(`variants.attributes.agePlants.key:"${this.pageInfo.ageFilters.join('","')}"`);
             }
             // Sale
-            if (this.pageInfo.filters[3].value) {
+            if (this.pageInfo.saleFilters) {
                 filterReqest.push(`variants.attributes.isOnSale: "true"`);
             }
-
             // Price
-            // filterReqest.push(`variants.price.centAmount:range (500 to 1500)`);
+            filterReqest.push(
+                `variants.price.centAmount:range (
+                ${this.pageInfo.priceFilters.min * 100} to 
+                ${this.pageInfo.priceFilters.max * 100})`
+            );
         } catch (err) {
             console.log('');
         }
@@ -258,9 +282,11 @@ export class CatalogPage extends Page {
 
         resetBtnEl.classList.add('negative');
         resetBtnEl.addEventListener('click', () => {
-            this.pageInfo.filters.forEach((param) => {
-                param.value = [];
-            });
+            this.pageInfo.sizeFilters = [];
+            this.pageInfo.ageFilters = [];
+            this.pageInfo.priceFilters.min = MIN_PRICE;
+            this.pageInfo.priceFilters.max = MAX_PRICE;
+            this.pageInfo.saleFilters = false;
             this.render();
         });
         return resetBtnEl;
@@ -270,7 +296,7 @@ export class CatalogPage extends Page {
         const innerEl = createElement({ tag: 'div', classes: ['catalog-filter__inner'] });
         const plantsSizeEl = this.createPlantsSizeFilter();
         const plantsAgeEl = this.createPlantsAgeFilter();
-        const priceEl = createElement({ tag: 'div', classes: ['catalog-filter__block'], text: 'PRICE' });
+        const priceEl = this.createPlantsPriceFilter();
         const saleEl = this.createPlantsSaleFilter();
         innerEl.append(plantsSizeEl, plantsAgeEl, priceEl, saleEl);
         return innerEl;
@@ -282,7 +308,7 @@ export class CatalogPage extends Page {
         const listEl = createElement({ tag: 'div', classes: ['catalog-filter__list'] });
 
         PLANT_SIZE_FILTERS.forEach((element) => {
-            const sizeArr = this.pageInfo.filters[0].value as string[];
+            const sizeArr = this.pageInfo.sizeFilters;
             const cheps = new Chips(element.value);
             const chepsEl = cheps.getComponent();
 
@@ -315,7 +341,7 @@ export class CatalogPage extends Page {
         const listEl = createElement({ tag: 'div', classes: ['catalog-filter__list'] });
 
         PLANT_AGE_FILTERS.forEach((element) => {
-            const ageArr = this.pageInfo.filters[1].value as string[];
+            const ageArr = this.pageInfo.ageFilters;
             const cheps = new Chips(element.value);
             const chepsEl = cheps.getComponent();
 
@@ -342,6 +368,70 @@ export class CatalogPage extends Page {
         return plantsAgeEl;
     }
 
+    private createPlantsPriceFilter(): HTMLElement {
+        const plantsPriceEl = createElement({ tag: 'div', classes: ['catalog-filter__block'] });
+        const titleEl = createElement({ tag: 'h5', classes: ['catalog-filter__title'], text: 'Price ($)' });
+        const listEl = createElement({ tag: 'div', classes: ['catalog-filter__list'] });
+
+        const fieldsWrapperEl = createElement({ tag: 'div', classes: ['catalog-filter__wrapper'] });
+        const minField = this.createMinPriceField();
+        const maxField = this.createMaxPriceField();
+
+        fieldsWrapperEl.append(minField, maxField);
+        listEl.append(fieldsWrapperEl);
+
+        plantsPriceEl.append(titleEl, listEl);
+        return plantsPriceEl;
+    }
+
+    private createMinPriceField(): HTMLElement {
+        const param = this.pageInfo.priceFilters;
+        const minField = new InputField('number', 'min', 'min', `${MIN_PRICE}`);
+        const minInput = minField.getComponent().querySelector('.input') as HTMLInputElement;
+        minField.setValue(`${param.min}`);
+
+        minInput.min = `${MIN_PRICE}`;
+        minInput.max = `${param.max}`;
+
+        minInput.addEventListener('change', () => {
+            if (+minInput.value >= param.max) {
+                minInput.value = `${param.max - 1}`;
+            }
+            if (+minInput.value < MIN_PRICE) {
+                minInput.value = `${MIN_PRICE}`;
+            }
+            param.min = +minInput.value;
+
+            this.setProductsData();
+            this.createInner();
+        });
+        return minField.getComponent();
+    }
+
+    private createMaxPriceField(): HTMLElement {
+        const param = this.pageInfo.priceFilters;
+        const maxField = new InputField('number', 'max', 'max', `${MAX_PRICE}`);
+        const maxInput = maxField.getComponent().querySelector('.input') as HTMLInputElement;
+        maxField.setValue(`${param.max}`);
+
+        maxInput.min = `${param.min}`;
+        maxInput.max = `${MAX_PRICE}`;
+
+        maxInput.addEventListener('change', () => {
+            if (+maxInput.value > MAX_PRICE) {
+                maxInput.value = `${MAX_PRICE}`;
+            }
+            if (+maxInput.value <= param.min) {
+                maxInput.value = `${param.min + 1}`;
+            }
+            param.max = +maxInput.value;
+
+            this.setProductsData();
+            this.createInner();
+        });
+        return maxField.getComponent();
+    }
+
     private createPlantsSaleFilter(): HTMLElement {
         const plantsSaleEl = createElement({ tag: 'div', classes: ['catalog-filter__block'] });
         const titleEl = createElement({ tag: 'h5', classes: ['catalog-filter__title'], text: 'Sale' });
@@ -349,12 +439,12 @@ export class CatalogPage extends Page {
         const cheps = new Chips('Discounted items');
         const chepsEl = cheps.getComponent();
 
-        if (this.pageInfo.filters[3].value) {
+        if (this.pageInfo.saleFilters) {
             cheps.setActive();
         }
 
         chepsEl.addEventListener('click', () => {
-            this.pageInfo.filters[3].value = !this.pageInfo.filters[3].value;
+            this.pageInfo.saleFilters = !this.pageInfo.saleFilters;
 
             this.setProductsData();
             this.createInner();

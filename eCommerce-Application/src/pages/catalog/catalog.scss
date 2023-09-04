@@ -99,6 +99,17 @@
     gap: 16px;
   }
 
+  &__wrapper {
+    display: flex;
+    // justify-content: stretch;
+    gap: 16px;
+    width: 100%;
+    & > * {
+      padding: 0;
+      width: calc(50% - 8px);
+    }
+  }
+
   @media (max-width: $max-mobile) {
     &__inner {
       display: none;
