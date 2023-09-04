@@ -1,0 +1,75 @@
+@import "../../styles/tokens.scss";
+
+.dimming-window {
+    position: relative;
+    width: 100%;
+    min-height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    overflow: hidden;
+    position: fixed;
+    top: 0px;
+    border-radius: 0;
+}
+
+.popup {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 640px;
+    padding: 32px;
+    background-color: $color-neutral-100;
+    border-radius: 32px;
+    box-shadow: 0px 0px 10px #000;
+    margin: 100px auto;
+    max-height: 80vh;
+    overflow-y: scroll;
+    @media (max-width: $max-mobile) {
+        width: 328px;
+    }
+
+    &::-webkit-scrollbar {
+        width: 0;
+    }
+
+    >* {
+        margin-bottom: 32px;
+    }
+
+    &__close {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        width: 24px;
+        height: 24px;
+        opacity: 0.2;
+        cursor: pointer;
+      transition: opacity ease 0.5s;
+    
+        &:hover {
+            opacity: 1;
+        }
+    }
+    
+    &__close::before,
+    &__close::after {
+        content: '';
+        position: absolute;
+        top: 10px;
+        display: block;
+        width: 24px;
+        height: 2px;
+        background: #000;
+    }
+    
+    &__close::before {
+        transform: rotate(45deg);
+    }
+    
+    &__close::after {
+        transform: rotate(-45deg);
+    }
+
+    &__save {
+        width: 100%;
+    }
+}

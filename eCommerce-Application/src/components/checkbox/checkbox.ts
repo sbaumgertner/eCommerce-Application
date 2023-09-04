@@ -29,4 +29,8 @@ export class Checkbox extends Component {
     public setChecked(): void {
         this.checkbox.classList.add('checkbox_checked');
     }
+
+    public setUnchecked(): void {
+        this.checkbox.classList.remove('checkbox_checked');
+    }
 }

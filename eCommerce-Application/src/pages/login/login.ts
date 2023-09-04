@@ -34,7 +34,7 @@ export class LoginPage extends Page {
         this.loginStore = new LoginStore();
         this.apiError = createElement({ tag: 'div', classes: ['api-error'] });
         this.loginStore.addChangeListener(StoreEventType.LOGIN_ERROR, this.onStoreChange.bind(this));
-        this.createPasswordButton();
+        this.createPasswordButton(this.passwordField.getComponent());
     }
 
     public render(): void {
@@ -55,12 +55,12 @@ export class LoginPage extends Page {
         return div;
     }
 
-    private createPasswordButton(): void {
+    private createPasswordButton(parentEl: HTMLElement): void {
         const closeButton = new ClosePasswordButton();
         const openButton = new OpenPasswordButton();
         this.passwordField.getComponent().append(closeButton.getComponent(), openButton.getComponent());
-        closeButton.openPassword(openButton.getComponent());
-        openButton.closePassword(closeButton.getComponent());
+        closeButton.openPassword(openButton.getComponent(), parentEl);
+        openButton.closePassword(closeButton.getComponent(), parentEl);
     }
 
     public addEventListeners(): void {
