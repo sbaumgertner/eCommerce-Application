@@ -36,9 +36,27 @@ const PLANT_SIZE_FILTERS = [
         value: 'Large (8” - 10” Pot)',
     },
 ];
+const PLANT_AGE_FILTERS = [
+    {
+        key: 'seed',
+        value: 'Seed',
+    },
+    {
+        key: 'baby',
+        value: 'Baby',
+    },
+    {
+        key: 'adult',
+        value: 'Adult',
+    },
+];
 const emptyFilters = [
     {
         name: 'size',
+        value: [],
+    },
+    {
+        name: 'age',
         value: [],
     },
 ];
@@ -133,9 +151,10 @@ export class CatalogPage extends Page {
                 filterReqest.push(`variants.attributes.sizePlants.key:"${this.pageInfo.filters[0].value.join('","')}"`);
             }
 
-            // const arr = ['seed', 'adult'];
-            // // Age of Plants
-            // filterReqest.push(`variants.attributes.agePlants.key:"${arr.join('","')}"`);
+            // Plant Age
+            if (this.pageInfo.filters[1].value.length !== 0) {
+                filterReqest.push(`variants.attributes.agePlants.key:"${this.pageInfo.filters[1].value.join('","')}"`);
+            }
 
             // Price
             // filterReqest.push(`variants.price.centAmount:range (500 to 1500)`);
@@ -241,7 +260,7 @@ export class CatalogPage extends Page {
     private createFilterInner(): HTMLElement {
         const innerEl = createElement({ tag: 'div', classes: ['catalog-filter__inner'] });
         const plantsSizeEl = this.createPlantsSizeFilter();
-        const plantsAgeEl = createElement({ tag: 'div', classes: ['catalog-filter__block'], text: 'plantsAge' });
+        const plantsAgeEl = this.createPlantsAgeFilter();
         const priceEl = createElement({ tag: 'div', classes: ['catalog-filter__block'], text: 'PRICE' });
         const saleEl = createElement({ tag: 'div', classes: ['catalog-filter__block'], text: 'SALE' });
         innerEl.append(plantsSizeEl, plantsAgeEl, priceEl, saleEl);
@@ -278,6 +297,38 @@ export class CatalogPage extends Page {
 
         plantsSizeEl.append(titleEl, listEl);
         return plantsSizeEl;
+    }
+
+    private createPlantsAgeFilter(): HTMLElement {
+        const plantsAgeEl = createElement({ tag: 'div', classes: ['catalog-filter__block'] });
+        const titleEl = createElement({ tag: 'h5', classes: ['catalog-filter__title'], text: 'Age of Plants' });
+        const listEl = createElement({ tag: 'div', classes: ['catalog-filter__list'] });
+
+        PLANT_AGE_FILTERS.forEach((element) => {
+            const cheps = new Chips(element.value);
+            const chepsEl = cheps.getComponent();
+
+            if (this.pageInfo.filters[1].value.includes(element.key)) {
+                cheps.setActive();
+            }
+
+            chepsEl.addEventListener('click', () => {
+                const index = this.pageInfo.filters[1].value.indexOf(element.key);
+                if (index === -1) {
+                    this.pageInfo.filters[1].value.push(element.key);
+                } else {
+                    this.pageInfo.filters[1].value.splice(index, 1);
+                }
+
+                this.setProductsData();
+                this.createInner();
+            });
+
+            listEl.append(chepsEl);
+        });
+
+        plantsAgeEl.append(titleEl, listEl);
+        return plantsAgeEl;
     }
 
     private createInner(): HTMLElement {
