@@ -36,6 +36,12 @@ const PLANT_SIZE_FILTERS = [
         value: 'Large (8” - 10” Pot)',
     },
 ];
+const emptyFilters = [
+    {
+        name: 'size',
+        value: [],
+    },
+];
 
 type CatalogPageData = {
     currentCategories: string;
@@ -69,12 +75,7 @@ export class CatalogPage extends Page {
                     : window.location.pathname.split('/')[2],
             currentPage: 1,
             maxCardPerPage: 12,
-            filters: [
-                {
-                    name: 'size',
-                    value: [],
-                },
-            ],
+            filters: emptyFilters,
         };
         this.appStore.addChangeListener(StoreEventType.PAGE_CHANGE, this.onStoreChange.bind(this));
     }
@@ -217,12 +218,24 @@ export class CatalogPage extends Page {
     private createFilter(): HTMLElement {
         const filtertEl = createElement({ tag: 'div', classes: ['catalog-filter'] });
         const innerEl = this.createFilterInner();
-        const resetBtnEl = new IconButton({ icon: resetIcon, type: 'clear' }).getComponent();
+        const resetBtnEl = this.createResetFilterBtn();
         const headerEl = this.createBlockHeader('Filters', innerEl, resetBtnEl);
 
-        resetBtnEl.classList.add('negative');
         filtertEl.append(headerEl, innerEl);
         return filtertEl;
+    }
+
+    private createResetFilterBtn(): HTMLElement {
+        const resetBtnEl = new IconButton({ icon: resetIcon, type: 'clear' }).getComponent();
+
+        resetBtnEl.classList.add('negative');
+        resetBtnEl.addEventListener('click', () => {
+            this.pageInfo.filters.forEach((param) => {
+                param.value = [];
+            });
+            this.render();
+        });
+        return resetBtnEl;
     }
 
     private createFilterInner(): HTMLElement {
