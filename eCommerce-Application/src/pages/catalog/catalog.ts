@@ -14,7 +14,7 @@ export class CatalogPage extends Page {
     public render(): void {
         this.html = document.createElement('div');
         this.html.className = 'account-page';
-        this.html.append(this.createProduct('1'), this.createProduct('2'));
+        this.html.append(this.createProduct('10101'), this.createProduct('10102'));
     }
 
     private createProduct(id: string): HTMLElement {

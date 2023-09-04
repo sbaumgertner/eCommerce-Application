@@ -7,6 +7,7 @@ const pagesForLoggedInUser: PageName[] = [
     PageName.ABOUT_US,
     PageName.ACCOUNT,
     PageName.CART,
+    PageName.PRODUCT,
     PageName.CATALOG,
     PageName.INDEX,
     PageName.NOT_FOUND,
@@ -70,7 +71,7 @@ export class AppStore extends Store {
     }
 
     private hasResource(resource: string): boolean {
-        if (!['1', '2'].includes(resource)) {
+        if (!['10101', '10102'].includes(resource)) {
             return false;
         }
         return true;

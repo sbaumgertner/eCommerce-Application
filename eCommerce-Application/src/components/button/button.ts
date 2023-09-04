@@ -53,4 +53,16 @@ export class IconButton extends Component {
         super(componentParams);
         this.componentElem.append(htmlToElement(`<div class="button__icon">${icon}</div>`));
     }
+
+    public getComponent(): HTMLButtonElement {
+        return this.componentElem as HTMLButtonElement;
+    }
+
+    public disable(): void {
+        this.getComponent().disabled = true;
+    }
+
+    public enable(): void {
+        this.getComponent().disabled = false;
+    }
 }

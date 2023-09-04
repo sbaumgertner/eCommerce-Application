@@ -76,3 +76,15 @@ export type LinkProps = {
     page: PageName;
     text: string;
 };
+
+export type ProductData = {
+    id: string;
+    name: string;
+    category: string;
+    description: string;
+    price: number;
+    discountPrice?: number;
+    images: string[];
+    size: string;
+    age: string;
+};
