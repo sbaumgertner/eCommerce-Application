@@ -21,6 +21,7 @@ import { addRemoveClasslist } from '../../utils/add-remove-classlist';
 import { AddressFields } from '../../components/address-fields/address-fields';
 import { Checkbox } from '../../components/checkbox/checkbox';
 import { ClientResponse, Customer } from '@commercetools/platform-sdk';
+import { Scroll } from '../../utils/scroll';
 
 export class AccountPage extends Page {
     private appStore: AppStore;
@@ -50,6 +51,7 @@ export class AccountPage extends Page {
     private buttonEditAddress: Button;
     private editEmailButton: IconButton;
     private apiError: HTMLElement;
+    private scroll: Scroll;
     //private adresses;
 
     constructor(appStore: AppStore) {
@@ -100,6 +102,7 @@ export class AccountPage extends Page {
             this.billingDefaultCheckbox.getComponent().classList.toggle('disabled');
             this.billingDefaultCheckbox.setUnchecked();
         });
+        this.scroll = new Scroll();
     }
 
     public render(): void {
@@ -133,14 +136,14 @@ export class AccountPage extends Page {
         const sectionHead = createElement({ tag: 'div', classes: ['section-email__head'] });
         const title = createElement({ tag: 'div', classes: ['head-title'] });
         this.accountStore.getFullCustomerName(title);
-        sectionHead.append(title, this.buttonEditPassword.getComponent());
+        sectionHead.append(title);
 
         const sectionInfo = createElement({ tag: 'div', classes: ['section-email__info'] });
         this.accountStore.getEmailInfo(this.emailInfo);
 
         sectionInfo.append(this.emailInfo, this.editEmailButton.getComponent());
 
-        section.append(sectionHead, sectionInfo);
+        section.append(sectionHead, sectionInfo, this.buttonEditPassword.getComponent());
 
         return section;
     }
@@ -173,11 +176,12 @@ export class AccountPage extends Page {
         const sectionHead = createElement({ tag: 'div', classes: ['section-info__head'] });
         const title = createElement({ tag: 'div', classes: ['head-title'] });
         title.textContent = 'Common information';
-        const button = new Button('bordered', 'button-edit', 'Edit');
+        const button = new Button('bordered', 'button-edit-info', 'Edit');
         button.getComponent().addEventListener('click', () => {
             this.html?.append(this.getFullNamePopUp());
+            this.scroll.removeScroll();
         });
-        sectionHead.append(title, button.getComponent());
+        sectionHead.append(title);
 
         const sectionInfo = createElement({ tag: 'div', classes: ['section-info__content'] });
         const firstNameLabel = createElement({ tag: 'div', classes: ['label'] });
@@ -201,7 +205,7 @@ export class AccountPage extends Page {
             this.birthDate
         );
 
-        section.append(sectionHead, sectionInfo);
+        section.append(sectionHead, button.getComponent(), sectionInfo);
 
         return section;
     }
@@ -232,7 +236,6 @@ export class AccountPage extends Page {
         const sectionHead = createElement({ tag: 'div', classes: ['section-address__head'] });
         const title = createElement({ tag: 'div', classes: ['head-title'] });
         title.textContent = 'Addresses';
-        //const button = new Button('bordered', 'button-set-default', 'Set default');
         sectionHead.append(title);
 
         const sectionInfo = createElement({ tag: 'div', classes: ['section-address__content'] });
@@ -413,6 +416,7 @@ export class AccountPage extends Page {
         button.onclick = (): void => {
             localStorage.setItem('buttonId', button.id);
             this.html?.append(this.createEditAddressPopUp());
+            this.scroll.removeScroll();
             document.querySelectorAll('.checkbox-wrapper')[0].textContent = '';
             this.accountStore.getCustomerInfo().then((data) => {
                 data.body.addresses.forEach((address) => {
@@ -458,15 +462,18 @@ export class AccountPage extends Page {
     public addEventListeners(): void {
         this.buttonEditPassword.getComponent().addEventListener('click', () => {
             this.html?.append(this.getEditPasswordPopUp());
+            this.scroll.removeScroll();
         });
 
         this.editEmailButton.getComponent().addEventListener('click', () => {
             this.html?.append(this.getEmailPopUp());
+            this.scroll.removeScroll();
         });
 
         this.buttonAddress.getComponent().addEventListener('click', () => {
             this.html?.append(this.createNewAddressPopUp());
             document.querySelectorAll('.checkbox-wrapper')[0].textContent = '';
+            this.scroll.removeScroll();
         });
 
         this.buttonSavePassword.getComponent().addEventListener('click', () => {

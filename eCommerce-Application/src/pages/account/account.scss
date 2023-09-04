@@ -3,7 +3,6 @@
 .account-page {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     background: url("../../assets/img/image-01.jpg") no-repeat;
     background-size: cover;
@@ -13,7 +12,7 @@
     min-height: calc(100vh - 80px);
     @media (max-width: $max-tablet) {
         padding: 32px;
-      }
+    }
     @media (max-width: $max-mobile) {
       padding: 16px;
     }
@@ -25,10 +24,15 @@
         padding: 32px;
         border-radius: 32px;
         background-color: $color-neutral-100;
+        @media (max-width: $max-mobile) {
+            width: 328px;
+            padding: 24px;
+          }
     }
 }
 
 .section-email {
+    position: relative;
     &__head {
         display: flex;
         flex-direction: row;
@@ -46,9 +50,21 @@
         @include font-h3;
         color: $color-neutral-30;
     }
+
+    #button-edit {
+        position: absolute;
+        right: 0;
+        top: 0;
+        @media (max-width: $max-mobile) {
+            position: relative;
+            width: 100%;
+            margin-top: 16px;
+        }
+    }
 }
 
 .section-info {
+    position: relative;
     &__head {
         display: flex;
         flex-direction: row;
@@ -79,6 +95,17 @@
         color: $color-neutral-10;
         @include font-text;
         margin-bottom: 16px;
+    }
+
+    #button-edit-info {
+        position: absolute;
+        right: 0;
+        top: 0;
+        @media (max-width: $max-mobile) {
+            position: relative;
+            width: 100%;
+            margin-bottom: 32px;
+        }
     }
 }
 
@@ -112,10 +139,16 @@
         border-bottom: 1px solid $color-neutral-90;
         align-items: center;
         height: 75px;
+        @media (max-width: $max-mobile) {
+            height: 95px;
+        }
     }
 
     .address-info {
         margin-left: 8px;
+        @media (max-width: $max-mobile) {
+            width: 75%;
+        }
     }
 
     #new-address-button {
@@ -145,12 +178,20 @@
     position: absolute;
     right: 20px;
     top: 8px;
+    @media (max-width: $max-mobile) {
+        right: 0;
+        top: 0;
+    }
 }
 
 .edit-address-button {
     position: absolute;
     right: 60px;
     top: 10px;
+    @media (max-width: $max-mobile) {
+        right: 33px;
+        top: 0;
+    }
 }
 
 .checkboxes {

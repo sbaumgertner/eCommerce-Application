@@ -23,6 +23,9 @@
     margin: 100px auto;
     max-height: 80vh;
     overflow-y: scroll;
+    @media (max-width: $max-mobile) {
+        width: 328px;
+    }
 
     &::-webkit-scrollbar {
         width: 0;

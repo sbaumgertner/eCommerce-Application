@@ -2,12 +2,13 @@ import './popUp.scss';
 
 import createElement from '../../utils/create-element';
 import Component from '../abstract/component';
-//import { Button } from '../button/button';
+import { Scroll } from '../../utils/scroll';
 
 export default class PopUp extends Component {
+    private scroll: Scroll;
     constructor(title: string, content: HTMLElement, errorMessage: HTMLElement, button: HTMLButtonElement) {
         super({ tag: 'div', classes: ['dimming-window'] });
-
+        this.scroll = new Scroll();
         this.componentElem.append(this.createPopUp(title, content, errorMessage, button));
     }
 
@@ -22,14 +23,13 @@ export default class PopUp extends Component {
         const closeButton = createElement({ tag: 'div', classes: ['popup__close'] });
         this.closePopUp(closeButton);
         popUp.append(popUpTitle, closeButton, content, errorMessage, button);
-        //(document.body.parentNode as HTMLElement).style.overflow = 'hidden';
         return popUp;
     }
 
     private closePopUp(button: HTMLElement): void {
         button.addEventListener('click', () => {
             this.componentElem.remove();
-            //(document.body.parentNode as HTMLElement).style.overflow = 'visible';
+            this.scroll.addScroll();
         });
     }
 }
