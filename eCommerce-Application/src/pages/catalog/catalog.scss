@@ -3,8 +3,23 @@
 .search-bar {
   background: $color-neutral-98;
   &__wrapper {
+    position: relative;
+    display: flex;
     padding-top: 32px;
     padding-bottom: 8px;
+  }
+  &__input {
+    flex-grow: 1;
+    height: 40px;
+  }
+  & .button {
+    position: absolute;
+    right: 32px;
+    padding: 0 4px;
+    height: 40px;
+    @media (max-width: $max-mobile) {
+      right: 16px;
+    }
   }
 }
 

@@ -19,6 +19,9 @@ import { AppStore } from '../../store/app-store';
 import { Pagination } from '../../components/pagination/pagination';
 import InputField from '../../components/input-field/input-field';
 
+import searchIcon from '../../assets/icons/icon-search.svg';
+import Input from '../../components/input/input';
+
 const PLANT_SIZE_FILTERS = [
     {
         key: 'mini',
@@ -217,9 +220,33 @@ export class CatalogPage extends Page {
     private createSearchBar(): HTMLElement {
         const searchBarEl = createElement({ tag: 'section', classes: ['search-bar'] });
         const wrapperEl = createElement({ tag: 'div', classes: ['wrapper', 'search-bar__wrapper'] });
-        const searchFieldEl = createElement({ tag: 'div', classes: ['search-bar__input'], text: 'SEARCH_FIELD' });
+        const searchField = new Input({
+            classes: ['input', 'search-bar__input'],
+            type: 'text',
+            name: 'search',
+            placeholder: 'Type plant name',
+        });
+        const searchBtnEl = new IconButton({
+            icon: searchIcon,
+            type: 'clear',
+        }).getComponent();
 
-        wrapperEl.append(searchFieldEl);
+        searchField.setValue(this.pageInfo.searchText);
+        searchBtnEl.addEventListener('click', () => {
+            this.pageInfo.searchText = searchField.getValue();
+            this.setProductsData();
+            this.createInner();
+        });
+
+        searchField.getComponent().addEventListener('keyup', (e) => {
+            if (e.keyCode === 13) {
+                this.pageInfo.searchText = searchField.getValue();
+                this.setProductsData();
+                this.createInner();
+            }
+        });
+
+        wrapperEl.append(searchField.getComponent(), searchBtnEl);
         searchBarEl.append(wrapperEl);
         return searchBarEl;
     }
