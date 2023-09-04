@@ -82,13 +82,30 @@
   background: $color-neutral-90;
 
   &__inner {
-    display: none;
-    &.visible {
-      display: initial;
-    }
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__block {
+    display: flex;
+    flex-direction: column;
+    margin: 24px 0;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    margin-top: 16px;
+    gap: 16px;
   }
 
   @media (max-width: $max-mobile) {
+    &__inner {
+      display: none;
+      &.visible {
+        display: flex;
+      }
+    }
     width: calc(100% + 32px);
     margin: -32px -16px 0;
     border-radius: 0;

@@ -19,6 +19,7 @@ type ProductCardData = {
 export class ProductCard extends Component {
     constructor(productData: ProductCardData) {
         super({ tag: 'a', classes: ['product-card'] });
+        this.componentElem.setAttribute('target', '_blank');
         this.componentElem.setAttribute('href', productData.url);
         this.render(productData);
     }
@@ -118,7 +119,7 @@ export function productDataAdapter(product: EcomProductData, categoriesData: any
         const age = ageData ? ageData.value.label : '';
         const imgURL = product.masterVariant.images[0].url;
         const description = product.metaDescription.en;
-        const url = `/product/${product.slug.en}`;
+        const url = `/product/${product.key}`;
 
         return {
             name,

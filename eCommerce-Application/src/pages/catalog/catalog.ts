@@ -18,14 +18,40 @@ import { ProductCard, productDataAdapter } from '../../components/product-card/p
 import { AppStore } from '../../store/app-store';
 import { Pagination } from '../../components/pagination/pagination';
 
+const PLANT_SIZE_FILTERS = [
+    {
+        key: 'mini',
+        value: 'Mini (2” - 3” Pot)',
+    },
+    {
+        key: 'small',
+        value: 'Small (4” Pot)',
+    },
+    {
+        key: 'medium',
+        value: 'Medium (6” Pot)',
+    },
+    {
+        key: 'large',
+        value: 'Large (8” - 10” Pot)',
+    },
+];
+
+type CatalogPageData = {
+    currentCategories: string;
+    currentPage: number;
+    maxCardPerPage: number;
+    filters?: {
+        name: string;
+        value: string[];
+    }[];
+};
+
 export class CatalogPage extends Page {
     private routeAction: RouteAction;
     private categoriesBarEl = createElement({ tag: 'section', classes: ['categories-bar'] });
     private innerEl = createElement({ tag: 'div', classes: ['catalog-inner'] });
-    private currentCategories =
-        window.location.pathname.split('/').length === 2 ? 'all plants' : window.location.pathname.split('/')[2];
-    private currentPage = 1;
-    private maxCardPerPage = 12;
+    private pageInfo: CatalogPageData;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private categoriesData: any = [];
@@ -36,22 +62,36 @@ export class CatalogPage extends Page {
         super();
         this.html = document.createElement('div');
         this.routeAction = new RouteAction();
+        this.pageInfo = {
+            currentCategories:
+                window.location.pathname.split('/').length === 2
+                    ? 'all plants'
+                    : window.location.pathname.split('/')[2],
+            currentPage: 1,
+            maxCardPerPage: 12,
+        };
         this.appStore.addChangeListener(StoreEventType.PAGE_CHANGE, this.onStoreChange.bind(this));
     }
 
     private async setCategoriesData(): Promise<unknown> {
+        this.categoriesData = undefined;
+        this.productsData = undefined;
+        this.totalProducts = 0;
         const data = (await getCategories()).results;
         this.categoriesData = data;
-        this.createCategoriesBar();
         this.setProductsData();
+        this.createCategoriesBar();
         return data;
     }
     private async setProductsData(): Promise<unknown> {
         const filter = this.createFilterReqest();
-        const queryArgs =
-            filter === ''
-                ? { limit: this.maxCardPerPage, offset: (this.currentPage - 1) * this.maxCardPerPage }
-                : { filter, limit: this.maxCardPerPage, offset: (this.currentPage - 1) * this.maxCardPerPage };
+        const queryArgs = {
+            filter,
+            limit: this.pageInfo.maxCardPerPage,
+            offset: (this.pageInfo.currentPage - 1) * this.pageInfo.maxCardPerPage,
+        };
+        this.productsData = undefined;
+        this.totalProducts = 0;
         const data = await getProducts({ queryArgs });
         this.totalProducts = data.total || 0;
         this.productsData = data.results as unknown as EcomProductData[];
@@ -62,26 +102,36 @@ export class CatalogPage extends Page {
     public render(): void {
         if (this.html) {
             this.html.innerHTML = '';
-            this.categoriesData = undefined;
-            this.productsData = undefined;
-            this.totalProducts = 0;
             this.setCategoriesData();
             this.html.append(this.createSearchBar(), this.createCategoriesBar(), this.createMainContent());
         }
     }
 
-    private createFilterReqest(): string {
-        let filterReqest = '';
+    private createFilterReqest(): string[] {
+        const filterReqest: string[] = [];
         try {
-            if (this.currentCategories && this.currentCategories !== 'all plants') {
-                filterReqest = filterReqest.concat(
+            if (this.pageInfo.currentCategories && this.pageInfo.currentCategories !== 'all plants') {
+                filterReqest.push(
                     `categories.id:"${
                         this.categoriesData.find(
-                            (cat: { slug: { en: string } }) => cat.slug.en === this.currentCategories
+                            (cat: { slug: { en: string } }) => cat.slug.en === this.pageInfo.currentCategories
                         ).id
                     }"`
                 );
             }
+
+            // Plant Size
+            // filterReqest.push(`variants.attributes.agePlants.key:"seed", "mini"`);
+
+            // const arr = ['seed', 'adult'];
+            // // Age of Plants
+            // filterReqest.push(`variants.attributes.agePlants.key:"${arr.join('","')}"`);
+
+            // Price
+            // filterReqest.push(`variants.price.centAmount:range (500 to 1500)`);
+
+            // Sale
+            // filterReqest.push(`variants.attributes.isOnSale: "true"`);
         } catch (err) {
             console.log('');
         }
@@ -126,16 +176,16 @@ export class CatalogPage extends Page {
             );
             const chepsEl = cheps.getComponent();
 
-            if (name === this.currentCategories) {
+            if (name === this.pageInfo.currentCategories) {
                 cheps.setActive();
             }
             chepsEl.addEventListener('click', () => {
-                this.currentPage = 1;
-                if (this.currentCategories === name) {
-                    this.currentCategories = 'all plants';
+                this.pageInfo.currentPage = 1;
+                if (this.pageInfo.currentCategories === name) {
+                    this.pageInfo.currentCategories = 'all plants';
                     this.routeAction.changePage({ addHistory: true, page: PageName.CATALOG });
                 } else {
-                    this.currentCategories = name;
+                    this.pageInfo.currentCategories = name;
                     this.routeAction.changePage({ addHistory: true, page: PageName.CATALOG, resource: name });
                 }
             });
@@ -157,13 +207,53 @@ export class CatalogPage extends Page {
 
     private createFilter(): HTMLElement {
         const filtertEl = createElement({ tag: 'div', classes: ['catalog-filter'] });
-        const innerEl = createElement({ tag: 'div', classes: ['catalog-filter__inner'], text: 'FILTERS' });
+        const innerEl = this.createFilterInner();
         const resetBtnEl = new IconButton({ icon: resetIcon, type: 'clear' }).getComponent();
         const headerEl = this.createBlockHeader('Filters', innerEl, resetBtnEl);
 
         resetBtnEl.classList.add('negative');
         filtertEl.append(headerEl, innerEl);
         return filtertEl;
+    }
+
+    private createFilterInner(): HTMLElement {
+        const innerEl = createElement({ tag: 'div', classes: ['catalog-filter__inner'] });
+        const plantsSizeEl = this.createPlantsSizeFilter();
+        const plantsAgeEl = createElement({ tag: 'div', classes: ['catalog-filter__block'], text: 'plantsAge' });
+        const priceEl = createElement({ tag: 'div', classes: ['catalog-filter__block'], text: 'PRICE' });
+        const saleEl = createElement({ tag: 'div', classes: ['catalog-filter__block'], text: 'SALE' });
+        innerEl.append(plantsSizeEl, plantsAgeEl, priceEl, saleEl);
+        return innerEl;
+    }
+
+    private createPlantsSizeFilter(): HTMLElement {
+        const plantsSizeEl = createElement({ tag: 'div', classes: ['catalog-filter__block'] });
+        const titleEl = createElement({ tag: 'h5', classes: ['catalog-filter__title'], text: 'Plant Size' });
+        const listEl = createElement({ tag: 'div', classes: ['catalog-filter__list'] });
+
+        PLANT_SIZE_FILTERS.forEach((element) => {
+            const cheps = new Chips(element.value);
+            const chepsEl = cheps.getComponent();
+
+            // if (name === this.pageInfo.currentCategories) {
+            //     cheps.setActive();
+            // }
+            // chepsEl.addEventListener('click', () => {
+            //     this.pageInfo.currentPage = 1;
+            //     if (this.pageInfo.currentCategories === name) {
+            //         this.pageInfo.currentCategories = 'all plants';
+            //         this.routeAction.changePage({ addHistory: true, page: PageName.CATALOG });
+            //     } else {
+            //         this.pageInfo.currentCategories = name;
+            //         this.routeAction.changePage({ addHistory: true, page: PageName.CATALOG, resource: name });
+            //     }
+            // });
+
+            listEl.append(chepsEl);
+        });
+
+        plantsSizeEl.append(titleEl, listEl);
+        return plantsSizeEl;
     }
 
     private createInner(): HTMLElement {
@@ -195,24 +285,28 @@ export class CatalogPage extends Page {
     }
 
     private createPagination(): HTMLElement {
-        const currentPage = this.currentPage;
-        const maxPage = Math.ceil(this.totalProducts / this.maxCardPerPage);
+        const currentPage = this.pageInfo.currentPage;
+        const maxPage = Math.ceil(this.totalProducts / this.pageInfo.maxCardPerPage);
         const paginationEl = new Pagination(currentPage, maxPage);
         paginationEl.setFirstPageHandler(() => {
-            this.currentPage = 1;
-            this.render();
+            this.pageInfo.currentPage = 1;
+            this.setProductsData();
+            this.createInner();
         });
         paginationEl.setPrevPageHandler(() => {
-            this.currentPage -= 1;
-            this.render();
+            this.pageInfo.currentPage -= 1;
+            this.setProductsData();
+            this.createInner();
         });
         paginationEl.setNextPageHandler(() => {
-            this.currentPage += 1;
-            this.render();
+            this.pageInfo.currentPage += 1;
+            this.setProductsData();
+            this.createInner();
         });
         paginationEl.setLastPageHandler(() => {
-            this.currentPage = maxPage;
-            this.render();
+            this.pageInfo.currentPage = maxPage;
+            this.setProductsData();
+            this.createInner();
         });
 
         return paginationEl.getComponent();
@@ -225,7 +319,7 @@ export class CatalogPage extends Page {
         const titleEl = createElement({
             tag: 'h3',
             classes: ['catalog-header__title'],
-            text: `${this.currentCategories[0].toUpperCase() + this.currentCategories.slice(1)} (${
+            text: `${this.pageInfo.currentCategories[0].toUpperCase() + this.pageInfo.currentCategories.slice(1)} (${
                 this.totalProducts
             })`,
         });
@@ -256,7 +350,7 @@ export class CatalogPage extends Page {
     }
 
     protected onStoreChange(): void {
-        this.currentCategories =
+        this.pageInfo.currentCategories =
             window.location.pathname.split('/').length === 2 ? 'all plants' : window.location.pathname.split('/')[2];
         this.render();
     }

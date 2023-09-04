@@ -80,6 +80,7 @@ export type LinkProps = {
 export type EcomProductData = {
     name: { en: string };
     categories: { id: string }[];
+    key: string;
     masterVariant: {
         prices: {
             value: { centAmount: number };
