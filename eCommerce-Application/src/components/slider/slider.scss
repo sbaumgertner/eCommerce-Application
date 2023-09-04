@@ -1,0 +1,134 @@
+@import "../../styles/tokens.scss";
+
+.slider__wrapper {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.slider {
+  display: flex;
+  flex-direction: column;
+}
+
+.slider__container {
+  position: relative;
+  display: flex;
+}
+
+.slider__card {
+  margin: 4px;
+  width: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: min(calc(100vh - 210px), calc(100vw / 2 + 1px));
+
+  @media (max-width: $max-mobile) {
+    height: min(calc(100vh - 140px), 100vw  + 1px);
+  }
+}
+
+.modal .slider__card {
+  background-size: contain;
+  height: min(calc(100vh - 312px), 100vw  + 1px);
+}
+
+.slider__controls {
+  position: relative;
+
+  @media (max-width: $max-tablet) {
+    padding: 0 16px;
+  }
+  @media (max-width: $max-mobile) {
+    padding: 0;
+  }
+}
+
+.modal .slider__controls {
+  height: 120px;
+}
+
+.slider__numbers {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  align-items: end;
+  position: absolute;
+  width: 100%;
+  height: 120px;
+  top: -70px;
+
+  @media (max-width: $max-tablet) {
+    gap: 16px;
+    justify-content: end;
+    position: relative;
+    height: 70px;
+    top: -35px;
+  }
+
+  @media (max-width: $max-mobile) {
+    gap: 8px;
+    justify-content: space-around;
+  }
+}
+
+.modal .slider__numbers {
+  top: -40px;
+  @media (max-width: $max-tablet) {
+    justify-content: center;
+    top: -20px;
+  }
+}
+
+.slider__number {
+  @include font-h4;
+  color: $color-neutral-30;
+
+  &_current {
+    @include font-h1;
+    color: $color-primary-80;
+    line-height: 120px;
+    @media (max-width: $max-tablet) {
+      line-height: 70px;
+    }
+  }
+
+  transition: 0.3s;
+}
+
+.slider__buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: end;
+  position: absolute;
+  width: 100%;
+
+  @media (max-width: $max-tablet) {
+    justify-content: flex-end;
+    position: relative;
+    top: -35px;
+  }
+  @media (max-width: $max-mobile) {
+    justify-content: center;
+  }
+}
+
+.modal .slider__buttons {
+  top: 20px;
+  @media (max-width: $max-tablet) {
+    justify-content: center;
+    top: -20px;
+  }
+}
+
+.slider-left,
+.slider-right {
+  width: 32px;
+  height: 32px;
+  border-radius: none;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}

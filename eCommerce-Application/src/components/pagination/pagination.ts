@@ -13,19 +13,19 @@ export class Pagination extends Component {
     private firstPageBtn = new IconButton({
         icon: arrowDbLeftIcon,
         type: 'bordered',
-    }).getComponent() as HTMLButtonElement;
+    }).getComponent();
     private prevPageBtn = new IconButton({
         icon: arrowLeftIcon,
         type: 'bordered',
-    }).getComponent() as HTMLButtonElement;
+    }).getComponent();
     private nextPageBtn = new IconButton({
         icon: arrowRightIcon,
         type: 'bordered',
-    }).getComponent() as HTMLButtonElement;
+    }).getComponent();
     private lastPageBtn = new IconButton({
         icon: arrowDbRightIcon,
         type: 'bordered',
-    }).getComponent() as HTMLButtonElement;
+    }).getComponent();
 
     constructor(private currentPage: number, private maxPage: number) {
         super({ tag: 'div', classes: ['pagination'] });

@@ -23,6 +23,7 @@ export class Layout extends Page {
     private accountPage: AccountPage;
     private catalogPage: CatalogPage;
     private productPage: ProductPage;
+
     private notFound = new NotFoundPage();
     private home: HomePage;
     private mainEl: HTMLElement;
@@ -33,7 +34,7 @@ export class Layout extends Page {
 
         this.home = new HomePage(this.appStore);
         this.loginPage = new LoginPage(this.appStore);
-        this.accountPage = new AccountPage();
+        this.accountPage = new AccountPage(this.appStore);
         this.catalogPage = new CatalogPage(this.appStore);
         this.productPage = new ProductPage(this.appStore);
 

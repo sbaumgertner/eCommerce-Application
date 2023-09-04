@@ -7,6 +7,7 @@ const pagesForLoggedInUser: PageName[] = [
     PageName.ABOUT_US,
     PageName.ACCOUNT,
     PageName.CART,
+    PageName.PRODUCT,
     PageName.CATALOG,
     PageName.INDEX,
     PageName.NOT_FOUND,
@@ -22,6 +23,38 @@ const pagesForAnonUser: PageName[] = [
     PageName.REGISTRATION,
 ];
 const CategoriesArr = ['alocasia', 'cactus', 'monstera', 'philodendron', 'syngonium'];
+const ProductIDArr = [
+    '10101',
+    '10102',
+    '10103',
+    '10201',
+    '10202',
+    '10203',
+    '10301',
+    '10302',
+    '10303',
+    '10401',
+    '10402',
+    '10403',
+    '10501',
+    '10502',
+    '10503',
+    '10601',
+    '10602',
+    '10603',
+    '10701',
+    '10702',
+    '10703',
+    '10801',
+    '10802',
+    '10803',
+    '10901',
+    '10902',
+    '10903',
+    '11001',
+    '11002',
+    '11003',
+];
 
 export class AppStore extends Store {
     private currentPage: PageName;
@@ -78,7 +111,7 @@ export class AppStore extends Store {
                 }
                 break;
             case PageName.PRODUCT:
-                if (!['1', '2'].includes(resource)) {
+                if (!ProductIDArr.includes(resource)) {
                     return false;
                 }
                 break;

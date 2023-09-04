@@ -5,6 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const EslingPlugin = require('eslint-webpack-plugin');
 const { merge } = require('webpack-merge');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = (_env, options) => {
     const isProduction = options.mode === 'production';
@@ -61,6 +62,14 @@ module.exports = (_env, options) => {
             }),
             new EslingPlugin({ extensions: 'ts' }),
             new FaviconsWebpackPlugin('./src/assets/icons/fav-icon.svg'),
+            new CopyWebpackPlugin({
+                patterns: [
+                  {
+                    from: path.resolve(__dirname, './src/assets/img/category'),
+                    to: path.resolve(__dirname, './dist/img/category')
+                  }
+                ]
+              })
         ],
     };
 
