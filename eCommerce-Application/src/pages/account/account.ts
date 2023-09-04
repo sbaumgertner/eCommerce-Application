@@ -27,7 +27,7 @@ export class AccountPage extends Page {
     private appStore: AppStore;
     private buttonEditPassword: Button;
     private buttonAddress: Button;
-    private accountStore: AccountStore;
+    private accountStore?: AccountStore;
     private accountAction: AcountAction;
     private currentPasswordField: InputField;
     private newPasswordField: InputField;
@@ -57,7 +57,7 @@ export class AccountPage extends Page {
     constructor(appStore: AppStore) {
         super();
         this.appStore = appStore;
-        this.accountStore = new AccountStore();
+        //this.accountStore = new AccountStore();
         this.accountAction = new AcountAction();
         this.buttonEditPassword = new Button('bordered', 'button-edit', 'Edit Password');
         this.editEmailButton = new IconButton({ icon: bottonEdit, type: 'clear' });
@@ -93,7 +93,7 @@ export class AccountPage extends Page {
         this.shippingDefaultCheckbox = new Checkbox('Default address', 'shipping-default-checkbox');
         this.billingDefaultCheckbox = new Checkbox('Default address', 'billing-default-checkbox');
         this.billingAddressCheckbox.setChecked();
-        this.accountStore.addChangeListener(StoreEventType.ACCOUNT_ERROR, this.onStoreChange.bind(this));
+        //this.accountStore.addChangeListener(StoreEventType.ACCOUNT_ERROR, this.onStoreChange.bind(this));
         this.shippingAddressCheckbox.getComponent().addEventListener('click', () => {
             this.shippingDefaultCheckbox.getComponent().classList.toggle('disabled');
             this.shippingDefaultCheckbox.setUnchecked();
@@ -106,6 +106,9 @@ export class AccountPage extends Page {
     }
 
     public render(): void {
+        this.accountStore = new AccountStore();
+        this.accountStore.addChangeListener(StoreEventType.ACCOUNT_ERROR, this.onStoreChange.bind(this));
+        
         this.html = document.createElement('div');
         this.html.className = 'account-page';
         this.html.append(this.createEmailWrapper(), this.createInfoWrapper(), this.createAdressWrapper());
@@ -135,11 +138,11 @@ export class AccountPage extends Page {
         const section = createElement({ tag: 'div', classes: ['section-email'] });
         const sectionHead = createElement({ tag: 'div', classes: ['section-email__head'] });
         const title = createElement({ tag: 'div', classes: ['head-title'] });
-        this.accountStore.getFullCustomerName(title);
+        this.accountStore?.getFullCustomerName(title);
         sectionHead.append(title);
 
         const sectionInfo = createElement({ tag: 'div', classes: ['section-email__info'] });
-        this.accountStore.getEmailInfo(this.emailInfo);
+        this.accountStore?.getEmailInfo(this.emailInfo);
 
         sectionInfo.append(this.emailInfo, this.editEmailButton.getComponent());
 
@@ -186,15 +189,15 @@ export class AccountPage extends Page {
         const sectionInfo = createElement({ tag: 'div', classes: ['section-info__content'] });
         const firstNameLabel = createElement({ tag: 'div', classes: ['label'] });
         firstNameLabel.innerText = 'FIRST NAME';
-        this.accountStore.getFirstName(this.firstName);
+        this.accountStore?.getFirstName(this.firstName);
 
         const lastNameLabel = createElement({ tag: 'div', classes: ['label'] });
         lastNameLabel.innerText = 'LAST NAME';
-        this.accountStore.getLastName(this.lastName);
+        this.accountStore?.getLastName(this.lastName);
 
         const birthDateLabel = createElement({ tag: 'div', classes: ['label'] });
         birthDateLabel.innerText = 'DATE OF BIRTH';
-        this.accountStore.getDateOfBirth(this.birthDate);
+        this.accountStore?.getDateOfBirth(this.birthDate);
 
         sectionInfo.append(
             firstNameLabel,
@@ -249,7 +252,7 @@ export class AccountPage extends Page {
     private createDefaultAddresses(): HTMLElement {
         const defaultAdresses = createElement({ tag: 'div', classes: ['address-default'] });
 
-        this.accountStore.getCustomerInfo().then((data) => {
+        this.accountStore?.getCustomerInfo().then((data) => {
             for (let i = 0; i < data.body.addresses.length; i += 1) {
                 if (
                     data.body.addresses[i].id == data.body.defaultShippingAddressId ||
@@ -282,7 +285,7 @@ export class AccountPage extends Page {
 
     private createAllAddresses(): HTMLElement {
         const allAdresses = createElement({ tag: 'div', classes: ['address-all'] });
-        this.accountStore.getCustomerInfo().then((data) => {
+        this.accountStore?.getCustomerInfo().then((data) => {
             for (let i = 0; i < data.body.addresses.length; i += 1) {
                 allAdresses.append(this.createAddressItem(data, i));
             }
@@ -418,7 +421,7 @@ export class AccountPage extends Page {
             this.html?.append(this.createEditAddressPopUp());
             this.scroll.removeScroll();
             document.querySelectorAll('.checkbox-wrapper')[0].textContent = '';
-            this.accountStore.getCustomerInfo().then((data) => {
+            this.accountStore?.getCustomerInfo().then((data) => {
                 data.body.addresses.forEach((address) => {
                     if (address.id == button.id) {
                         (document.querySelector('[name="region"]') as HTMLInputElement).value =
@@ -534,15 +537,15 @@ export class AccountPage extends Page {
     }
 
     protected onStoreChange(): void {
-        const errors: AccountValidationErrors = this.accountStore.getValidationErrors() as AccountValidationErrors;
-        this.apiError.textContent = this.accountStore.getAccountError();
+        const errors: AccountValidationErrors = this.accountStore?.getValidationErrors() as AccountValidationErrors;
+        this.apiError.textContent = this.accountStore?.getAccountError() as string;
         this.emailField.setError(errors.email || '');
         this.currentPasswordField.setError(errors.currentPassword || '');
         this.newPasswordField.setError(errors.newPassword || '');
         this.firstNameField.setError(errors.firstName || '');
         this.lastNameField.setError(errors.lastName || '');
         this.birthDateField.setError(errors.birthDate || '');
-        const summaryErrors = this.accountStore.getSummaryErrors();
+        const summaryErrors = this.accountStore?.getSummaryErrors();
         this.apiError.innerHTML = '';
         if (summaryErrors) {
             this.apiError.append(createElement({ tag: 'p', classes: ['errors-header'], text: summaryErrors.message }));
@@ -555,9 +558,9 @@ export class AccountPage extends Page {
         } else {
             this.apiError.textContent = '';
         }
-        this.emailInfo.innerHTML = this.accountStore.getEmailInfo(this.emailInfo);
-        this.accountStore.getFirstName(this.firstName);
-        this.accountStore.getLastName(this.lastName);
-        this.accountStore.getDateOfBirth(this.birthDate);
+        this.emailInfo.innerHTML = this.accountStore?.getEmailInfo(this.emailInfo) as string;
+        this.accountStore?.getFirstName(this.firstName);
+        this.accountStore?.getLastName(this.lastName);
+        this.accountStore?.getDateOfBirth(this.birthDate);
     }
 }
