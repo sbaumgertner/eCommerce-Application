@@ -107,10 +107,7 @@ export class CatalogPage extends Page {
         this.html = document.createElement('div');
         this.routeAction = new RouteAction();
         this.pageInfo = {
-            currentCategories:
-                window.location.pathname.split('/').length === 2
-                    ? 'all plants'
-                    : window.location.pathname.split('/')[2],
+            currentCategories: 'all plants',
             currentPage: 1,
             maxCardPerPage: 12,
             sizeFilters: [],
@@ -163,6 +160,7 @@ export class CatalogPage extends Page {
         }
     }
 
+    // eslint-disable-next-line max-lines-per-function
     private createFilterReqest(): string[] {
         const filterReqest: string[] = [];
         try {
@@ -176,18 +174,34 @@ export class CatalogPage extends Page {
                     }"`
                 );
             }
+        } catch (err) {
+            console.log('Categories filter error');
+        }
+        try {
             // Plant Size
             if (this.pageInfo.sizeFilters.length !== 0) {
                 filterReqest.push(`variants.attributes.sizePlants.key:"${this.pageInfo.sizeFilters.join('","')}"`);
             }
+        } catch (err) {
+            console.log('Plant Size filter error');
+        }
+        try {
             // Plant Age
             if (this.pageInfo.ageFilters.length !== 0) {
                 filterReqest.push(`variants.attributes.agePlants.key:"${this.pageInfo.ageFilters.join('","')}"`);
             }
+        } catch (err) {
+            console.log('Plant Age filter error');
+        }
+        try {
             // Sale
             if (this.pageInfo.saleFilters) {
                 filterReqest.push(`variants.attributes.isOnSale: "true"`);
             }
+        } catch (err) {
+            console.log('Sale filter error');
+        }
+        try {
             // Price
             filterReqest.push(
                 `variants.price.centAmount:range (
@@ -195,7 +209,7 @@ export class CatalogPage extends Page {
                 ${this.pageInfo.priceFilters.max * 100})`
             );
         } catch (err) {
-            console.log('');
+            console.log('Price filter error');
         }
         return filterReqest;
     }
@@ -516,7 +530,7 @@ export class CatalogPage extends Page {
         const headerEl = createElement({ tag: 'div', classes: ['catalog-header'] });
         try {
             const wrapperEl = createElement({ tag: 'div', classes: ['catalog-header__wrapper'] });
-            const breadcrumbsEl = new Breadcrumbs(window.location.pathname).getComponent();
+            const breadcrumbsEl = new Breadcrumbs(window.location.href).getComponent();
             const titleEl = createElement({
                 tag: 'h3',
                 classes: ['catalog-header__title'],
@@ -554,8 +568,11 @@ export class CatalogPage extends Page {
     }
 
     protected onStoreChange(): void {
+        const locationArr = window.location.pathname.split('/');
         this.pageInfo.currentCategories =
-            window.location.pathname.split('/').length === 2 ? 'all plants' : window.location.pathname.split('/')[2];
+            locationArr.indexOf('catalog') === locationArr.length - 1
+                ? 'all plants'
+                : locationArr[locationArr.length - 1];
         this.render();
     }
 }

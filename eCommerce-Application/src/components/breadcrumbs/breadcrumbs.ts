@@ -16,7 +16,8 @@ export default class Breadcrumbs extends Component {
     private render(path: string): void {
         const pathArray = this.preparePath(path);
         pathArray.forEach((linkText, index) => {
-            const linkPath = '/' + path.split('/')[index];
+            const currentLevel = path.split('/')[index + path.split('/').length - pathArray.length];
+            const linkPath = path.slice(0, path.indexOf(currentLevel)) + currentLevel;
             if (index < pathArray.length - 1) {
                 this.componentElem.append(this.createLink(linkText, linkPath));
                 this.componentElem.append(this.createSeparator());
@@ -28,7 +29,8 @@ export default class Breadcrumbs extends Component {
 
     private preparePath(path: string): string[] {
         let arr = path.split('/');
-        arr[0] = 'Home';
+        arr.splice(0, arr.indexOf('catalog'));
+        arr.unshift('Home');
         arr = arr.map((linkText) => {
             if (linkText[0]) {
                 return linkText[0].toUpperCase() + linkText.slice(1);
