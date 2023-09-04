@@ -108,7 +108,7 @@ export class AccountPage extends Page {
     public render(): void {
         this.accountStore = new AccountStore();
         this.accountStore.addChangeListener(StoreEventType.ACCOUNT_ERROR, this.onStoreChange.bind(this));
-        
+
         this.html = document.createElement('div');
         this.html.className = 'account-page';
         this.html.append(this.createEmailWrapper(), this.createInfoWrapper(), this.createAdressWrapper());

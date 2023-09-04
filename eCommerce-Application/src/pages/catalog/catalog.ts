@@ -514,19 +514,23 @@ export class CatalogPage extends Page {
 
     private createInnerHeader(): HTMLElement {
         const headerEl = createElement({ tag: 'div', classes: ['catalog-header'] });
-        const wrapperEl = createElement({ tag: 'div', classes: ['catalog-header__wrapper'] });
-        const breadcrumbsEl = new Breadcrumbs(window.location.pathname).getComponent();
-        const titleEl = createElement({
-            tag: 'h3',
-            classes: ['catalog-header__title'],
-            text: `${this.pageInfo.currentCategories[0].toUpperCase() + this.pageInfo.currentCategories.slice(1)} (${
-                this.totalProducts
-            })`,
-        });
-        const sortEl = createElement({ tag: 'div', classes: ['catalog-header__sort'], text: 'SORT' });
+        try {
+            const wrapperEl = createElement({ tag: 'div', classes: ['catalog-header__wrapper'] });
+            const breadcrumbsEl = new Breadcrumbs(window.location.pathname).getComponent();
+            const titleEl = createElement({
+                tag: 'h3',
+                classes: ['catalog-header__title'],
+                text: `${
+                    this.pageInfo.currentCategories[0].toUpperCase() + this.pageInfo.currentCategories.slice(1)
+                } (${this.totalProducts})`,
+            });
+            const sortEl = createElement({ tag: 'div', classes: ['catalog-header__sort'], text: 'SORT' });
 
-        wrapperEl.append(breadcrumbsEl, titleEl);
-        headerEl.append(wrapperEl, sortEl);
+            wrapperEl.append(breadcrumbsEl, titleEl);
+            headerEl.append(wrapperEl, sortEl);
+        } catch (error) {
+            console.log('');
+        }
         return headerEl;
     }
 
