@@ -13,7 +13,6 @@ import { AccountPage } from './account/account';
 import { CatalogPage } from './catalog/catalog';
 import { ProductPage } from './product/product';
 
-
 export class Layout extends Page {
     private appStore: AppStore;
 
@@ -39,7 +38,6 @@ export class Layout extends Page {
         this.accountPage = new AccountPage(this.appStore);
         this.catalogPage = new CatalogPage();
         this.productPage = new ProductPage(this.appStore);
-
 
         this.header = new Header(this.appStore);
         this.main = this.home;
