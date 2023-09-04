@@ -12,7 +12,7 @@ import iconBilling from '../../assets/icons/icon-billing.svg';
 import PopUp from '../../components/pop-up/popUp';
 import InputField from '../../components/input-field/input-field';
 import { Validation } from '../../utils/validation';
-import { AccountStore } from '../../store/account-store';
+import { AccountStore, AccountValidationErrors } from '../../store/account-store';
 import ClosePasswordButton from '../../components/button/passwordButton/openButton';
 import OpenPasswordButton from '../../components/button/passwordButton/closeButton';
 import { AcountAction, NewAddressActionData } from '../../store/action/accountAction';
@@ -20,6 +20,7 @@ import { StoreEventType } from '../../types';
 import { addRemoveClasslist } from '../../utils/add-remove-classlist';
 import { AddressFields } from '../../components/address-fields/address-fields';
 import { Checkbox } from '../../components/checkbox/checkbox';
+import { ClientResponse, Customer } from '@commercetools/platform-sdk';
 
 export class AccountPage extends Page {
     private appStore: AppStore;
@@ -36,6 +37,8 @@ export class AccountPage extends Page {
     private newAddressFields: AddressFields;
     private shippingAddressCheckbox: Checkbox;
     private billingAddressCheckbox: Checkbox;
+    private shippingDefaultCheckbox: Checkbox;
+    private billingDefaultCheckbox: Checkbox;
     private emailInfo: HTMLElement;
     private firstName: HTMLElement;
     private lastName: HTMLElement;
@@ -44,6 +47,7 @@ export class AccountPage extends Page {
     private buttonSaveEmail: Button;
     private buttonSaveCommonInfo: Button;
     private buttonSaveNewAddress: Button;
+    private buttonEditAddress: Button;
     private editEmailButton: IconButton;
     private apiError: HTMLElement;
     //private adresses;
@@ -60,6 +64,7 @@ export class AccountPage extends Page {
         this.buttonSaveEmail = new Button('filled', 'popup__save', 'Save');
         this.buttonSaveCommonInfo = new Button('filled', 'popup__save', 'Save');
         this.buttonSaveNewAddress = new Button('filled', 'popup__save', 'Save');
+        this.buttonEditAddress = new Button('filled', 'popup__save', 'Save');
         this.apiError = createElement({ tag: 'div', classes: ['api-error'] });
 
         this.currentPasswordField = new InputField(
@@ -83,8 +88,18 @@ export class AccountPage extends Page {
         this.shippingAddressCheckbox = new Checkbox('Use as shipping address', 'shipping-address-checkbox');
         this.shippingAddressCheckbox.setChecked();
         this.billingAddressCheckbox = new Checkbox('Use as billing address', 'billing-address-checkbox');
-
+        this.shippingDefaultCheckbox = new Checkbox('Default address', 'shipping-default-checkbox');
+        this.billingDefaultCheckbox = new Checkbox('Default address', 'billing-default-checkbox');
+        this.billingAddressCheckbox.setChecked();
         this.accountStore.addChangeListener(StoreEventType.ACCOUNT_ERROR, this.onStoreChange.bind(this));
+        this.shippingAddressCheckbox.getComponent().addEventListener('click', () => {
+            this.shippingDefaultCheckbox.getComponent().classList.toggle('disabled');
+            this.shippingDefaultCheckbox.setUnchecked();
+        });
+        this.billingAddressCheckbox.getComponent().addEventListener('click', () => {
+            this.billingDefaultCheckbox.getComponent().classList.toggle('disabled');
+            this.billingDefaultCheckbox.setUnchecked();
+        });
     }
 
     public render(): void {
@@ -217,8 +232,8 @@ export class AccountPage extends Page {
         const sectionHead = createElement({ tag: 'div', classes: ['section-address__head'] });
         const title = createElement({ tag: 'div', classes: ['head-title'] });
         title.textContent = 'Addresses';
-        const button = new Button('bordered', 'button-set-default', 'Set default');
-        sectionHead.append(title, button.getComponent());
+        //const button = new Button('bordered', 'button-set-default', 'Set default');
+        sectionHead.append(title);
 
         const sectionInfo = createElement({ tag: 'div', classes: ['section-address__content'] });
         sectionInfo.append(this.createDefaultAddresses(), this.createAllAddresses());
@@ -244,6 +259,7 @@ export class AccountPage extends Page {
                     const addressShippingIcon = new IconButton({ icon: iconShipping, type: 'clear' });
                     const addressBillingIcon = new IconButton({ icon: iconBilling, type: 'clear' });
                     addressShippingIcon.getComponent().classList.add('round');
+                    addressBillingIcon.getComponent().classList.add('round');
                     if (addressItem.id == data.body.defaultShippingAddressId) {
                         addRemoveClasslist(addressShippingIcon.getComponent(), address);
                     }
@@ -261,51 +277,76 @@ export class AccountPage extends Page {
         return defaultAdresses;
     }
 
-    // eslint-disable-next-line max-lines-per-function
     private createAllAddresses(): HTMLElement {
         const allAdresses = createElement({ tag: 'div', classes: ['address-all'] });
         this.accountStore.getCustomerInfo().then((data) => {
             for (let i = 0; i < data.body.addresses.length; i += 1) {
-                const addressItem = createElement({ tag: 'div', classes: ['address-item'] });
-                addressItem.id = data.body.addresses[i].id as string;
-                const address = createElement({ tag: 'div', classes: ['address-info'] });
-                const buttons = createElement({ tag: 'div', classes: ['address-buttons'] });
-                const addressShippingIcon = new IconButton({ icon: iconShipping, type: 'clear' });
-                const addressBillingIcon = new IconButton({ icon: iconBilling, type: 'clear' });
-                data.body.shippingAddressIds?.forEach((id) => {
-                    if (id == addressItem.id) {
-                        buttons.append(addressShippingIcon.getComponent());
-                    }
-                });
-                data.body.billingAddressIds?.forEach((id) => {
-                    if (id == addressItem.id) {
-                        buttons.append(addressBillingIcon.getComponent());
-                    }
-                });
-                const buttonEdit = new IconButton({ icon: bottonEdit, type: 'clear' });
-                buttonEdit.getComponent().classList.add('edit-address-button');
-                buttonEdit.getComponent().id = addressItem.id;
-                const buttonDelete = new IconButton({ icon: bottonDelete, type: 'clear' });
-                buttonDelete.getComponent().id = addressItem.id;
-                buttonDelete.getComponent().classList.add('delete-address-button');
-                address.innerHTML = `${data.body.addresses[i].streetName} ${data.body.addresses[i].city} ${data.body.addresses[i].postalCode} ${data.body.addresses[i].country}`;
-                addressItem.append(address, buttons, buttonEdit.getComponent(), buttonDelete.getComponent());
-
-                allAdresses.append(addressItem);
+                allAdresses.append(this.createAddressItem(data, i));
             }
-            this.deleteAddress();
         });
         return allAdresses;
     }
 
+    private createAddressItem(data: ClientResponse<Customer>, i: number): HTMLElement {
+        const addressItem = createElement({ tag: 'div', classes: ['address-item'] });
+
+        addressItem.id = data.body.addresses[i].id as string;
+        const address = createElement({ tag: 'div', classes: ['address-info'] });
+        const buttons = createElement({ tag: 'div', classes: ['address-buttons'] });
+        const addressShippingIcon = new IconButton({ icon: iconShipping, type: 'clear' });
+        const addressBillingIcon = new IconButton({ icon: iconBilling, type: 'clear' });
+        data.body.shippingAddressIds?.forEach((id: string) => {
+            if (id == addressItem.id) {
+                buttons.append(addressShippingIcon.getComponent());
+            }
+        });
+        data.body.billingAddressIds?.forEach((id: string) => {
+            if (id == addressItem.id) {
+                buttons.append(addressBillingIcon.getComponent());
+            }
+        });
+        const buttonEdit = new IconButton({ icon: bottonEdit, type: 'clear' });
+        buttonEdit.getComponent().classList.add('edit-address-button');
+        buttonEdit.getComponent().id = addressItem.id;
+        this.editAddress(buttonEdit.getComponent() as HTMLButtonElement);
+        const buttonDelete = new IconButton({ icon: bottonDelete, type: 'clear' });
+        buttonDelete.getComponent().id = addressItem.id;
+        buttonDelete.getComponent().classList.add('delete-address-button');
+        this.deleteAddress(buttonDelete.getComponent() as HTMLButtonElement);
+        address.innerHTML = `${data.body.addresses[i].streetName} ${data.body.addresses[i].city} ${data.body.addresses[i].region} ${data.body.addresses[i].postalCode} ${data.body.addresses[i].country}`;
+        addressItem.append(address, buttons, buttonEdit.getComponent(), buttonDelete.getComponent());
+
+        return addressItem;
+    }
+
     private createNewAddressPopUp(): HTMLElement {
         const popUpContent = createElement({ tag: 'div', classes: ['popup__content'] });
-        popUpContent.append(
-            this.newAddressFields.getComponent(),
+        const shippingCheckbox = createElement({ tag: 'div', classes: ['checkboxes'] });
+
+        shippingCheckbox.append(
             this.shippingAddressCheckbox.getComponent(),
-            this.billingAddressCheckbox.getComponent()
+            this.shippingDefaultCheckbox.getComponent()
         );
+        const billingCheckbox = createElement({ tag: 'div', classes: ['checkboxes'] });
+        billingCheckbox.append(this.billingAddressCheckbox.getComponent(), this.billingDefaultCheckbox.getComponent());
+        popUpContent.append(this.newAddressFields.getComponent(), shippingCheckbox, billingCheckbox);
         const popUp = new PopUp('', popUpContent, this.apiError, this.buttonSaveNewAddress.getComponent());
+
+        return popUp.getComponent();
+    }
+
+    private createEditAddressPopUp(): HTMLElement {
+        const popUpContent = createElement({ tag: 'div', classes: ['popup__content'] });
+        const shippingCheckbox = createElement({ tag: 'div', classes: ['checkboxes'] });
+
+        shippingCheckbox.append(
+            this.shippingAddressCheckbox.getComponent(),
+            this.shippingDefaultCheckbox.getComponent()
+        );
+        const billingCheckbox = createElement({ tag: 'div', classes: ['checkboxes'] });
+        billingCheckbox.append(this.billingAddressCheckbox.getComponent(), this.billingDefaultCheckbox.getComponent());
+        popUpContent.append(this.newAddressFields.getComponent(), shippingCheckbox, billingCheckbox);
+        const popUp = new PopUp('', popUpContent, this.apiError, this.buttonEditAddress.getComponent());
 
         return popUp.getComponent();
     }
@@ -319,19 +360,98 @@ export class AccountPage extends Page {
         if (this.billingAddressCheckbox.getValue()) {
             data.billingAddress = this.newAddressFields.getAddressData();
         }
+        if (document.querySelector('#shipping-default-checkbox')?.classList.contains('checkbox_checked')) {
+            if (data.shippingAddress) {
+                data.shippingAddress.isDefault = true;
+            }
+        }
+        if (document.querySelector('#billing-default-checkbox')?.classList.contains('checkbox_checked')) {
+            if (data.billingAddress) {
+                data.billingAddress.isDefault = true;
+            }
+        }
 
         this.accountAction.addNewAddress(data);
     }
 
-    private deleteAddress(): void {
-        const buttons = document.querySelectorAll('.delete-address-button');
-        console.log(buttons);
-        buttons.forEach((button) => {
-            button.addEventListener('click', () => {
-                console.log('Hello!');
+    private sendEditAddressData(): void {
+        const data: NewAddressActionData = {};
+
+        if (this.shippingAddressCheckbox.getValue()) {
+            data.shippingAddress = this.newAddressFields.getAddressData();
+        }
+        if (this.billingAddressCheckbox.getValue()) {
+            data.billingAddress = this.newAddressFields.getAddressData();
+        }
+        if (document.querySelector('#shipping-default-checkbox')?.classList.contains('checkbox_checked')) {
+            if (data.shippingAddress) {
+                data.shippingAddress.isDefault = true;
+            }
+        }
+        if (document.querySelector('#billing-default-checkbox')?.classList.contains('checkbox_checked')) {
+            if (data.billingAddress) {
+                data.billingAddress.isDefault = true;
+            }
+        }
+
+        this.accountAction.editAddress(data);
+    }
+
+    private deleteAddress(button: HTMLButtonElement): void {
+        button.onclick = (): void => {
+            try {
                 this.accountAction.deleteAddress({ id: button.id });
+                document.querySelector('.address-all')?.querySelector(`#${button.id}`)?.remove();
+            } catch (error) {
+                console.log(error);
+                //location.reload();
+            }
+        };
+    }
+
+    private editAddress(button: HTMLButtonElement): void {
+        button.onclick = (): void => {
+            localStorage.setItem('buttonId', button.id);
+            this.html?.append(this.createEditAddressPopUp());
+            document.querySelectorAll('.checkbox-wrapper')[0].textContent = '';
+            this.accountStore.getCustomerInfo().then((data) => {
+                data.body.addresses.forEach((address) => {
+                    if (address.id == button.id) {
+                        (document.querySelector('[name="region"]') as HTMLInputElement).value =
+                            address.region as string;
+                        (document.querySelector('[name="city"]') as HTMLInputElement).value = address.city as string;
+                        (document.querySelector('[name="zip"]') as HTMLInputElement).value =
+                            address.postalCode as string;
+                        (document.querySelectorAll('.form-item')[1] as HTMLInputElement).classList.remove(
+                            'form-item_disabled'
+                        );
+                        (document.querySelector('[name="street"]') as HTMLInputElement).value =
+                            address.streetName as string;
+                        (document.querySelector('select') as HTMLSelectElement).value = address.country;
+                    }
+                });
+                if (data.body.shippingAddressIds?.includes(button.id)) {
+                    this.shippingAddressCheckbox.setChecked();
+                } else {
+                    this.shippingAddressCheckbox.setUnchecked();
+                }
+                if (data.body.billingAddressIds?.includes(button.id)) {
+                    this.billingAddressCheckbox.setChecked();
+                } else {
+                    this.billingAddressCheckbox.setUnchecked();
+                }
+                if (data.body.defaultShippingAddressId == button.id) {
+                    this.shippingDefaultCheckbox.setChecked();
+                } else {
+                    this.shippingDefaultCheckbox.setUnchecked();
+                }
+                if (data.body.defaultBillingAddressId == button.id) {
+                    this.billingDefaultCheckbox.setChecked();
+                } else {
+                    this.billingDefaultCheckbox.setUnchecked();
+                }
             });
-        });
+        };
     }
 
     // eslint-disable-next-line max-lines-per-function
@@ -346,17 +466,12 @@ export class AccountPage extends Page {
 
         this.buttonAddress.getComponent().addEventListener('click', () => {
             this.html?.append(this.createNewAddressPopUp());
-        });
-
-        this.billingAddressCheckbox.getComponent().addEventListener('click', () => {
-            (document.querySelector('#shipping-address-checkbox') as HTMLElement).classList.remove('checkbox_checked');
-        });
-
-        this.shippingAddressCheckbox.getComponent().addEventListener('click', () => {
-            (document.querySelector('#billing-address-checkbox') as HTMLElement).classList.remove('checkbox_checked');
+            document.querySelectorAll('.checkbox-wrapper')[0].textContent = '';
         });
 
         this.buttonSavePassword.getComponent().addEventListener('click', () => {
+            this.currentPasswordField.addValidation(Validation.checkPassword);
+            this.newPasswordField.addValidation(Validation.checkPassword);
             this.apiError.textContent = '';
             this.accountAction.changePassword({
                 currentPassword: this.currentPasswordField.getValue(),
@@ -365,6 +480,7 @@ export class AccountPage extends Page {
         });
 
         this.buttonSaveEmail.getComponent().addEventListener('click', () => {
+            this.emailField.addValidation(Validation.checkEmail);
             this.apiError.textContent = '';
             this.accountAction.changeEmail({
                 email: this.emailField.getValue(),
@@ -372,6 +488,9 @@ export class AccountPage extends Page {
         });
 
         this.buttonSaveCommonInfo.getComponent().addEventListener('click', () => {
+            this.firstNameField.addValidation(Validation.checkText);
+            this.lastNameField.addValidation(Validation.checkText);
+            this.birthDateField.addValidation(Validation.checkDate);
             this.apiError.textContent = '';
             this.accountAction.changeCommonInfo({
                 firstName: this.firstNameField.getValue(),
@@ -380,9 +499,22 @@ export class AccountPage extends Page {
             });
         });
 
-        this.buttonSaveNewAddress.getComponent().addEventListener('click', () => {
+        this.buttonSaveNewAddress.getComponent().onclick = (): void => {
+            this.newAddressFields.addValidations();
             this.apiError.textContent = '';
             this.sendNewAddressData();
+            // (document.querySelector('.address-all') as HTMLElement).textContent = '';
+            // this.accountStore.getCustomerInfo().then((data) => {
+            //     for (let i = 0; i < data.body.addresses.length; i += 1) {
+            //         (document.querySelector('.address-all') as HTMLElement).append(this.createAddressItem(data, i));
+            //     }
+            // });
+        };
+
+        this.buttonEditAddress.getComponent().addEventListener('click', () => {
+            this.newAddressFields.addValidations();
+            this.apiError.textContent = '';
+            this.sendEditAddressData();
         });
 
         this.currentPasswordField.addValidation(Validation.checkPassword);
@@ -395,14 +527,30 @@ export class AccountPage extends Page {
     }
 
     protected onStoreChange(): void {
+        const errors: AccountValidationErrors = this.accountStore.getValidationErrors() as AccountValidationErrors;
         this.apiError.textContent = this.accountStore.getAccountError();
-
+        this.emailField.setError(errors.email || '');
+        this.currentPasswordField.setError(errors.currentPassword || '');
+        this.newPasswordField.setError(errors.newPassword || '');
+        this.firstNameField.setError(errors.firstName || '');
+        this.lastNameField.setError(errors.lastName || '');
+        this.birthDateField.setError(errors.birthDate || '');
+        const summaryErrors = this.accountStore.getSummaryErrors();
+        this.apiError.innerHTML = '';
+        if (summaryErrors) {
+            this.apiError.append(createElement({ tag: 'p', classes: ['errors-header'], text: summaryErrors.message }));
+            if (summaryErrors.detailed) {
+                this.apiError.append(createElement({ tag: 'p', classes: ['p'], text: 'Detailed information:' }));
+                for (let i = 0; i < summaryErrors.detailed.length; i += 1) {
+                    this.apiError.append(createElement({ tag: 'p', classes: ['p'], text: summaryErrors.detailed[i] }));
+                }
+            }
+        } else {
+            this.apiError.textContent = '';
+        }
         this.emailInfo.innerHTML = this.accountStore.getEmailInfo(this.emailInfo);
         this.accountStore.getFirstName(this.firstName);
         this.accountStore.getLastName(this.lastName);
         this.accountStore.getDateOfBirth(this.birthDate);
-        // if (this.accountStore.getAdresses()) {
-        //     location.reload();
-        // }
     }
 }

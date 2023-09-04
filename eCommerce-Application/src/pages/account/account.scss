@@ -110,7 +110,12 @@
     .address-item {
         position: relative;
         border-bottom: 1px solid $color-neutral-90;
-        height: 62px;
+        align-items: center;
+        height: 75px;
+    }
+
+    .address-info {
+        margin-left: 8px;
     }
 
     #new-address-button {
@@ -146,4 +151,19 @@
     position: absolute;
     right: 60px;
     top: 10px;
+}
+
+.checkboxes {
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+}
+
+.disabled {
+    //display: none;
+    pointer-events: none;
+    .checkbox-label {
+        color: $color-neutral-60;
+    }
+
 }

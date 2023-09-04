@@ -24,6 +24,7 @@ export enum ActionType {
     CHANGE_COMMON_INFO = 'CHANGE_COMMON_INFO',
     ADD_NEW_ADDRESS = 'ADD_NEW_ADDRESS',
     DELETE_ADDRESS = 'DELETE_ADDRESS',
+    EDIT_ADDRESS = 'EDDIT_EDDRESS',
 }
 
 export type Action = {

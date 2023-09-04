@@ -1,6 +1,7 @@
 @import "../../styles/tokens.scss";
 
 .dimming-window {
+    position: relative;
     width: 100%;
     min-height: 100%;
     background-color: rgba(0,0,0,0.5);
@@ -69,4 +70,3 @@
         width: 100%;
     }
 }
-

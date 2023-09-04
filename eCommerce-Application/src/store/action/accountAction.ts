@@ -38,6 +38,10 @@ export class AcountAction extends AbstractAction {
         this.dispatcher.handleAction({ actionType: ActionType.ADD_NEW_ADDRESS, data: JSON.stringify(data) });
     }
 
+    public editAddress(data: AccountActionData): void {
+        this.dispatcher.handleAction({ actionType: ActionType.EDIT_ADDRESS, data: JSON.stringify(data) });
+    }
+
     public deleteAddress(data: addressID): void {
         this.dispatcher.handleAction({ actionType: ActionType.DELETE_ADDRESS, data: JSON.stringify(data) });
     }

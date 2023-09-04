@@ -220,4 +220,112 @@ export class manageEcom {
             })
             .execute();
     }
+    async addShippingAddressID(version: number, adressId: string): Promise<ClientResponse<Customer>> {
+        const ID = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: ID as string,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'addShippingAddressId',
+                            addressId: adressId,
+                        },
+                    ],
+                },
+            })
+            .execute();
+    }
+    async addBillingAddressID(version: number, adressId: string): Promise<ClientResponse<Customer>> {
+        const ID = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: ID as string,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'addBillingAddressId',
+                            addressId: adressId,
+                        },
+                    ],
+                },
+            })
+            .execute();
+    }
+
+    async addShippingDefaultAddress(version: number, adressId: string): Promise<ClientResponse<Customer>> {
+        const ID = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: ID as string,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'setDefaultShippingAddress',
+                            addressId: adressId,
+                        },
+                    ],
+                },
+            })
+            .execute();
+    }
+
+    async addBillinggDefaultAddress(version: number, adressId: string): Promise<ClientResponse<Customer>> {
+        const ID = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: ID as string,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'setDefaultBillingAddress',
+                            addressId: adressId,
+                        },
+                    ],
+                },
+            })
+            .execute();
+    }
+
+    async editAddress(
+        version: number,
+        adressId: string,
+        addressData: CustomerAddress
+    ): Promise<ClientResponse<Customer>> {
+        const ID = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: ID as string,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'changeAddress',
+                            addressId: adressId,
+                            address: addressData,
+                        },
+                    ],
+                },
+            })
+            .execute();
+    }
 }
