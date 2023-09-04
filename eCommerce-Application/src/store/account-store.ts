@@ -11,16 +11,6 @@ import { RegSummaryErrors } from './registration-store';
 
 export type AccountValidationErrors = Partial<AccountActionData>;
 
-// const userInformation = {
-//     firstName: '',
-//     lastName: '',
-//     birthDate: '',
-//     email: '',
-//     password: '',
-//     shippingAddress: '',
-//     billingAddress: '',
-// };
-
 export class AccountStore extends Store {
     private validationErrors: AccountValidationErrors;
     private changeError?: string;
@@ -196,7 +186,6 @@ export class AccountStore extends Store {
                     this.changeError = '';
                     this.email = data.email as string;
                     getSuccessMessage('The email has been changed successfuly');
-                    //(document.body.parentNode as HTMLElement).style.overflow = 'visible';
                 })
                 .catch((error) => {
                     this.changeError = error.message;
@@ -261,7 +250,6 @@ export class AccountStore extends Store {
             state: '',
             city: '',
             street: '',
-            // isDefault: true,
         };
 
         let result = Validation.checkCountry(address.country);
@@ -287,10 +275,10 @@ export class AccountStore extends Store {
         return addressErrors;
     }
 
-    // eslint-disable-next-line max-lines-per-function
     private onAddNewAddress(jsonData: string): void {
         let addShippingAddress;
         let addBillingAddress;
+
         const data: AccountActionData = JSON.parse(jsonData);
         const isValid: boolean = this.validateNewAddressData(data);
         if (isValid) {
@@ -301,7 +289,6 @@ export class AccountStore extends Store {
                 country: '',
             };
             if (data.shippingAddress && data.billingAddress) {
-                const defaultAddress = data.shippingAddress.isDefault;
                 shippingAddress = {
                     country: data.shippingAddress.country,
                     streetName: data.shippingAddress.street,
@@ -309,15 +296,15 @@ export class AccountStore extends Store {
                     city: data.shippingAddress.city,
                     region: data.shippingAddress.state,
                 };
+                const defaultShippingAddress = data.shippingAddress.isDefault;
+                const defaultBillingAddress = data.billingAddress.isDefault;
                 const version = this.getVersionAPI();
                 this.manageEcom
                     .addNewAddress(version, shippingAddress)
-                    // eslint-disable-next-line max-lines-per-function
                     .then((data) => {
                         this.changeError = '';
                         getSuccessMessage('The address is added');
                         this.adresses = data.body.addresses;
-                        //this.emit(StoreEventType.ACCOUNT_ERROR);
                         const id = data.body.addresses[data.body.addresses.length - 1].id as string;
                         addShippingAddress = this.manageEcom
                             .addShippingAddressID(version + 1, id)
@@ -325,7 +312,7 @@ export class AccountStore extends Store {
                                 this.changeError = error.message;
                             })
                             .then(() => {
-                                if (defaultAddress) {
+                                if (defaultShippingAddress) {
                                     this.manageEcom.addShippingDefaultAddress(version + 2, id).catch((error) => {
                                         this.changeError = error.message;
                                     });
@@ -337,7 +324,7 @@ export class AccountStore extends Store {
                                 this.changeError = error.message;
                             })
                             .then(() => {
-                                if (defaultAddress) {
+                                if (defaultBillingAddress) {
                                     this.manageEcom.addBillinggDefaultAddress(version + 2, id).catch((error) => {
                                         this.changeError = error.message;
                                     });
@@ -351,7 +338,7 @@ export class AccountStore extends Store {
                 this.emit(StoreEventType.ACCOUNT_ERROR);
             }
             if (data.shippingAddress) {
-                const defaultAddress = data.shippingAddress.isDefault;
+                const defaultShippingAddress = data.shippingAddress.isDefault;
                 shippingAddress = {
                     country: data.shippingAddress.country,
                     streetName: data.shippingAddress.street,
@@ -374,7 +361,7 @@ export class AccountStore extends Store {
                                 this.changeError = error.message;
                             })
                             .then(() => {
-                                if (defaultAddress) {
+                                if (defaultShippingAddress) {
                                     this.manageEcom.addShippingDefaultAddress(version + 2, id).catch((error) => {
                                         this.changeError = error.message;
                                     });
@@ -388,7 +375,7 @@ export class AccountStore extends Store {
             }
 
             if (data.billingAddress) {
-                const defaultAddress = data.billingAddress.isDefault;
+                const defaultBillingAddress = data.billingAddress.isDefault;
                 billingAddress = {
                     country: data.billingAddress.country,
                     streetName: data.billingAddress.street,
@@ -410,7 +397,7 @@ export class AccountStore extends Store {
                                 this.changeError = error.message;
                             })
                             .then(() => {
-                                if (defaultAddress) {
+                                if (defaultBillingAddress) {
                                     this.manageEcom.addBillinggDefaultAddress(version + 2, id).catch((error) => {
                                         this.changeError = error.message;
                                     });
@@ -427,7 +414,6 @@ export class AccountStore extends Store {
             };
             this.emit(StoreEventType.ACCOUNT_ERROR);
         }
-
         this.emit(StoreEventType.ACCOUNT_ERROR);
     }
 
@@ -461,7 +447,8 @@ export class AccountStore extends Store {
                 country: '',
             };
             if (data.shippingAddress && data.billingAddress) {
-                const defaultAddress = data.shippingAddress.isDefault;
+                const defaultShippingAddress = data.shippingAddress.isDefault;
+                const defaultBillingAddress = data.billingAddress.isDefault;
                 shippingAddress = {
                     country: data.shippingAddress.country,
                     streetName: data.shippingAddress.street,
@@ -485,7 +472,7 @@ export class AccountStore extends Store {
                                 this.changeError = error.message;
                             })
                             .then(() => {
-                                if (defaultAddress) {
+                                if (defaultShippingAddress) {
                                     this.manageEcom.addShippingDefaultAddress(version + 2, id).catch((error) => {
                                         this.changeError = error.message;
                                     });
@@ -497,7 +484,7 @@ export class AccountStore extends Store {
                                 this.changeError = error.message;
                             })
                             .then(() => {
-                                if (defaultAddress) {
+                                if (defaultBillingAddress) {
                                     this.manageEcom.addBillinggDefaultAddress(version + 2, id).catch((error) => {
                                         this.changeError = error.message;
                                     });
