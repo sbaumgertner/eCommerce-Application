@@ -59,6 +59,14 @@ const emptyFilters = [
         name: 'age',
         value: [],
     },
+    {
+        name: 'price',
+        value: [],
+    },
+    {
+        name: 'sale',
+        value: false,
+    },
 ];
 
 type CatalogPageData = {
@@ -67,7 +75,7 @@ type CatalogPageData = {
     maxCardPerPage: number;
     filters: {
         name: string;
-        value: string[];
+        value: string[] | number[] | boolean;
     }[];
 };
 
@@ -134,6 +142,8 @@ export class CatalogPage extends Page {
 
     private createFilterReqest(): string[] {
         const filterReqest: string[] = [];
+        const plansSizeArr = this.pageInfo.filters[0].value;
+        const plansAgeArr = this.pageInfo.filters[1].value;
         try {
             // Categories
             if (this.pageInfo.currentCategories && this.pageInfo.currentCategories !== 'all plants') {
@@ -145,22 +155,21 @@ export class CatalogPage extends Page {
                     }"`
                 );
             }
-
             // Plant Size
-            if (this.pageInfo.filters[0].value.length !== 0) {
-                filterReqest.push(`variants.attributes.sizePlants.key:"${this.pageInfo.filters[0].value.join('","')}"`);
+            if (Array.isArray(plansSizeArr) && plansSizeArr.length !== 0) {
+                filterReqest.push(`variants.attributes.sizePlants.key:"${plansSizeArr.join('","')}"`);
             }
-
             // Plant Age
-            if (this.pageInfo.filters[1].value.length !== 0) {
-                filterReqest.push(`variants.attributes.agePlants.key:"${this.pageInfo.filters[1].value.join('","')}"`);
+            if (Array.isArray(plansAgeArr) && plansAgeArr.length !== 0) {
+                filterReqest.push(`variants.attributes.agePlants.key:"${plansAgeArr.join('","')}"`);
+            }
+            // Sale
+            if (this.pageInfo.filters[3].value) {
+                filterReqest.push(`variants.attributes.isOnSale: "true"`);
             }
 
             // Price
             // filterReqest.push(`variants.price.centAmount:range (500 to 1500)`);
-
-            // Sale
-            // filterReqest.push(`variants.attributes.isOnSale: "true"`);
         } catch (err) {
             console.log('');
         }
@@ -262,7 +271,7 @@ export class CatalogPage extends Page {
         const plantsSizeEl = this.createPlantsSizeFilter();
         const plantsAgeEl = this.createPlantsAgeFilter();
         const priceEl = createElement({ tag: 'div', classes: ['catalog-filter__block'], text: 'PRICE' });
-        const saleEl = createElement({ tag: 'div', classes: ['catalog-filter__block'], text: 'SALE' });
+        const saleEl = this.createPlantsSaleFilter();
         innerEl.append(plantsSizeEl, plantsAgeEl, priceEl, saleEl);
         return innerEl;
     }
@@ -273,19 +282,20 @@ export class CatalogPage extends Page {
         const listEl = createElement({ tag: 'div', classes: ['catalog-filter__list'] });
 
         PLANT_SIZE_FILTERS.forEach((element) => {
+            const sizeArr = this.pageInfo.filters[0].value as string[];
             const cheps = new Chips(element.value);
             const chepsEl = cheps.getComponent();
 
-            if (this.pageInfo.filters[0].value.includes(element.key)) {
+            if (sizeArr.includes(element.key)) {
                 cheps.setActive();
             }
 
             chepsEl.addEventListener('click', () => {
-                const index = this.pageInfo.filters[0].value.indexOf(element.key);
+                const index = sizeArr.indexOf(element.key);
                 if (index === -1) {
-                    this.pageInfo.filters[0].value.push(element.key);
+                    sizeArr.push(element.key);
                 } else {
-                    this.pageInfo.filters[0].value.splice(index, 1);
+                    sizeArr.splice(index, 1);
                 }
 
                 this.setProductsData();
@@ -305,19 +315,20 @@ export class CatalogPage extends Page {
         const listEl = createElement({ tag: 'div', classes: ['catalog-filter__list'] });
 
         PLANT_AGE_FILTERS.forEach((element) => {
+            const ageArr = this.pageInfo.filters[1].value as string[];
             const cheps = new Chips(element.value);
             const chepsEl = cheps.getComponent();
 
-            if (this.pageInfo.filters[1].value.includes(element.key)) {
+            if (ageArr.includes(element.key)) {
                 cheps.setActive();
             }
 
             chepsEl.addEventListener('click', () => {
-                const index = this.pageInfo.filters[1].value.indexOf(element.key);
+                const index = ageArr.indexOf(element.key);
                 if (index === -1) {
-                    this.pageInfo.filters[1].value.push(element.key);
+                    ageArr.push(element.key);
                 } else {
-                    this.pageInfo.filters[1].value.splice(index, 1);
+                    ageArr.splice(index, 1);
                 }
 
                 this.setProductsData();
@@ -329,6 +340,30 @@ export class CatalogPage extends Page {
 
         plantsAgeEl.append(titleEl, listEl);
         return plantsAgeEl;
+    }
+
+    private createPlantsSaleFilter(): HTMLElement {
+        const plantsSaleEl = createElement({ tag: 'div', classes: ['catalog-filter__block'] });
+        const titleEl = createElement({ tag: 'h5', classes: ['catalog-filter__title'], text: 'Sale' });
+        const listEl = createElement({ tag: 'div', classes: ['catalog-filter__list'] });
+        const cheps = new Chips('Discounted items');
+        const chepsEl = cheps.getComponent();
+
+        if (this.pageInfo.filters[3].value) {
+            cheps.setActive();
+        }
+
+        chepsEl.addEventListener('click', () => {
+            this.pageInfo.filters[3].value = !this.pageInfo.filters[3].value;
+
+            this.setProductsData();
+            this.createInner();
+        });
+
+        listEl.append(chepsEl);
+
+        plantsSaleEl.append(titleEl, listEl);
+        return plantsSaleEl;
     }
 
     private createInner(): HTMLElement {
