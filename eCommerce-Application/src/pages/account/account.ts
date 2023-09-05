@@ -431,18 +431,6 @@ export class AccountPage extends Page {
                 this.shippingAddressCheckbox.getComponent(),
                 this.shippingDefaultCheckbox.getComponent()
             );
-            // if (
-            //     this.billingAddressCheckbox.getComponent().classList.contains('checkbox_checked') === false &&
-            //     this.billingDefaultCheckbox.getComponent().classList.contains('disabled') == false
-            // ) {
-            //     this.billingDefaultCheckbox.getComponent().classList.add('disabled');
-            // }
-            // if (
-            //     this.shippingAddressCheckbox.getComponent().classList.contains('checkbox_checked') == false &&
-            //     this.shippingDefaultCheckbox.getComponent().classList.contains('disabled') == false
-            // ) {
-            //     this.shippingDefaultCheckbox.getComponent().classList.add('disabled');
-            // }
             this.accountStore?.getCustomerInfo().then((data) => {
                 data.body.addresses.forEach((address) => {
                     if (address.id == button.id) {
