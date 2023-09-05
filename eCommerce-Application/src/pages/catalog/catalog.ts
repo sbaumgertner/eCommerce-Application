@@ -21,6 +21,7 @@ import InputField from '../../components/input-field/input-field';
 
 import searchIcon from '../../assets/icons/icon-search.svg';
 import Input from '../../components/input/input';
+import { Select } from '../../components/select/select';
 
 const PLANT_SIZE_FILTERS = [
     {
@@ -54,28 +55,13 @@ const PLANT_AGE_FILTERS = [
         value: 'Adult',
     },
 ];
-const SORT_VAR = [
-    {
-        text: 'Default',
-        query: '',
-    },
-    {
-        text: 'Price (desc)',
-        query: 'price desc',
-    },
-    {
-        text: 'Price (asc)',
-        query: 'price asc',
-    },
-    {
-        text: 'Name (zyx...)',
-        query: 'name.en desc',
-    },
-    {
-        text: 'Name (abc...)',
-        query: 'name.en asc',
-    },
-];
+const SORT: Map<string, string> = new Map([
+    ['', 'Default'],
+    ['name.en asc', 'Name (a → z)'],
+    ['name.en desc', 'Name (z → a)'],
+    ['price asc', 'Price (asc)'],
+    ['price desc', 'Price (desc)'],
+]);
 const MIN_PRICE = 1;
 const MAX_PRICE = 37;
 
@@ -121,7 +107,7 @@ export class CatalogPage extends Page {
             },
             saleFilters: false,
             searchText: '',
-            sortBy: SORT_VAR[0].query,
+            sortBy: '',
         };
         this.appStore.addChangeListener(StoreEventType.PAGE_CHANGE, this.onStoreChange.bind(this));
     }
@@ -565,7 +551,7 @@ export class CatalogPage extends Page {
                     this.pageInfo.currentCategories[0].toUpperCase() + this.pageInfo.currentCategories.slice(1)
                 } (${this.totalProducts})`,
             });
-            const sortEl = createElement({ tag: 'div', classes: ['catalog-header__sort'], text: 'SORT' });
+            const sortEl = this.createSortBar();
 
             wrapperEl.append(breadcrumbsEl, titleEl);
             headerEl.append(wrapperEl, sortEl);
@@ -573,6 +559,22 @@ export class CatalogPage extends Page {
             console.log('');
         }
         return headerEl;
+    }
+
+    private createSortBar(): HTMLElement {
+        const sortEl = createElement({ tag: 'div', classes: ['sort-bar', 'catalog-header__sort-bar'] });
+        const labelEl = createElement({ tag: 'span', classes: ['sort-bar__title'], text: 'Sort by' });
+        const selectEl = new Select({ classes: ['sort-bar__input'], options: SORT });
+
+        selectEl.setValue(this.pageInfo.sortBy);
+
+        selectEl.getComponent().addEventListener('change', () => {
+            this.pageInfo.sortBy = selectEl.getValue();
+            this.setProductsData();
+            this.createInner();
+        });
+        sortEl.append(labelEl, selectEl.getComponent());
+        return sortEl;
     }
 
     private createBlockHeader(title: string, hiddenContent: HTMLElement, additionalEl?: HTMLElement): HTMLElement {

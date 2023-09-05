@@ -155,6 +155,7 @@
 
 .catalog-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: end;
   gap: 16px;
 
@@ -164,12 +165,33 @@
     flex-direction: column;
     gap: 8px;
   }
-  &__sort {
+  &__sort-bar {
     padding: 8px 0;
   }
 
   @media (max-width: $max-mobile) {
     flex-direction: column;
     align-items: stretch;
+  }
+}
+
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &__input {
+    height: 40px;
+    padding: 0 8px;
+    border-bottom: solid 1px $color-neutral-60;
+    color: $color-neutral-30;
+    @media (max-width: $max-mobile) {
+      flex-grow: 1;
+    }
+  }
+  &__title {
+    padding-top: 4px;
+    @include font-overline;
+    color: $color-neutral-60;
   }
 }
