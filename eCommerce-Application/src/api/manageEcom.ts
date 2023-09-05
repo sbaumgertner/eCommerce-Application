@@ -303,6 +303,39 @@ export class manageEcom {
             .execute();
     }
 
+    async addAddress(version: number, adressId: string): Promise<ClientResponse<Customer>> {
+        const ID = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: ID as string,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'addShippingAddressId',
+                            addressId: adressId,
+                        },
+                        {
+                            action: 'addBillingAddressId',
+                            addressId: adressId,
+                        },
+                        {
+                            action: 'setDefaultShippingAddress',
+                            addressId: adressId,
+                        },
+                        {
+                            action: 'setDefaultBillingAddress',
+                            addressId: adressId,
+                        },
+                    ],
+                },
+            })
+            .execute();
+    }
+
     async editAddress(
         version: number,
         adressId: string,
