@@ -19,6 +19,10 @@ import { AppStore } from '../../store/app-store';
 import { Pagination } from '../../components/pagination/pagination';
 import InputField from '../../components/input-field/input-field';
 
+import searchIcon from '../../assets/icons/icon-search.svg';
+import Input from '../../components/input/input';
+import { Select } from '../../components/select/select';
+
 const PLANT_SIZE_FILTERS = [
     {
         key: 'mini',
@@ -51,28 +55,13 @@ const PLANT_AGE_FILTERS = [
         value: 'Adult',
     },
 ];
-const SORT_VAR = [
-    {
-        text: 'Default',
-        query: '',
-    },
-    {
-        text: 'Price (desc)',
-        query: 'price desc',
-    },
-    {
-        text: 'Price (asc)',
-        query: 'price asc',
-    },
-    {
-        text: 'Name (zyx...)',
-        query: 'name.en desc',
-    },
-    {
-        text: 'Name (abc...)',
-        query: 'name.en asc',
-    },
-];
+const SORT: Map<string, string> = new Map([
+    ['', 'Default'],
+    ['name.en asc', 'Name (a → z)'],
+    ['name.en desc', 'Name (z → a)'],
+    ['price asc', 'Price (asc)'],
+    ['price desc', 'Price (desc)'],
+]);
 const MIN_PRICE = 1;
 const MAX_PRICE = 37;
 
@@ -118,7 +107,7 @@ export class CatalogPage extends Page {
             },
             saleFilters: false,
             searchText: '',
-            sortBy: SORT_VAR[0].query,
+            sortBy: '',
         };
         this.appStore.addChangeListener(StoreEventType.PAGE_CHANGE, this.onStoreChange.bind(this));
     }
@@ -217,9 +206,33 @@ export class CatalogPage extends Page {
     private createSearchBar(): HTMLElement {
         const searchBarEl = createElement({ tag: 'section', classes: ['search-bar'] });
         const wrapperEl = createElement({ tag: 'div', classes: ['wrapper', 'search-bar__wrapper'] });
-        const searchFieldEl = createElement({ tag: 'div', classes: ['search-bar__input'], text: 'SEARCH_FIELD' });
+        const searchField = new Input({
+            classes: ['input', 'search-bar__input'],
+            type: 'text',
+            name: 'search',
+            placeholder: 'Type plant name',
+        });
+        const searchBtnEl = new IconButton({
+            icon: searchIcon,
+            type: 'clear',
+        }).getComponent();
 
-        wrapperEl.append(searchFieldEl);
+        searchField.setValue(this.pageInfo.searchText);
+        searchBtnEl.addEventListener('click', () => {
+            this.pageInfo.searchText = searchField.getValue();
+            this.setProductsData();
+            this.createInner();
+        });
+
+        searchField.getComponent().addEventListener('keyup', (e) => {
+            if (e.keyCode === 13) {
+                this.pageInfo.searchText = searchField.getValue();
+                this.setProductsData();
+                this.createInner();
+            }
+        });
+
+        wrapperEl.append(searchField.getComponent(), searchBtnEl);
         searchBarEl.append(wrapperEl);
         return searchBarEl;
     }
@@ -538,7 +551,7 @@ export class CatalogPage extends Page {
                     this.pageInfo.currentCategories[0].toUpperCase() + this.pageInfo.currentCategories.slice(1)
                 } (${this.totalProducts})`,
             });
-            const sortEl = createElement({ tag: 'div', classes: ['catalog-header__sort'], text: 'SORT' });
+            const sortEl = this.createSortBar();
 
             wrapperEl.append(breadcrumbsEl, titleEl);
             headerEl.append(wrapperEl, sortEl);
@@ -546,6 +559,22 @@ export class CatalogPage extends Page {
             console.log('');
         }
         return headerEl;
+    }
+
+    private createSortBar(): HTMLElement {
+        const sortEl = createElement({ tag: 'div', classes: ['sort-bar', 'catalog-header__sort-bar'] });
+        const labelEl = createElement({ tag: 'span', classes: ['sort-bar__title'], text: 'Sort by' });
+        const selectEl = new Select({ classes: ['sort-bar__input'], options: SORT });
+
+        selectEl.setValue(this.pageInfo.sortBy);
+
+        selectEl.getComponent().addEventListener('change', () => {
+            this.pageInfo.sortBy = selectEl.getValue();
+            this.setProductsData();
+            this.createInner();
+        });
+        sortEl.append(labelEl, selectEl.getComponent());
+        return sortEl;
     }
 
     private createBlockHeader(title: string, hiddenContent: HTMLElement, additionalEl?: HTMLElement): HTMLElement {
