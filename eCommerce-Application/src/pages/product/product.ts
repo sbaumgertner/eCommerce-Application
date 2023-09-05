@@ -51,7 +51,7 @@ export class ProductPage extends Page {
                 <p class="product-title__name">${this.data?.name}</p>
             </div>
             <div class="product-title__image-wrap">
-                <img class="product-title__image" alt="category image" src="../../img/category/cat-${this.data?.category.toLowerCase()}.png">
+                <img class="product-title__image" alt="category image" src="https://raw.githubusercontent.com/Illia-Sakharau/img-for-final-task/main/cat-${this.data?.category.toLowerCase()}.png">
             </div>
         `;
         return html;

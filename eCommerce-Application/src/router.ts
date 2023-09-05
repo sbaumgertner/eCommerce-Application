@@ -27,11 +27,22 @@ export class Router {
             } else if (host.includes('127.0.0.1')) {
                 this.basePath = '/eCommerce-Application/eCommerce-Application/dist/';
             } else {
-                this.basePath = '/eCommerce-sprint2-deploy/';
+                this.basePath = '/eCommerce-sprint3-deploy/';
             }
             this.navigate();
         });
         window.addEventListener('popstate', this.navigate.bind(this));
+    }
+
+    public static getBasePath(): string {
+        const host: string = window.location.host;
+        if (host.includes('localhost')) {
+            return '';
+        } else if (host.includes('127.0.0.1')) {
+            return 'eCommerce-Application/eCommerce-Application/dist/';
+        } else {
+            return 'eCommerce-sprint3-deploy/';
+        }
     }
 
     public addHistory(page: PageName, resource?: string): void {

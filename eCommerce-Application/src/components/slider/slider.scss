@@ -31,7 +31,17 @@
 
 .modal .slider__card {
   background-size: contain;
-  height: min(calc(100vh - 312px), 100vw  + 1px);
+  width: calc(100vw - 192px);
+  height: max(calc(100vh - 292px), 100vw * 0.7);
+
+  @media (max-width: $max-tablet) {
+    width: calc(100vw - 128px);
+    height: max(calc(100vh - 164px), 100vw * 0.8);
+  }
+  @media (max-width: $max-mobile) {
+    width: calc(100vw - 64px);
+    height: max(calc(100vh - 132px), 100vw);
+  }
 }
 
 .slider__controls {
@@ -46,7 +56,7 @@
 }
 
 .modal .slider__controls {
-  height: 120px;
+  height: 100px;
 }
 
 .slider__numbers {

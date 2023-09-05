@@ -1,7 +1,7 @@
 @import "../../styles/tokens.scss";
 
 .overlay {
-  position: fixed;
+  position: absolute;
   z-index: 200;
   top: 0;
   left: 0;
@@ -12,22 +12,35 @@
   align-items: start;
   justify-content: center;
   padding: 64px;
+
+  @media (max-width: $max-tablet) {
+    padding: 32px;
+  }
+
+  @media (max-width: $max-mobile) {
+    padding: 16px;
+  }
 }
 
 .modal {
   display: flex;
-  padding: 32px 64px;
+  padding: 32px;
   align-items: center;
   justify-content: center;
 
   position: relative;
   border-radius: 32px;
   background-color: $color-neutral-100;
-  width: calc(100vw - 192px);
+  width: calc(100vw - 128px);
+
+  @media (max-width: $max-tablet) {
+    width: calc(100vw - 64px);
+  }
 
   @media (max-width: $max-mobile) {
     padding: 16px;
     flex-direction: column;
+    width: calc(100vw - 32px);
   }
 }
 

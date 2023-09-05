@@ -119,7 +119,7 @@ export function productDataAdapter(product: EcomProductData, categoriesData: any
         const age = ageData ? ageData.value.label : '';
         const imgURL = product.masterVariant.images[0].url;
         const description = product.metaDescription.en;
-        const url = `/product/${product.key}`;
+        const url = `https://sbaumgertner.github.io/eCommerce-sprint3-deploy/product/${product.key}`;
 
         return {
             name,
