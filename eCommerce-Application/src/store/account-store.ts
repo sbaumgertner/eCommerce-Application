@@ -1,4 +1,3 @@
-/* eslint-disable no-dupe-class-members */
 /* eslint-disable max-lines-per-function */
 import { Action, ActionType, AddressData, StoreEventType } from '../types';
 import { Store } from './abstract/store';
@@ -287,10 +286,6 @@ export class AccountStore extends Store {
     }
 
     private onAddNewAddress(jsonData: string): void {
-        //let addShippingAddress;
-        //let addBillingAddress;
-        //let id: string;
-
         const data: AccountActionData = JSON.parse(jsonData);
         const isValid: boolean = this.validateNewAddressData(data);
         if (isValid) {
@@ -429,7 +424,6 @@ export class AccountStore extends Store {
             .then(() => {
                 this.changeError = '';
                 getSuccessMessage('The address has been removed successfuly');
-
                 this.emit(StoreEventType.ACCOUNT_ERROR);
             })
             .catch((error) => {
@@ -439,8 +433,6 @@ export class AccountStore extends Store {
     }
 
     private onEditAddress(jsonData: string): void {
-        //let addShippingAddress;
-        //let addBillingAddress;
         const data: AccountActionData = JSON.parse(jsonData);
         const isValid: boolean = this.validateNewAddressData(data);
         if (isValid) {
@@ -451,8 +443,6 @@ export class AccountStore extends Store {
                 country: '',
             };
             if (data.shippingAddress && data.billingAddress) {
-                //const defaultShippingAddress = data.shippingAddress.isDefault;
-                //const defaultBillingAddress = data.billingAddress.isDefault;
                 shippingAddress = {
                     country: data.shippingAddress.country,
                     streetName: data.shippingAddress.street,
@@ -467,15 +457,8 @@ export class AccountStore extends Store {
                         return data.body.version;
                     })
                     .then((version) => {
-                        this.manageEcom
-                            .getCustomerById()
-                            .then(() => {
-                                const id = localStorage.getItem('buttonId') as string;
-                                this.manageEcom.addAddress(version, id);
-                            })
-                            .catch((error) => {
-                                this.changeError = error.message;
-                            });
+                        const id = localStorage.getItem('buttonId') as string;
+                        this.manageEcom.editAllAddress(version, id, shippingAddress);
                     })
                     .catch((error) => {
                         this.changeError = error.message;
@@ -485,47 +468,6 @@ export class AccountStore extends Store {
                         getSuccessMessage('The address is edited');
                         //this.adresses = data.body.addresses;
                     });
-
-                //     const version = this.getVersionAPI();
-                //     this.manageEcom
-                //         .editAddress(version, localStorage.getItem('buttonId') as string, shippingAddress)
-                //         .then(() => {
-                //             this.changeError = '';
-                //             getSuccessMessage('The address has been edited successfuly');
-                //             this.emit(StoreEventType.ACCOUNT_ERROR);
-                //         })
-                //         .then(() => {
-                //             const id = localStorage.getItem('buttonId') as string;
-                //             addShippingAddress = this.manageEcom
-                //                 .addShippingAddressID(version + 1, id)
-                //                 .catch((error) => {
-                //                     this.changeError = error.message;
-                //                 })
-                //                 .then(() => {
-                //                     if (defaultShippingAddress) {
-                //                         this.manageEcom.addShippingDefaultAddress(version + 2, id).catch((error) => {
-                //                             this.changeError = error.message;
-                //                         });
-                //                     }
-                //                 });
-                //             addBillingAddress = this.manageEcom
-                //                 .addBillingAddressID(version + 1, id)
-                //                 .catch((error) => {
-                //                     this.changeError = error.message;
-                //                 })
-                //                 .then(() => {
-                //                     if (defaultBillingAddress) {
-                //                         this.manageEcom.addBillinggDefaultAddress(version + 2, id).catch((error) => {
-                //                             this.changeError = error.message;
-                //                         });
-                //                     }
-                //                 });
-                //             Promise.all([addShippingAddress, addBillingAddress]);
-                //         })
-                //         .catch((error) => {
-                //             this.changeError = error.message;
-                //         });
-                //     this.emit(StoreEventType.ACCOUNT_ERROR);
             }
             if (data.shippingAddress && data.billingAddress == undefined) {
                 const defaultAddress = data.shippingAddress.isDefault;

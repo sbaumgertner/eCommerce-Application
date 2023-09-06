@@ -6,6 +6,6 @@ export function getSuccessMessage(message: string): void {
     setTimeout(() => {
         (document.querySelector('body') as HTMLElement).style.overflow = 'scroll';
         document.querySelector('.dimming-window')?.remove();
-        location.reload();
+        //location.reload();
     }, 2000);
 }
