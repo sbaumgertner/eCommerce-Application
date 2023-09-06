@@ -22,6 +22,7 @@ import { AddressFields } from '../../components/address-fields/address-fields';
 import { Checkbox } from '../../components/checkbox/checkbox';
 import { ClientResponse, Customer } from '@commercetools/platform-sdk';
 import { Scroll } from '../../utils/scroll';
+import { checkboxChecking } from '../../utils/checkbox-checking';
 
 export class AccountPage extends Page {
     private appStore: AppStore;
@@ -142,8 +143,8 @@ export class AccountPage extends Page {
         sectionHead.append(title);
 
         const sectionInfo = createElement({ tag: 'div', classes: ['section-email__info'] });
+        this.emailInfo.innerHTML = this.accountStore?.returnEmail() as string;
         this.accountStore?.getEmailInfo(this.emailInfo);
-
         sectionInfo.append(this.emailInfo, this.editEmailButton.getComponent());
 
         section.append(sectionHead, sectionInfo, this.buttonEditPassword.getComponent());
@@ -273,7 +274,7 @@ export class AccountPage extends Page {
                         addRemoveClasslist(addressBillingIcon.getComponent(), address);
                     }
                     buttons.append(addressShippingIcon.getComponent(), addressBillingIcon.getComponent());
-                    address.innerHTML = `${data.body.addresses[i].streetName} ${data.body.addresses[i].city} ${data.body.addresses[i].postalCode} ${data.body.addresses[i].country}`;
+                    address.innerHTML = `${data.body.addresses[i].streetName} ${data.body.addresses[i].city} ${data.body.addresses[i].region} ${data.body.addresses[i].postalCode} ${data.body.addresses[i].country}`;
                     addressItem.append(address, buttons);
                     defaultAdresses.append(addressItem);
                 }
@@ -407,7 +408,10 @@ export class AccountPage extends Page {
         button.onclick = (): void => {
             try {
                 this.accountAction.deleteAddress({ id: button.id });
-                document.querySelector('.address-all')?.querySelector(`#${button.id}`)?.remove();
+                document.querySelectorAll(`#${button.id}`).forEach((el) => {
+                    el.remove();
+                });
+                //document.querySelector('.address-all')?.querySelector(`#${button.id}`)?.remove();
             } catch (error) {
                 console.log(error);
                 //location.reload();
@@ -421,6 +425,12 @@ export class AccountPage extends Page {
             this.html?.append(this.createEditAddressPopUp());
             this.scroll.removeScroll();
             document.querySelectorAll('.checkbox-wrapper')[0].textContent = '';
+            checkboxChecking(
+                this.billingAddressCheckbox.getComponent(),
+                this.billingDefaultCheckbox.getComponent(),
+                this.shippingAddressCheckbox.getComponent(),
+                this.shippingDefaultCheckbox.getComponent()
+            );
             this.accountStore?.getCustomerInfo().then((data) => {
                 data.body.addresses.forEach((address) => {
                     if (address.id == button.id) {
@@ -558,9 +568,10 @@ export class AccountPage extends Page {
         } else {
             this.apiError.textContent = '';
         }
-        this.emailInfo.innerHTML = this.accountStore?.getEmailInfo(this.emailInfo) as string;
+        //this.emailInfo.innerHTML = this.accountStore?.getEmailInfo(this.emailInfo) as string;
         this.accountStore?.getFirstName(this.firstName);
         this.accountStore?.getLastName(this.lastName);
         this.accountStore?.getDateOfBirth(this.birthDate);
+        this.accountStore?.getEmailInfo(this.emailInfo);
     }
 }

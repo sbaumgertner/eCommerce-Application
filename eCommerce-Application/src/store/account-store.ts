@@ -44,11 +44,29 @@ export class AccountStore extends Store {
     }
 
     public getEmailInfo(emailInfo: HTMLElement): string {
-        this.getCustomerInfo().then((data) => {
-            emailInfo.innerHTML = data.body.email;
-            this.email = emailInfo.innerHTML;
-        });
+        this.getCustomerInfo()
+            .then((data) => {
+                emailInfo.innerHTML = data.body.email;
+                this.email = emailInfo.innerHTML;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        return this.email;
+    }
 
+    public getEmail(): void {
+        this.getCustomerInfo()
+            .then((data) => {
+                this.email = data.body.email;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
+    public returnEmail(): string {
+        this.getEmail();
         return this.email;
     }
 
@@ -67,32 +85,48 @@ export class AccountStore extends Store {
     }
 
     public getFirstName(firstName: HTMLElement): void {
-        this.getCustomerInfo().then((data) => {
-            firstName.innerHTML = data.body.firstName as string;
-            this.firstName = firstName.innerHTML;
-        });
+        this.getCustomerInfo()
+            .then((data) => {
+                firstName.innerHTML = data.body.firstName as string;
+                this.firstName = firstName.innerHTML;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
     public getLastName(lastName: HTMLElement): void {
-        this.getCustomerInfo().then((data) => {
-            lastName.innerHTML = data.body.lastName as string;
-            this.lastName = lastName.innerHTML;
-        });
+        this.getCustomerInfo()
+            .then((data) => {
+                lastName.innerHTML = data.body.lastName as string;
+                this.lastName = lastName.innerHTML;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
     public getDateOfBirth(dateOfBirth: HTMLElement): void {
-        this.getCustomerInfo().then((data) => {
-            dateOfBirth.innerHTML = data.body.dateOfBirth as string;
-            this.birthDate = dateOfBirth.innerHTML;
-        });
+        this.getCustomerInfo()
+            .then((data) => {
+                dateOfBirth.innerHTML = data.body.dateOfBirth as string;
+                this.birthDate = dateOfBirth.innerHTML;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
     public getAdresses(): object {
-        this.getCustomerInfo().then((data) => {
-            data.body.addresses.forEach((item) => {
-                this.adresses.push(item);
+        this.getCustomerInfo()
+            .then((data) => {
+                data.body.addresses.forEach((item) => {
+                    this.adresses.push(item);
+                });
+            })
+            .catch((error) => {
+                console.log(error);
             });
-        });
         return this.adresses;
     }
 
@@ -276,9 +310,6 @@ export class AccountStore extends Store {
     }
 
     private onAddNewAddress(jsonData: string): void {
-        let addShippingAddress;
-        let addBillingAddress;
-
         const data: AccountActionData = JSON.parse(jsonData);
         const isValid: boolean = this.validateNewAddressData(data);
         if (isValid) {
@@ -288,7 +319,12 @@ export class AccountStore extends Store {
             let billingAddress: CustomerAddress = {
                 country: '',
             };
-            if (data.shippingAddress && data.billingAddress) {
+            if (
+                data.shippingAddress &&
+                data.billingAddress &&
+                data.shippingAddress.isDefault &&
+                data.billingAddress.isDefault
+            ) {
                 shippingAddress = {
                     country: data.shippingAddress.country,
                     streetName: data.shippingAddress.street,
@@ -296,48 +332,35 @@ export class AccountStore extends Store {
                     city: data.shippingAddress.city,
                     region: data.shippingAddress.state,
                 };
-                const defaultShippingAddress = data.shippingAddress.isDefault;
-                const defaultBillingAddress = data.billingAddress.isDefault;
-                const version = this.getVersionAPI();
+
                 this.manageEcom
-                    .addNewAddress(version, shippingAddress)
+                    .getCustomerById()
                     .then((data) => {
-                        this.changeError = '';
-                        getSuccessMessage('The address is added');
-                        this.adresses = data.body.addresses;
-                        const id = data.body.addresses[data.body.addresses.length - 1].id as string;
-                        addShippingAddress = this.manageEcom
-                            .addShippingAddressID(version + 1, id)
+                        this.version = data.body.version;
+                        this.manageEcom.addNewAddress(data.body.version, shippingAddress);
+                        return data.body.version;
+                    })
+                    .then((version) => {
+                        this.manageEcom
+                            .getCustomerById()
+                            .then((data) => {
+                                const id = data.body.addresses[data.body.addresses.length - 1].id as string;
+                                this.manageEcom.addAddress(version + 1, id);
+                            })
                             .catch((error) => {
                                 this.changeError = error.message;
-                            })
-                            .then(() => {
-                                if (defaultShippingAddress) {
-                                    this.manageEcom.addShippingDefaultAddress(version + 2, id).catch((error) => {
-                                        this.changeError = error.message;
-                                    });
-                                }
                             });
-                        addBillingAddress = this.manageEcom
-                            .addBillingAddressID(version + 1, id)
-                            .catch((error) => {
-                                this.changeError = error.message;
-                            })
-                            .then(() => {
-                                if (defaultBillingAddress) {
-                                    this.manageEcom.addBillinggDefaultAddress(version + 2, id).catch((error) => {
-                                        this.changeError = error.message;
-                                    });
-                                }
-                            });
-                        Promise.all([addShippingAddress, addBillingAddress]);
                     })
                     .catch((error) => {
                         this.changeError = error.message;
+                    })
+                    .then(() => {
+                        this.changeError = '';
+                        getSuccessMessage('The address is added');
+                        //this.adresses = data.body.addresses;
                     });
-                this.emit(StoreEventType.ACCOUNT_ERROR);
             }
-            if (data.shippingAddress) {
+            if (data.shippingAddress && data.billingAddress == undefined) {
                 const defaultShippingAddress = data.shippingAddress.isDefault;
                 shippingAddress = {
                     country: data.shippingAddress.country,
@@ -374,7 +397,7 @@ export class AccountStore extends Store {
                 this.emit(StoreEventType.ACCOUNT_ERROR);
             }
 
-            if (data.billingAddress) {
+            if (data.billingAddress && data.shippingAddress == undefined) {
                 const defaultBillingAddress = data.billingAddress.isDefault;
                 billingAddress = {
                     country: data.billingAddress.country,
@@ -425,7 +448,6 @@ export class AccountStore extends Store {
             .then(() => {
                 this.changeError = '';
                 getSuccessMessage('The address has been removed successfuly');
-
                 this.emit(StoreEventType.ACCOUNT_ERROR);
             })
             .catch((error) => {
@@ -435,8 +457,6 @@ export class AccountStore extends Store {
     }
 
     private onEditAddress(jsonData: string): void {
-        let addShippingAddress;
-        let addBillingAddress;
         const data: AccountActionData = JSON.parse(jsonData);
         const isValid: boolean = this.validateNewAddressData(data);
         if (isValid) {
@@ -447,8 +467,6 @@ export class AccountStore extends Store {
                 country: '',
             };
             if (data.shippingAddress && data.billingAddress) {
-                const defaultShippingAddress = data.shippingAddress.isDefault;
-                const defaultBillingAddress = data.billingAddress.isDefault;
                 shippingAddress = {
                     country: data.shippingAddress.country,
                     streetName: data.shippingAddress.street,
@@ -456,48 +474,26 @@ export class AccountStore extends Store {
                     city: data.shippingAddress.city,
                     region: data.shippingAddress.state,
                 };
-                const version = this.getVersionAPI();
                 this.manageEcom
-                    .editAddress(version, localStorage.getItem('buttonId') as string, shippingAddress)
-                    .then(() => {
-                        this.changeError = '';
-                        getSuccessMessage('The address has been edited successfuly');
-                        this.emit(StoreEventType.ACCOUNT_ERROR);
+                    .getCustomerById()
+                    .then((data) => {
+                        this.version = data.body.version;
+                        return data.body.version;
                     })
-                    .then(() => {
+                    .then((version) => {
                         const id = localStorage.getItem('buttonId') as string;
-                        addShippingAddress = this.manageEcom
-                            .addShippingAddressID(version + 1, id)
-                            .catch((error) => {
-                                this.changeError = error.message;
-                            })
-                            .then(() => {
-                                if (defaultShippingAddress) {
-                                    this.manageEcom.addShippingDefaultAddress(version + 2, id).catch((error) => {
-                                        this.changeError = error.message;
-                                    });
-                                }
-                            });
-                        addBillingAddress = this.manageEcom
-                            .addBillingAddressID(version + 1, id)
-                            .catch((error) => {
-                                this.changeError = error.message;
-                            })
-                            .then(() => {
-                                if (defaultBillingAddress) {
-                                    this.manageEcom.addBillinggDefaultAddress(version + 2, id).catch((error) => {
-                                        this.changeError = error.message;
-                                    });
-                                }
-                            });
-                        Promise.all([addShippingAddress, addBillingAddress]);
+                        this.manageEcom.editAllAddress(version, id, shippingAddress);
                     })
                     .catch((error) => {
                         this.changeError = error.message;
+                    })
+                    .then(() => {
+                        this.changeError = '';
+                        getSuccessMessage('The address is edited');
+                        //this.adresses = data.body.addresses;
                     });
-                this.emit(StoreEventType.ACCOUNT_ERROR);
             }
-            if (data.shippingAddress) {
+            if (data.shippingAddress && data.billingAddress == undefined) {
                 const defaultAddress = data.shippingAddress.isDefault;
                 shippingAddress = {
                     country: data.shippingAddress.country,
@@ -534,7 +530,7 @@ export class AccountStore extends Store {
                     });
                 this.emit(StoreEventType.ACCOUNT_ERROR);
             }
-            if (data.billingAddress) {
+            if (data.billingAddress && data.shippingAddress == undefined) {
                 const defaultAddress = data.billingAddress.isDefault;
                 billingAddress = {
                     country: data.billingAddress.country,
