@@ -14,11 +14,11 @@ export type AccountValidationErrors = Partial<AccountActionData>;
 export class AccountStore extends Store {
     private validationErrors: AccountValidationErrors;
     private changeError?: string;
-    private manageEcom: manageEcom;
+    public manageEcom: manageEcom;
     private firstName: string;
     private lastName: string;
     private birthDate: string;
-    private email: string;
+    public email: string;
     private version: number;
     private adresses: Address[];
     private summaryErrors?: RegSummaryErrors;
