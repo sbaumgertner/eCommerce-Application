@@ -26,7 +26,7 @@ export default class PopUp extends Component {
         return popUp;
     }
 
-    private closePopUp(button: HTMLElement): void {
+    public closePopUp(button: HTMLElement): void {
         button.addEventListener('click', () => {
             this.componentElem.remove();
             this.scroll.addScroll();

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import MyToken from './myToken';
+import fetch from 'node-fetch';
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import {
     ClientBuilder,
