@@ -44,17 +44,25 @@ export class AccountStore extends Store {
     }
 
     public getEmailInfo(emailInfo: HTMLElement): string {
-        this.getCustomerInfo().then((data) => {
-            emailInfo.innerHTML = data.body.email;
-            this.email = emailInfo.innerHTML;
-        });
+        this.getCustomerInfo()
+            .then((data) => {
+                emailInfo.innerHTML = data.body.email;
+                this.email = emailInfo.innerHTML;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
         return this.email;
     }
 
     public getEmail(): void {
-        this.getCustomerInfo().then((data) => {
-            this.email = data.body.email;
-        });
+        this.getCustomerInfo()
+            .then((data) => {
+                this.email = data.body.email;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
     public returnEmail(): string {
@@ -77,32 +85,48 @@ export class AccountStore extends Store {
     }
 
     public getFirstName(firstName: HTMLElement): void {
-        this.getCustomerInfo().then((data) => {
-            firstName.innerHTML = data.body.firstName as string;
-            this.firstName = firstName.innerHTML;
-        });
+        this.getCustomerInfo()
+            .then((data) => {
+                firstName.innerHTML = data.body.firstName as string;
+                this.firstName = firstName.innerHTML;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
     public getLastName(lastName: HTMLElement): void {
-        this.getCustomerInfo().then((data) => {
-            lastName.innerHTML = data.body.lastName as string;
-            this.lastName = lastName.innerHTML;
-        });
+        this.getCustomerInfo()
+            .then((data) => {
+                lastName.innerHTML = data.body.lastName as string;
+                this.lastName = lastName.innerHTML;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
     public getDateOfBirth(dateOfBirth: HTMLElement): void {
-        this.getCustomerInfo().then((data) => {
-            dateOfBirth.innerHTML = data.body.dateOfBirth as string;
-            this.birthDate = dateOfBirth.innerHTML;
-        });
+        this.getCustomerInfo()
+            .then((data) => {
+                dateOfBirth.innerHTML = data.body.dateOfBirth as string;
+                this.birthDate = dateOfBirth.innerHTML;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
     public getAdresses(): object {
-        this.getCustomerInfo().then((data) => {
-            data.body.addresses.forEach((item) => {
-                this.adresses.push(item);
+        this.getCustomerInfo()
+            .then((data) => {
+                data.body.addresses.forEach((item) => {
+                    this.adresses.push(item);
+                });
+            })
+            .catch((error) => {
+                console.log(error);
             });
-        });
         return this.adresses;
     }
 
