@@ -1,0 +1,62 @@
+[{
+    "name": "Standard",
+    "key": "std",
+    "localizedDescription": {
+        "en":"Delivery in 5-6 working days"
+    },
+    "taxCategory": {
+        "typeId": "tax-category",
+        "id": 1
+    },
+    "zoneRates": [
+        {
+            "zone": {
+                "typeId": "zone",
+                "id": "Europe"
+            },
+            "shippingRates": [
+                {
+                    "price": {
+                        "currencyCode": "USD",
+                        "centAmount": 300
+                    },
+                    "freeAbove": {
+                        "currencyCode": "USD",
+                        "centAmount": 20000
+                    },
+                    "tiers": []
+                }
+            ]
+        }
+    ],
+    "isDefault": true
+},
+{
+    "name": "Express",
+    "key": "express",
+    "localizedDescription": {
+        "en":"Same day delivery"
+    },
+    "taxCategory": {
+        "typeId": "tax-category",
+        "id": 1
+    },
+    "zoneRates": [
+        {
+            "zone": {
+                "typeId": "zone",
+                "id": "Europe"
+            },
+            "shippingRates": [
+                {
+                    "price": {
+                        "currencyCode": "USD",
+                        "centAmount": 1000
+                    },
+                    "tiers": []
+                }
+            ]
+        }
+    ],
+    "isDefault": false
+}]

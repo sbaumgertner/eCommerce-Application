@@ -1,0 +1,108 @@
+[
+  
+  {
+    "key": "plants-store-minsk",
+    "roles": [
+      "InventorySupply",
+      "ProductDistribution"
+    ],
+    "name": {
+      "en": "Plants Store Minsk"
+    },
+    "custom": {
+      "type": {
+        "key": "physicalStore"
+      },
+      "fields": {
+        "openingTimes": {
+          "en": "Mo-Fr. 10:00AM - 8:00PM\nSa. 9:00AM - 6:00PM"
+        },
+        "imageUrl": "https://ltdfoto.ru/image/y4iDpS"
+      }
+    },
+    "address": {
+      "streetName": "Jakuba Kolasa",
+      "streetNumber": "21",
+      "postalCode": "220089",
+      "city": "Minsk",
+      "country": "BY"
+    },
+    "geoLocation": {
+      "coordinates": [
+        53.922008, 
+        27.588630
+      ],
+      "type": "Point"
+    }
+  },
+  {
+    "key": "plants-store-tbilisi",
+    "roles": [
+      "InventorySupply",
+      "ProductDistribution"
+    ],
+    "name": {
+      "en": "Plants Store Tbilisi"
+    },
+    "custom": {
+      "type": {
+        "key": "physicalStore"
+      },
+      "fields": {
+        "openingTimes": {
+          "en": "Mo-Fr. 10:00AM - 8:00PM\nSa. 9:00AM - 6:00PM"
+        },
+        "imageUrl": "https://ltdfoto.ru/image/y4if7o"
+      }
+    },
+    "address": {
+      "streetName": "Pekini Ave",
+      "streetNumber": "17",
+      "postalCode": "645512",
+      "city": "Tbilisi",
+      "country": "GE"
+    },
+    "geoLocation": {
+      "coordinates": [
+        41.723000,
+        44.773299
+      ],
+      "type": "Point"
+    }
+  },
+  {
+    "key": "plants-store-moscow",
+    "roles": [
+      "InventorySupply",
+      "ProductDistribution"
+    ],
+    "name": {
+      "en": "Plants Store Moscow"
+    },
+    "custom": {
+      "type": {
+        "key": "physicalStore"
+      },
+      "fields": {
+        "openingTimes": {
+          "en": "Mo-Fr. 10:00AM - 8:00PM\nSa. 9:00AM - 6:00PM"
+        },
+        "imageUrl": "https://ltdfoto.ru/image/y4ibri"
+      }
+    },
+    "address": {
+      "streetName": "Tverskaya",
+      "streetNumber": "23/12",
+      "postalCode": "123001",
+      "city": "Moscow",
+      "country": "RU"
+    },
+    "geoLocation": {
+      "coordinates": [
+        55.766778, 
+        37.600380
+      ],
+      "type": "Point"
+    }
+  }
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "key": "physicalStore",
+    "name": {
+      "en": "Physical Store"
+    },
+    "resourceTypeIds": [
+      "channel"
+    ],
+    "fieldDefinitions": [
+      {
+        "name": "imageUrl",
+        "label": {
+          "en": "Image URL"
+        },
+        "required": true,
+        "type": {
+          "name": "String"
+        },
+        "inputHint": "SingleLine"
+      },
+      {
+        "name": "openingTimes",
+        "label": {
+          "en": "Opening Times"
+        },
+        "required": true,
+        "type": {
+          "name": "LocalizedString"
+        },
+        "inputHint": "MultiLine"
+      }
+    ]
+  }
+]

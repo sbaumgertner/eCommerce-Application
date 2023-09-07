@@ -1,0 +1,13 @@
+[{
+    "key": "default",
+    "name": {
+        "en": "Default"
+    }
+},
+{
+    "key": "europe",
+    "name": {
+        "en": "Europe"
+    },
+    "languages": ["en"]
+}]
