@@ -37,6 +37,10 @@ export class Select extends Component {
         return this.getComponent().value;
     }
 
+    public setValue(value: string): void {
+        this.getComponent().value = value;
+    }
+
     public setError(isError: boolean): void {
         if (isError) {
             this.getComponent().classList.add('input_invalid');

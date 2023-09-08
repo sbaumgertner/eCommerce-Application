@@ -1,6 +1,6 @@
 module.exports = {
   coverageDirectory: "coverage",
-  moduleNameMapper: {'^.+\\.(scss|css)$': '<rootDir>/config/CSSStub.js'},
+  moduleNameMapper: {'^.+\\.(scss|css|svg)$': '<rootDir>/config/CSSStub.js'},
   preset: "ts-jest",
   rootDir: './tests',
   testEnvironment: "jest-environment-node",

@@ -1,4 +1,4 @@
-import { BaseAddress } from '@commercetools/platform-sdk';
+import { BaseAddress, ClientResponse, Customer } from '@commercetools/platform-sdk';
 import { getApiRootForCredentialFlow } from './client';
 
 export type CustomerData = {
@@ -59,5 +59,340 @@ export class manageEcom {
                 }
             })
             .catch(console.error);
+    }
+
+    async getCustomerById(): Promise<ClientResponse<Customer>> {
+        const id = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: id as string,
+            })
+            .get()
+            .execute();
+    }
+
+    async chageCustomerCommonInfo(
+        version: number,
+        firstName: string,
+        lastName: string,
+        dateOfBirth: string
+    ): Promise<ClientResponse<Customer>> {
+        const id = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: id as string,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'setFirstName',
+                            firstName: firstName,
+                        },
+                        {
+                            action: 'setLastName',
+                            lastName: lastName,
+                        },
+                        {
+                            action: 'setDateOfBirth',
+                            dateOfBirth: dateOfBirth,
+                        },
+                    ],
+                },
+            })
+            .execute();
+    }
+
+    async changeCustomerEmail(version: number, email: string): Promise<ClientResponse<Customer>> {
+        const id = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: id as string,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'changeEmail',
+                            email: email,
+                        },
+                    ],
+                },
+            })
+            .execute();
+    }
+
+    async getCustomerFistName(): Promise<string> {
+        let firstName = '';
+        const id = localStorage.getItem('id');
+        getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: id as string,
+            })
+            .get()
+            .execute()
+            .then((data) => {
+                firstName = data.body.firstName as string;
+            });
+
+        return firstName;
+    }
+
+    async getCustomerLastName(): Promise<string> {
+        let lastName = '';
+        const id = localStorage.getItem('id');
+        getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: id as string,
+            })
+            .get()
+            .execute()
+            .then((data) => {
+                lastName = data.body.lastName as string;
+            });
+
+        return lastName;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    async changeCustomerPassword(version: number, currentPassword: string, newPassword: string) {
+        const ID = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .password()
+            .post({
+                body: {
+                    id: ID as string,
+                    version: version,
+                    currentPassword: currentPassword,
+                    newPassword: newPassword,
+                },
+            })
+            .execute();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    async addNewAddress(version: number, adressData: CustomerAddress) {
+        const ID = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: ID as string,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'addAddress',
+                            address: adressData,
+                        },
+                    ],
+                },
+            })
+            .execute();
+    }
+
+    async removeAddress(version: number, adressId: string): Promise<ClientResponse<Customer>> {
+        const ID = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: ID as string,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'removeAddress',
+                            addressId: adressId,
+                        },
+                    ],
+                },
+            })
+            .execute();
+    }
+    async addShippingAddressID(version: number, adressId: string): Promise<ClientResponse<Customer>> {
+        const ID = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: ID as string,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'addShippingAddressId',
+                            addressId: adressId,
+                        },
+                    ],
+                },
+            })
+            .execute();
+    }
+    async addBillingAddressID(version: number, adressId: string): Promise<ClientResponse<Customer>> {
+        const ID = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: ID as string,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'addBillingAddressId',
+                            addressId: adressId,
+                        },
+                    ],
+                },
+            })
+            .execute();
+    }
+
+    async addShippingDefaultAddress(version: number, adressId: string): Promise<ClientResponse<Customer>> {
+        const ID = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: ID as string,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'setDefaultShippingAddress',
+                            addressId: adressId,
+                        },
+                    ],
+                },
+            })
+            .execute();
+    }
+
+    async addBillinggDefaultAddress(version: number, adressId: string): Promise<ClientResponse<Customer>> {
+        const ID = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: ID as string,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'setDefaultBillingAddress',
+                            addressId: adressId,
+                        },
+                    ],
+                },
+            })
+            .execute();
+    }
+
+    async addAddress(version: number, adressId: string): Promise<ClientResponse<Customer>> {
+        const ID = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: ID as string,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'addShippingAddressId',
+                            addressId: adressId,
+                        },
+                        {
+                            action: 'addBillingAddressId',
+                            addressId: adressId,
+                        },
+                        {
+                            action: 'setDefaultShippingAddress',
+                            addressId: adressId,
+                        },
+                        {
+                            action: 'setDefaultBillingAddress',
+                            addressId: adressId,
+                        },
+                    ],
+                },
+            })
+            .execute();
+    }
+
+    async editAllAddress(
+        version: number,
+        adressId: string,
+        addressData: CustomerAddress
+    ): Promise<ClientResponse<Customer>> {
+        const ID = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: ID as string,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'changeAddress',
+                            addressId: adressId,
+                            address: addressData,
+                        },
+                        {
+                            action: 'setDefaultShippingAddress',
+                            addressId: adressId,
+                        },
+                        {
+                            action: 'setDefaultBillingAddress',
+                            addressId: adressId,
+                        },
+                    ],
+                },
+            })
+            .execute();
+    }
+
+    async editAddress(
+        version: number,
+        adressId: string,
+        addressData: CustomerAddress
+    ): Promise<ClientResponse<Customer>> {
+        const ID = localStorage.getItem('id');
+        return getApiRootForCredentialFlow()
+            .customers()
+            .withId({
+                ID: ID as string,
+            })
+            .post({
+                body: {
+                    version: version,
+                    actions: [
+                        {
+                            action: 'changeAddress',
+                            addressId: adressId,
+                            address: addressData,
+                        },
+                    ],
+                },
+            })
+            .execute();
     }
 }

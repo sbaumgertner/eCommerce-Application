@@ -1,0 +1,111 @@
+[
+  {
+    "name": "plant",
+    "key": "plant",
+    "description": "Plants Product Data Set Structure",
+    "attributes": [
+      {
+        "name": "creationDate",
+        "label": {
+          "en": "Date of Creation"
+        },
+        "isRequired": false,
+        "type": {
+          "name": "datetime"
+        },
+        "attributeConstraint": "None",
+        "isSearchable": true,
+        "inputHint": "SingleLine",
+        "displayGroup": "Other"
+      },
+      {
+        "name": "sizePlants",
+        "label": {
+          "en": "Size of Plants"
+        },
+        "isRequired": true,
+        "type": {
+          "name": "enum",
+          "values": [
+            {
+              "key": "mini",
+              "label": "Mini (2\"-3\" pot)"
+            },
+            {
+              "key": "small",
+              "label": "Small (4\" pot)"
+            },
+            {
+              "key": "medium",
+              "label": "Medium (6\" pot)"
+            },
+            {
+              "key": "large",
+              "label": "Large (8\"-10\" pot)"
+            }
+          ]
+        },
+        "attributeConstraint": "CombinationUnique",
+        "isSearchable": true,
+        "inputHint": "SingleLine",
+        "displayGroup": "Other"
+      },
+      {
+        "name": "agePlants",
+        "label": {
+          "en": "Age of Plants"
+        },
+        "isRequired": true,
+        "type": {
+          "name": "enum",
+          "values": [
+            {
+              "key": "seed",
+              "label": "Seed"
+            },
+            {
+              "key": "baby",
+              "label": "Baby"
+            },
+            {
+              "key": "adult",
+              "label": "Adult"
+            }
+          ]
+        },
+        "attributeConstraint": "CombinationUnique",
+        "isSearchable": true,
+        "inputHint": "SingleLine",
+        "displayGroup": "Other"
+      },
+      {
+        "name": "baseId",
+        "label": {
+          "en": "BaseID"
+        },
+        "isRequired": true,
+        "type": {
+          "name": "text"
+        },
+        "attributeConstraint": "None",
+        "isSearchable": true,
+        "inputHint": "SingleLine",
+        "displayGroup": "Other"
+      },
+      {
+        "name": "isOnSale",
+        "label": {
+          "en": "isOnSale"
+        },
+        "isRequired": false,
+        "type": {
+          "name": "boolean"
+        },
+        "attributeConstraint": "None",
+        "isSearchable": true,
+        "inputHint": "SingleLine",
+        "displayGroup": "Other"
+      }
+    ]
+  }
+]

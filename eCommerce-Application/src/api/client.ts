@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import MyToken from './myToken';
+import fetch from 'node-fetch';
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import {
     ClientBuilder,
@@ -13,12 +14,12 @@ import {
 } from '@commercetools/sdk-client-v2';
 
 const CTP_PROJECT_KEY = 'ecom_app';
-const CTP_CLIENT_SECRET = 'jgIUZAg-yTbrBpijCK4Rjtw_wAy0vXsu';
-const CTP_CLIENT_ID = '5bYmbO7AS_8C4ELloQB1ZRDm';
+const CTP_CLIENT_SECRET = 'SOD9EBG_EpE0m8SVaeJa5DaIWQnT6sm2';
+const CTP_CLIENT_ID = 'Kw1PsiB2LYvTBb6ClYXf2qRB';
 const CPT_AUTH_URL = 'https://auth.europe-west1.gcp.commercetools.com';
 const CPT_API_URL = 'https://api.europe-west1.gcp.commercetools.com';
 const CPT_SCOPES = [
-    'view_cart_discounts:ecom_app manage_orders:ecom_app view_project_settings:ecom_app manage_my_shopping_lists:ecom_app manage_customers:ecom_app view_messages:ecom_app view_published_products:ecom_app introspect_oauth_tokens:ecom_app manage_my_profile:ecom_app view_shipping_methods:ecom_app create_anonymous_token:ecom_app manage_shopping_lists:ecom_app view_shopping_lists:ecom_app view_payments:ecom_app view_orders:ecom_app view_categories:ecom_app view_discount_codes:ecom_app manage_my_orders:ecom_app',
+    'view_cart_discounts:ecom_app manage_orders:ecom_app view_project_settings:ecom_app manage_my_shopping_lists:ecom_app manage_customers:ecom_app view_messages:ecom_app view_published_products:ecom_app introspect_oauth_tokens:ecom_app manage_my_profile:ecom_app view_shipping_methods:ecom_app create_anonymous_token:ecom_app manage_products:ecom_app manage_shopping_lists:ecom_app view_shopping_lists:ecom_app view_payments:ecom_app view_orders:ecom_app view_categories:ecom_app view_discount_codes:ecom_app manage_my_orders:ecom_app',
 ];
 const ANONYMOUS_ID = 'idAnonym1';
 

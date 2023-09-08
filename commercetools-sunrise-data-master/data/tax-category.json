@@ -1,0 +1,50 @@
+[
+  {
+    "name": "standard",
+    "key": "standard",
+    "rates": [
+      {
+        "name": "20% incl.",
+        "amount": 0.2,
+        "includedInPrice": true,
+        "country": "BY"
+      },
+      {
+        "name": "10% incl.",
+        "amount": 0.1,
+        "includedInPrice": true,
+        "country": "GE"
+      },
+      {
+        "name": "19% incl.",
+        "amount": 0.19,
+        "includedInPrice": true,
+        "country": "RU"
+      }
+    ]
+  },
+  {
+    "name": "Low Category",
+    "key": "low",
+    "rates": [
+      {
+        "name": "20% incl.",
+        "amount": 0.07,
+        "includedInPrice": true,
+        "country": "BY"
+      },
+      {
+        "name": "10% incl.",
+        "amount": 0.08,
+        "includedInPrice": true,
+        "country": "GE"
+      },
+      {
+        "name": "19% incl.",
+        "amount": 0.05,
+        "includedInPrice": true,
+        "country": "RU"
+      }
+    ]
+  }
+]

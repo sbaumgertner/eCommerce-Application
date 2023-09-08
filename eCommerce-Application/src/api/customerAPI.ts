@@ -23,10 +23,26 @@ export default class CustomerAPI {
                 },
             })
             .execute()
-            .then(() => {
+            .then((data) => {
+                localStorage.setItem('id', data.body.customer.id);
                 const token = myToken.get().token;
                 localStorage.setItem('token', token);
                 this.userAction.changeUserType(false);
             });
+    }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    async changeCustomerPassword(version: number, currentPassword: string, newPassword: string) {
+        return getApiRootForPasswordFlow(this.username, this.password)
+            .me()
+            .password()
+            .post({
+                body: {
+                    version: version,
+                    currentPassword: currentPassword,
+                    newPassword: newPassword,
+                },
+            })
+            .execute();
     }
 }

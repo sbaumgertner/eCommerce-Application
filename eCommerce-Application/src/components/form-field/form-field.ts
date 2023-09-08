@@ -36,6 +36,12 @@ export default class FormField extends Component {
         return this.input.getValue();
     }
 
+    public setValue(value: string): void {
+        if (this.input instanceof Input) {
+            this.input.setValue(value);
+        }
+    }
+
     public setError(error: string): void {
         this.error.innerText = error;
         this.input.setError(error.length > 0);
