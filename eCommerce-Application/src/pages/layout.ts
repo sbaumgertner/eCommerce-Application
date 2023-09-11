@@ -14,9 +14,11 @@ import { CatalogPage } from './catalog/catalog';
 import { ProductPage } from './product/product';
 import { CartPage } from './cart/cart';
 import { AboutPage } from './about/about';
+import { CartStore } from '../store/cart-store';
 
 export class Layout extends Page {
     private appStore: AppStore;
+    private cartStore: CartStore;
 
     private header: Header;
     private main: Page;
@@ -32,19 +34,20 @@ export class Layout extends Page {
     private home: HomePage;
     private mainEl: HTMLElement;
 
-    constructor(appStore: AppStore) {
+    constructor(appStore: AppStore, cartStore: CartStore) {
         super();
         this.appStore = appStore;
+        this.cartStore = cartStore;
 
         this.home = new HomePage(this.appStore);
         this.loginPage = new LoginPage(this.appStore);
         this.accountPage = new AccountPage(this.appStore);
-        this.catalogPage = new CatalogPage(this.appStore);
+        this.catalogPage = new CatalogPage(this.appStore, this.cartStore);
         this.productPage = new ProductPage(this.appStore);
-        this.cartPage = new CartPage();
+        this.cartPage = new CartPage(this.appStore, this.cartStore);
         this.aboutPage = new AboutPage();
 
-        this.header = new Header(this.appStore);
+        this.header = new Header(this.appStore, this.cartStore);
         this.main = this.home;
         this.footer = new Footer(this.appStore);
 

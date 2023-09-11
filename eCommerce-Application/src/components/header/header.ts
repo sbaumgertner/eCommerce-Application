@@ -15,6 +15,7 @@ import cartIcon from '../../assets/icons/icon-cart.svg';
 import userIcon from '../../assets/icons/icon-user.svg';
 import burgerIcon from '../../assets/icons/icon-menu.svg';
 import closeIcon from '../../assets/icons/icon-cross.svg';
+import { CartStore } from '../../store/cart-store';
 
 const HeaderNavLinks: LinkProps[] = [
     {
@@ -40,7 +41,7 @@ export default class Header extends Component {
     private isMobile = this.handleMobileChange(this.mediaQuery);
     private navigationBar = new NavigationBar(this.appStore, HeaderNavLinks, 'dark').getComponent();
 
-    constructor(private appStore: AppStore) {
+    constructor(private appStore: AppStore, private cartStore: CartStore) {
         const headerParams: ElementParams = {
             tag: 'header',
             classes: ['header'],
@@ -142,12 +143,11 @@ export default class Header extends Component {
     }
 
     private createCartIcon(): HTMLElement {
-        const cartIconInstance = new IconWithCounter(cartIcon, 'clear', 0);
+        const cartIconInstance = new IconWithCounter(cartIcon, 'clear', this.cartStore.getCartItemAmount());
         const cartIconEl = cartIconInstance.getComponent();
 
-        // поменять на лиснер изменения в сторе корзины
-        cartIconEl.addEventListener('click', () => {
-            cartIconInstance.setCount(Number(cartIconEl.dataset.count) + 1);
+        this.cartStore.addChangeListener(StoreEventType.CART_ITEM_AMOUNT_CHANGE, () => {
+            cartIconInstance.setCount(this.cartStore.getCartItemAmount());
         });
 
         cartIconEl.addEventListener('click', () =>

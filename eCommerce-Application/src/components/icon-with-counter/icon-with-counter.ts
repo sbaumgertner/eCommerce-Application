@@ -16,6 +16,8 @@ export default class IconWithCounter extends IconButton {
         this.componentElem.dataset.count = `${count}`;
         if (count > 0) {
             this.componentElem.classList.add('icon-count_count');
+        } else {
+            this.componentElem.classList.remove('icon-count_count');
         }
     }
 
