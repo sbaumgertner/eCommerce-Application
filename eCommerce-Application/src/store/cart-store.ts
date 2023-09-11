@@ -53,6 +53,9 @@ export class CartStore extends Store {
             this.cartItemAmount--;
             this.items.splice(index, 1);
             // ДОБАВИТЬ API удаления продукта из корзину
+            if (this.items.length === 0) {
+                this.emit(StoreEventType.CART_CLEAR);
+            }
             this.emit(StoreEventType.CART_ITEM_AMOUNT_CHANGE);
         }
 
