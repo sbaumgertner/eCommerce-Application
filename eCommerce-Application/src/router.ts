@@ -63,7 +63,7 @@ export class Router {
         if (url_arr.length > 2) {
             pageName = PageName.NOT_FOUND;
         } else {
-            const page: Page | undefined = pages.find((item) => item.url === url_arr[0]); //?.name;
+            const page: Page | undefined = pages.find((item) => item.url === url_arr[0]);
             if (!page || (Boolean(page.hasResourse) != url_arr.length > 1 && page.name === PageName.PRODUCT)) {
                 pageName = PageName.NOT_FOUND;
             } else {

@@ -12,6 +12,8 @@ import Footer from '../components/footer/footer';
 import { AccountPage } from './account/account';
 import { CatalogPage } from './catalog/catalog';
 import { ProductPage } from './product/product';
+import { CartPage } from './cart/cart';
+import { AboutPage } from './about/about';
 
 export class Layout extends Page {
     private appStore: AppStore;
@@ -23,6 +25,8 @@ export class Layout extends Page {
     private accountPage: AccountPage;
     private catalogPage: CatalogPage;
     private productPage: ProductPage;
+    private cartPage: CartPage;
+    private aboutPage: AboutPage;
 
     private notFound = new NotFoundPage();
     private home: HomePage;
@@ -37,6 +41,8 @@ export class Layout extends Page {
         this.accountPage = new AccountPage(this.appStore);
         this.catalogPage = new CatalogPage(this.appStore);
         this.productPage = new ProductPage(this.appStore);
+        this.cartPage = new CartPage();
+        this.aboutPage = new AboutPage();
 
         this.header = new Header(this.appStore);
         this.main = this.home;
@@ -62,7 +68,7 @@ export class Layout extends Page {
                 this.updateMainView(this.accountPage);
                 break;
             case PageName.CART:
-                this.updateMainView(this.notFound);
+                this.updateMainView(this.cartPage);
                 break;
             case PageName.PRODUCT:
                 this.updateMainView(this.productPage);
@@ -71,7 +77,7 @@ export class Layout extends Page {
                 this.updateMainView(this.catalogPage);
                 break;
             case PageName.ABOUT_US:
-                this.updateMainView(this.notFound);
+                this.updateMainView(this.aboutPage);
                 break;
             case PageName.NOT_FOUND:
                 this.updateMainView(this.notFound);
