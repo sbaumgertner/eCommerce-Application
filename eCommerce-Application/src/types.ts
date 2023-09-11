@@ -27,6 +27,9 @@ export enum ActionType {
     ADD_NEW_ADDRESS = 'ADD_NEW_ADDRESS',
     DELETE_ADDRESS = 'DELETE_ADDRESS',
     EDIT_ADDRESS = 'EDDIT_EDDRESS',
+    CART_ADD_ITEM = 'CART_ADD_ITEM',
+    CART_REMOVE_ITEM = 'CART_REMOVE_ITEM',
+    CART_CLEAR = 'CART_CLEAR',
 }
 
 export type Action = {
@@ -40,6 +43,10 @@ export enum StoreEventType {
     REGISTRATION_ERROR = 'REGISTRATION_ERROR',
     LOGIN_ERROR = 'LOGIN_ERROR',
     ACCOUNT_ERROR = 'ACCOUNT_ERROR',
+    CART_ADD_ITEM = 'CART_ADD_ITEM',
+    CART_REMOVE_ITEM = 'CART_REMOVE_ITEM',
+    CART_CLEAR = 'CART_CLEAR',
+    CART_ITEM_AMOUNT_CHANGE = 'CART_ITEM_AMOUNT_CHANGE',
 }
 
 export type ElementParams = {
@@ -120,4 +127,10 @@ export type ProductData = {
     images: string[];
     size: string;
     age: string;
+};
+
+export type ProductKey = string;
+export type CartItem = {
+    key: string;
+    count: number;
 };

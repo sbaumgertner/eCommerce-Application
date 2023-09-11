@@ -12,9 +12,12 @@ import Footer from '../components/footer/footer';
 import { AccountPage } from './account/account';
 import { CatalogPage } from './catalog/catalog';
 import { ProductPage } from './product/product';
+import { CartPage } from './cart/cart';
+import { CartStore } from '../store/cart-store';
 
 export class Layout extends Page {
     private appStore: AppStore;
+    private cartStore: CartStore;
 
     private header: Header;
     private main: Page;
@@ -23,22 +26,25 @@ export class Layout extends Page {
     private accountPage: AccountPage;
     private catalogPage: CatalogPage;
     private productPage: ProductPage;
+    private cartPage: CartPage;
 
     private notFound = new NotFoundPage();
     private home: HomePage;
     private mainEl: HTMLElement;
 
-    constructor(appStore: AppStore) {
+    constructor(appStore: AppStore, cartStore: CartStore) {
         super();
         this.appStore = appStore;
+        this.cartStore = cartStore;
 
         this.home = new HomePage(this.appStore);
         this.loginPage = new LoginPage(this.appStore);
         this.accountPage = new AccountPage(this.appStore);
-        this.catalogPage = new CatalogPage(this.appStore);
+        this.catalogPage = new CatalogPage(this.appStore, this.cartStore);
         this.productPage = new ProductPage(this.appStore);
+        this.cartPage = new CartPage(this.appStore, this.cartStore);
 
-        this.header = new Header(this.appStore);
+        this.header = new Header(this.appStore, this.cartStore);
         this.main = this.home;
         this.footer = new Footer(this.appStore);
 
@@ -62,7 +68,7 @@ export class Layout extends Page {
                 this.updateMainView(this.accountPage);
                 break;
             case PageName.CART:
-                this.updateMainView(this.notFound);
+                this.updateMainView(this.cartPage);
                 break;
             case PageName.PRODUCT:
                 this.updateMainView(this.productPage);
