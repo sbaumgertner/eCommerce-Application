@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+import { Cart, ClientResponse } from '@commercetools/platform-sdk';
 import { getAPIRootWithExistingTokenFlow } from './client';
 
 type CartDraft = {
@@ -13,7 +15,6 @@ type MyCartUpdate = {
 type MyCartUpdateAction = {
     readonly action: 'addLineItem';
     readonly productId?: string;
-    readonly variantId?: number;
     readonly quantity?: number;
 };
 
@@ -41,8 +42,7 @@ type CartRemoveItemDraft = {
 };
 
 export default class CartAPI {
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    private createCustomerCartDraft(cartData: CartDraft) {
+    private createCustomerCartDraft(cartData: CartDraft): CartDraft {
         const { currency, customerEmail } = cartData;
 
         return {
@@ -81,11 +81,8 @@ export default class CartAPI {
         };
     }
 
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     async createCartForCurrentCustomer(cartDraft: CartDraft) {
         try {
-            const cart = await this.getActiveCart();
-            if (cart?.statusCode == 200) return cart;
             return getAPIRootWithExistingTokenFlow()
                 .me()
                 .carts()
@@ -98,22 +95,14 @@ export default class CartAPI {
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    async getActiveCart() {
-        try {
-            const activeCart = await getAPIRootWithExistingTokenFlow().me().activeCart().get().execute();
-
-            return activeCart;
-        } catch (error) {
-            return error;
-        }
+    async getActiveCart(): Promise<ClientResponse<Cart>> {
+        const activeCart = await getAPIRootWithExistingTokenFlow().me().activeCart().get().execute();
+        return activeCart;
     }
 
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     async updateActiveCart(productDetails: { cartId: string; cartUpdateDraft: CartUpdateDraft }) {
         try {
-            // eslint-disable-next-line prefer-const
-            let { cartId, cartUpdateDraft } = productDetails;
+            const { cartId, cartUpdateDraft } = productDetails;
 
             const updatedCart = await getAPIRootWithExistingTokenFlow()
                 .me()
@@ -128,7 +117,6 @@ export default class CartAPI {
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     async removeLineItem(productDetails: CartRemoveItemDraft) {
         try {
             const { body } = await this.getActiveCart();

@@ -141,7 +141,7 @@ type ExistingTokenMiddlewareOptions = {
     force?: boolean;
 };
 
-const authorization = localStorage.getItem('token');
+const authorization = `Bearer ${localStorage.getItem('token')}`;
 
 const options: ExistingTokenMiddlewareOptions = {
     force: true,
@@ -150,7 +150,8 @@ const options: ExistingTokenMiddlewareOptions = {
 export const getExistingTokenFlowClient = (): Client => {
     const ctpClient = new ClientBuilder()
         .withProjectKey(CTP_PROJECT_KEY)
-        .withExistingTokenFlow(authorization as string, options)
+        .withHttpMiddleware(httpMiddlewareOptions)
+        .withExistingTokenFlow(authorization, options)
         .build();
 
     return ctpClient;
