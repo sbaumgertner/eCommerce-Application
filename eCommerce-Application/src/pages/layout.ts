@@ -13,6 +13,7 @@ import { AccountPage } from './account/account';
 import { CatalogPage } from './catalog/catalog';
 import { ProductPage } from './product/product';
 import { CartPage } from './cart/cart';
+import { AboutPage } from './about/about';
 import { CartStore } from '../store/cart-store';
 
 export class Layout extends Page {
@@ -27,6 +28,7 @@ export class Layout extends Page {
     private catalogPage: CatalogPage;
     private productPage: ProductPage;
     private cartPage: CartPage;
+    private aboutPage: AboutPage;
 
     private notFound = new NotFoundPage();
     private home: HomePage;
@@ -43,6 +45,7 @@ export class Layout extends Page {
         this.catalogPage = new CatalogPage(this.appStore, this.cartStore);
         this.productPage = new ProductPage(this.appStore);
         this.cartPage = new CartPage(this.appStore, this.cartStore);
+        this.aboutPage = new AboutPage();
 
         this.header = new Header(this.appStore, this.cartStore);
         this.main = this.home;
@@ -77,7 +80,7 @@ export class Layout extends Page {
                 this.updateMainView(this.catalogPage);
                 break;
             case PageName.ABOUT_US:
-                this.updateMainView(this.notFound);
+                this.updateMainView(this.aboutPage);
                 break;
             case PageName.NOT_FOUND:
                 this.updateMainView(this.notFound);
