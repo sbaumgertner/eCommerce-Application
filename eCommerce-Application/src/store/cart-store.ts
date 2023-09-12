@@ -1,4 +1,4 @@
-import { Action, ActionType, CartItem, ProductKey, StoreEventType } from '../types';
+import { Action, ActionType, CartItem, ProductID, StoreEventType } from '../types';
 import { Store } from './abstract/store';
 
 export class CartStore extends Store {
@@ -20,26 +20,26 @@ export class CartStore extends Store {
         return this.items;
     }
 
-    private onAddItem(productKey: ProductKey): void {
-        const product = this.items.find((item) => item.key === productKey);
+    private onIncItem(productID: ProductID): void {
+        const product = this.items.find((item) => item.productID === productID);
 
         if (product) {
             product.count++;
-            // ДОБАВИТЬ API изменения количества продукта в корзине
+            // ДОБАВИТЬ API изменения количества продукта в корзине (+1)
         } else {
             this.cartItemAmount++;
-            this.items.push({ key: productKey, count: 1 });
+            this.items.push({ productID, count: 1 });
             // ДОБАВИТЬ API добавки продукта в корзину
             this.emit(StoreEventType.CART_ITEM_AMOUNT_CHANGE);
         }
 
-        this.emit(StoreEventType.CART_ADD_ITEM);
+        this.emit(StoreEventType.CART_INC_ITEM);
     }
 
-    private onRemoveItem(productKey: ProductKey): void {
+    private onDecItem(productID: ProductID): void {
         let index = 0;
         const product = this.items.find((item, i) => {
-            if (item.key === productKey) {
+            if (item.productID === productID) {
                 index = i;
                 return true;
             }
@@ -48,8 +48,32 @@ export class CartStore extends Store {
 
         if (product && product.count > 1) {
             product.count--;
-            // ДОБАВИТЬ API изменения количества продукта в корзине
+            // ДОБАВИТЬ API изменения количества продукта в корзине (-1)
         } else {
+            this.cartItemAmount--;
+            this.items.splice(index, 1);
+            // ДОБАВИТЬ API удаления продукта из корзину
+            if (this.items.length === 0) {
+                this.emit(StoreEventType.CART_CLEAR);
+            }
+            this.emit(StoreEventType.CART_REMOVE_ITEM);
+            this.emit(StoreEventType.CART_ITEM_AMOUNT_CHANGE);
+        }
+
+        this.emit(StoreEventType.CART_DEC_ITEM);
+    }
+
+    private onRemoveItem(productID: ProductID): void {
+        let index = 0;
+        const product = this.items.find((item, i) => {
+            if (item.productID === productID) {
+                index = i;
+                return true;
+            }
+            return false;
+        });
+
+        if (product) {
             this.cartItemAmount--;
             this.items.splice(index, 1);
             // ДОБАВИТЬ API удаления продукта из корзину
@@ -59,7 +83,7 @@ export class CartStore extends Store {
             this.emit(StoreEventType.CART_ITEM_AMOUNT_CHANGE);
         }
 
-        this.emit(StoreEventType.CART_ADD_ITEM);
+        this.emit(StoreEventType.CART_REMOVE_ITEM);
     }
 
     private onClearCart(): void {
@@ -73,8 +97,11 @@ export class CartStore extends Store {
 
     protected actionCallback(action: Action): void {
         switch (action.actionType) {
-            case ActionType.CART_ADD_ITEM:
-                this.onAddItem(action.data);
+            case ActionType.CART_INC_ITEM:
+                this.onIncItem(action.data);
+                break;
+            case ActionType.CART_DEC_ITEM:
+                this.onDecItem(action.data);
                 break;
             case ActionType.CART_REMOVE_ITEM:
                 this.onRemoveItem(action.data);
