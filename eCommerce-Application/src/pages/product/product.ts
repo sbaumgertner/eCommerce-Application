@@ -1,26 +1,24 @@
 import './product.scss';
 import { AppStore } from '../../store/app-store';
 import { ProductStore } from '../../store/product-store';
-import { ProductData } from '../../types';
+import { ProductData, ProductID } from '../../types';
 import createElement from '../../utils/create-element';
 import { Page } from '../abstract/page';
-import { Button } from '../../components/button/button';
 import { Slider } from '../../components/slider/slider';
 import { Modal } from '../../components/modal/modal';
+import { CartStore } from '../../store/cart-store';
+import { CartInteractionBar } from '../../components/cart-interactions-bar/cart-interactions-bar';
 
 export class ProductPage extends Page {
-    private appStore: AppStore;
     private productStore: ProductStore;
     private data?: ProductData;
-    private addButton?: Button;
 
     private slider?: Slider;
     private modalSlider?: Slider;
     private modal?: Modal;
 
-    constructor(appStore: AppStore) {
+    constructor(private appStore: AppStore, private cartStore: CartStore) {
         super();
-        this.appStore = appStore;
         this.productStore = new ProductStore();
     }
 
@@ -59,9 +57,12 @@ export class ProductPage extends Page {
 
     private createPrice(): HTMLElement {
         const html = createElement({ tag: 'div', classes: ['product-price'] });
-        this.addButton = new Button('filled', 'add-product', 'Add to cart');
-        this.addButton.getComponent().classList.add('button-add-product');
-        html.append(this.addButton.getComponent());
+        const productID = this.data?.productID as ProductID;
+        const btnBarEl = new CartInteractionBar({ type: 'filled', productID }, this.cartStore).getComponent();
+
+        btnBarEl.classList.add('product__button-bar');
+
+        html.append(btnBarEl);
         html.append(this.createPriceValues());
         return html;
     }

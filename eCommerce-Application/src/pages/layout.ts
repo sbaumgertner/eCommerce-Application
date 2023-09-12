@@ -43,7 +43,7 @@ export class Layout extends Page {
         this.loginPage = new LoginPage(this.appStore);
         this.accountPage = new AccountPage(this.appStore);
         this.catalogPage = new CatalogPage(this.appStore, this.cartStore);
-        this.productPage = new ProductPage(this.appStore);
+        this.productPage = new ProductPage(this.appStore, this.cartStore);
         this.cartPage = new CartPage(this.appStore, this.cartStore);
         this.aboutPage = new AboutPage();
 

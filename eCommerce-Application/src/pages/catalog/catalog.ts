@@ -22,7 +22,6 @@ import InputField from '../../components/input-field/input-field';
 import searchIcon from '../../assets/icons/icon-search.svg';
 import Input from '../../components/input/input';
 import { Select } from '../../components/select/select';
-import { CartActions } from '../../store/action/cartActions';
 import { CartStore } from '../../store/cart-store';
 
 const PLANT_SIZE_FILTERS = [
@@ -84,7 +83,6 @@ type CatalogPageData = {
 
 export class CatalogPage extends Page {
     private routeAction: RouteAction;
-    private cartActions: CartActions;
     private categoriesBarEl = createElement({ tag: 'section', classes: ['categories-bar'] });
     private innerEl = createElement({ tag: 'div', classes: ['catalog-inner'] });
     private pageInfo: CatalogPageData;
@@ -98,7 +96,6 @@ export class CatalogPage extends Page {
         super();
         this.html = document.createElement('div');
         this.routeAction = new RouteAction();
-        this.cartActions = new CartActions();
         this.pageInfo = {
             currentCategories: 'all plants',
             currentPage: 1,
@@ -505,19 +502,7 @@ export class CatalogPage extends Page {
         if (this.productsData) {
             this.productsData.forEach((product) => {
                 const productData = productDataAdapter(product, this.categoriesData);
-                const productCard = new ProductCard(productData);
-                // удалить после проверок
-                const btn = productCard.getComponent().querySelector('button');
-                btn?.addEventListener('click', () => {
-                    console.log(product.key);
-                    const cartItem = this.cartStore.getCartItems().find((item) => item.key === product.key);
-                    if (cartItem) {
-                        this.cartActions.removeProduct(product.key);
-                    } else {
-                        this.cartActions.addProduct(product.key);
-                    }
-                });
-                //
+                const productCard = new ProductCard(productData, this.cartStore);
                 cardGridEl.append(productCard.getComponent());
             });
         } else {
