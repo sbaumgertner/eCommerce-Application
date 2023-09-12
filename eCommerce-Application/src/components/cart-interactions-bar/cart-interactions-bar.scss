@@ -4,6 +4,7 @@
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
+  min-height: 40px;
   &__add {
     flex-grow: 1;
   }

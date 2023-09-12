@@ -7,7 +7,7 @@ export class CartStore extends Store {
 
     constructor() {
         super();
-        // получить по API текущую корзину и заполнить cartItemAmount и items
+        // получить по API текущую корзину (или создать новую) и заполнить cartItemAmount и items
         this.cartItemAmount = 0;
         this.items = [];
     }
@@ -23,7 +23,7 @@ export class CartStore extends Store {
     private onIncItem(productID: ProductID): void {
         const product = this.items.find((item) => item.productID === productID);
 
-        if (product) {
+        if (product && typeof product.count === 'number') {
             product.count++;
             // ДОБАВИТЬ API изменения количества продукта в корзине (+1)
         } else {
@@ -46,7 +46,7 @@ export class CartStore extends Store {
             return false;
         });
 
-        if (product && product.count > 1) {
+        if (product && typeof product.count === 'number' && product.count > 1) {
             product.count--;
             // ДОБАВИТЬ API изменения количества продукта в корзине (-1)
         } else {
