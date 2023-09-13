@@ -65,3 +65,56 @@
     }
   }
 }
+
+.members{
+  background: url('../../assets/img/image-05.png') 50%/cover no-repeat;
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  &__list {
+    display: flex;
+    gap: 16px;
+    @media (max-width: $max-mobile) {
+      flex-direction: column;
+    }
+  }
+}
+
+.member {
+  flex: 1 1 33.333%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0px 0px 16px 0px rgba(125, 137, 117, 0.25);
+  background: $color-white;
+
+  &__photo {
+    width: 100%;
+    min-height: 320px;
+    max-height: 384px;
+    object-fit: cover;
+  }
+  &__header {
+    color: $color-neutral-10;
+
+  }
+  &__name {
+    margin: 24px 24px 0;
+  }
+  & .gh-link {
+    margin: 0 24px;
+    padding: 8px 0;
+    justify-content: start;
+    color: $color-neutral-30;
+    & svg {
+      fill: $color-neutral-30;
+    }
+  }
+  &__text {
+    margin: 8px 24px 24px;
+    color: $color-neutral-30;
+  } 
+}

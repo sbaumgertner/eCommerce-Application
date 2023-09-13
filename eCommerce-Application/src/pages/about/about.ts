@@ -4,6 +4,15 @@ import createElement from '../../utils/create-element';
 
 import rssLogo from '../../assets/rss-logo.svg';
 import htmlToElement from '../../utils/html-to-element';
+import GitHubLink from '../../components/link-github/link-github';
+
+type Member = {
+    name: string;
+    gitName: string;
+    gitLink: string;
+    photo: string;
+    text: string;
+};
 
 const GREETING_TEXT = `Hello, everyone! We're the Positive Code Crafters team, and this is our final project for the JavaScript/Front-end course at The Rolling Scopes School.`;
 const RESP_TEXT = `Svetlana Sbaumgertner (team lead): set up the application structure, developed routing, worked on the "Registration" and "Detailed Product" pages. 
@@ -18,6 +27,32 @@ const MENTORS_INFO = [
     {
         name: 'Maksim Rynkov',
         git: 'https://github.com/maximzmei',
+    },
+];
+const MEMBERS_INFO: Member[] = [
+    {
+        name: 'Yulia Novoselova',
+        gitName: 'Jully13',
+        gitLink: 'https://github.com/jully13',
+        // eslint-disable-next-line no-undef
+        photo: require('../../assets/img/photo-jully.jpg'),
+        text: `I am a starting front end developer. Last year I made a decision to try myself at programming. And by chance I found a repost of RS School Front-end Course on social media. To be honest, at that time I knew nothing about git, github and java-script. And my start was rather difficult. But the process of education was to my liking. Today I have already obtained an appropriate knowledge base to try myself as an front-end developer.`,
+    },
+    {
+        name: 'Svetlana baumgertner',
+        gitName: 'sbaumgertner',
+        gitLink: 'https://github.com/sbaumgertner',
+        // eslint-disable-next-line no-undef
+        photo: require('../../assets/img/photo-sveta.jpg'),
+        text: `I've been working in software development for more than 10 years. I started with flash programming. Then I worked on the development, support and integration of university information systems. Lately I've been working at Netcracker as a java developer. Now I'm on maternity leave and it's time to try frontend!`,
+    },
+    {
+        name: 'Illia Sakharau ',
+        gitName: 'Illia-Sakharau',
+        gitLink: 'https://github.com/Illia-Sakharau',
+        // eslint-disable-next-line no-undef
+        photo: require('../../assets/img/photo-illiya.jpg'),
+        text: `I am a UX/UI designer with 2 years of commercial experience who wants to understand the front-end better in order to improve my work. And, now I've decided to fully dedicate myself to front-end development.`,
     },
 ];
 
@@ -103,9 +138,29 @@ export class AboutPage extends Page {
             classes: ['members__title'],
             text: 'About the team members',
         });
+        const listEl = createElement({ tag: 'div', classes: ['members__list'] });
+        MEMBERS_INFO.forEach((member) => {
+            const memberEl = this.createMemberItem(member);
+            listEl.append(memberEl);
+        });
 
-        wrapperEl.append(titleEl);
+        wrapperEl.append(titleEl, listEl);
         sectionEl.append(wrapperEl);
         return sectionEl;
+    }
+
+    private createMemberItem(member: Member): HTMLElement {
+        const { name, photo, text, gitName, gitLink } = member;
+        const memberItemEl = createElement({ tag: 'div', classes: ['member'] });
+        const photoEl = createElement({ tag: 'img', classes: ['member__photo'] });
+        const headerEl = createElement({ tag: 'div', classes: ['member__header'] });
+        const nameEl = createElement({ tag: 'h6', classes: ['member__name'], text: name });
+        const githubEl = new GitHubLink({ name: gitName, link: gitLink }).getComponent();
+        const textEl = createElement({ tag: 'p', classes: ['member__text'], text: text });
+
+        photoEl.setAttribute('src', photo);
+        headerEl.append(nameEl, githubEl);
+        memberItemEl.append(photoEl, headerEl, textEl);
+        return memberItemEl;
     }
 }
