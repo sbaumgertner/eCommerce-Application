@@ -79,7 +79,6 @@ export const getCredentialFlowClient = (): Client => {
     const ctpClient = new ClientBuilder()
         .withProjectKey(CTP_PROJECT_KEY)
         .withClientCredentialsFlow(authMiddlewareOptions)
-        //.withAnonymousSessionFlow(anonymousMiddlewareOptions)
         .withHttpMiddleware(httpMiddlewareOptions)
         .withLoggerMiddleware()
         .build();
@@ -90,10 +89,8 @@ export const getCredentialFlowClient = (): Client => {
 export const getAnonymousFlowClient = (): Client => {
     const ctpClient = new ClientBuilder()
         .withProjectKey(CTP_PROJECT_KEY)
-        .withClientCredentialsFlow(authMiddlewareOptions)
         .withAnonymousSessionFlow(anonymousMiddlewareOptions)
         .withHttpMiddleware(httpMiddlewareOptions)
-        .withLoggerMiddleware()
         .build();
 
     return ctpClient;

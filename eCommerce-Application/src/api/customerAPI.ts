@@ -20,6 +20,8 @@ export default class CustomerAPI {
                 body: {
                     email: this.username,
                     password: this.password,
+                    updateProductData: true,
+                    activeCartSignInMode: 'MergeWithExistingCustomerCart',
                 },
             })
             .execute()
