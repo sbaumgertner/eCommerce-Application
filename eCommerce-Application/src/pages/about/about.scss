@@ -1,0 +1,42 @@
+@import "../../styles/tokens.scss";
+
+.hero {
+  background: url('../../assets/img/image-02.jpg') left/cover no-repeat;
+  // background: url('../../assets/img/image-02.jpg') 50%/cover no-repeat;
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding-bottom: 128px;
+    padding-right: calc(40% + 32px);
+    color: $color-neutral-10;
+    text-shadow: #F5F5F7 0 0 8px, #F5F5F7 0 0 8px, #F5F5F7 0 0 8px, #F5F5F7 0 0 8px, #F5F5F7 0 0 8px, #F5F5F7 0 0 8px;
+
+    @media (max-width: $max-tablet) {
+      padding: 96px calc(30% + 32px) 96px 32px;
+    }
+    @media (max-width: $max-mobile) {
+      padding: 72px 16px;
+    }
+    
+  }
+}
+
+.resp {
+  &__title {
+    margin-bottom: 16px;
+  }
+  &__text {
+    margin-top: 12px;
+  }
+}
+
+.mentors {
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 48px;
+    row-gap: 12px;
+    margin-top: 16px;
+  }
+}
