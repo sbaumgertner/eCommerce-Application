@@ -107,8 +107,7 @@
 .product-price {
   display: flex;
   gap: 32px;
-  padding-bottom: 32px;
-  align-items: flex-end;
+  align-items: center;
 }
 
 .button-add-product {
@@ -120,6 +119,7 @@
 }
 
 .price-discount {
+  display: flex;
   padding: 4px 8px 6px;
   border-radius: 60px;
   background: $color-secondary-40;
@@ -128,16 +128,17 @@
 
 .price-value {
   position: relative;
+  display: flex;
   overflow: visible;
   color: $color-neutral-10;
-  padding-top: 32px;
+  // padding-bottom: 32px;
   &.discounted {
-    padding-top: 0px;
+    margin-bottom: 32px;
 
     &::after {
       content: '';
       width: 115%;
-      height: 2px;
+      height: 1px;
       background: $color-secondary-40;
       position: absolute;
       left: -8px;
@@ -203,5 +204,13 @@
   @media (max-width: $max-mobile) {
     flex-basis: 100%;
     max-width: 100%;
+  }
+}
+
+.product__button-bar {
+  flex-grow: 1;
+  margin: 32px 0;
+  & .cic-bar {
+    min-width: 50%;
   }
 }

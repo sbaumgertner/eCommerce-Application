@@ -86,6 +86,7 @@ export class ProductsApi {
             images: images,
             size: size,
             age: age,
+            productID: data.body.results[0].id,
         };
 
         return product;

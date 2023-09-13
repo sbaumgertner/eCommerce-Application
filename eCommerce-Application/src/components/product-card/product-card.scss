@@ -50,11 +50,9 @@ $card-transform: all 0.2s ease-out;
   }
 
   &__button-bar {
-    display: flex;
     margin: 0 8px 8px;
-
-    & > .button {
-      flex-grow: 1;
+    & .cib-bar__remove {
+      display: none;
     }
   }
 
