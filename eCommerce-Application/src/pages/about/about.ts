@@ -2,6 +2,9 @@ import './about.scss';
 import { Page } from '../abstract/page';
 import createElement from '../../utils/create-element';
 
+import rssLogo from '../../assets/rss-logo.svg';
+import htmlToElement from '../../utils/html-to-element';
+
 const GREETING_TEXT = `Hello, everyone! We're the Positive Code Crafters team, and this is our final project for the JavaScript/Front-end course at The Rolling Scopes School.`;
 const RESP_TEXT = `Svetlana Sbaumgertner (team lead): set up the application structure, developed routing, worked on the "Registration" and "Detailed Product" pages. 
 Yulia Novoselova: managed the initial setup of the project in eCommerce tools and worked with their API, developed the "Login" and "User Profile" pages.
@@ -83,13 +86,11 @@ export class AboutPage extends Page {
     private createSchoolSection(): HTMLElement {
         const sectionEl = createElement({ tag: 'section', classes: ['school'] });
         const wrapperEl = createElement({ tag: 'div', classes: ['wrapper', 'school__wrapper'] });
-        const titleEl = createElement({
-            tag: 'h2',
-            classes: ['school__title'],
-            text: 'RSS',
-        });
+        const linkEl = htmlToElement(`<a href="https://rs.school/js/" target="_blank" class="school__link">
+                ${rssLogo}
+            </a>`);
 
-        wrapperEl.append(titleEl);
+        wrapperEl.append(linkEl);
         sectionEl.append(wrapperEl);
         return sectionEl;
     }
