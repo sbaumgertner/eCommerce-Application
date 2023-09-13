@@ -7,9 +7,12 @@
     flex-direction: column;
     gap: 32px;
     padding-bottom: 128px;
-    padding-right: calc(40% + 32px);
+    padding-right: 736px;
     color: $color-neutral-10;
 
+    @media (max-width: 1440px) {
+      padding-right: calc(40% + 32px);
+    }
     @media (max-width: $max-tablet) {
       padding: 96px calc(30% + 32px) 96px 32px;
     }
@@ -117,4 +120,27 @@
     margin: 8px 24px 24px;
     color: $color-neutral-30;
   } 
+}
+
+.mentor {
+  display: flex;
+  gap: 16px;
+
+  &__photo {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  &__name {
+    color: $color-neutral-10;
+  }
+  & .gh-link {
+    padding: 0;
+    justify-content: start;
+    color: $color-neutral-30;
+    & svg {
+      fill: $color-neutral-30;
+    }
+  }
 }

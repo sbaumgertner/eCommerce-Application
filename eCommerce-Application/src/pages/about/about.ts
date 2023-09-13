@@ -6,7 +6,7 @@ import rssLogo from '../../assets/rss-logo.svg';
 import htmlToElement from '../../utils/html-to-element';
 import GitHubLink from '../../components/link-github/link-github';
 
-type Member = {
+type Person = {
     name: string;
     gitName: string;
     gitLink: string;
@@ -19,17 +19,25 @@ const RESP_TEXT = `Svetlana Sbaumgertner (team lead): set up the application str
 Yulia Novoselova: managed the initial setup of the project in eCommerce tools and worked with their API, developed the "Login" and "User Profile" pages.
 Illia Sakharau: created the design of the application, managed the board, was responsible for filling the project in eCommerce tools, worked on the "Header & Footer", "Main Page", and "Catalog" pages.
 Although we chose Svetlana Sbaumgertner as our team leader, we made all decisions together. During the project, we supported each other and helped each other with any problems that arose.`;
-const MENTORS_INFO = [
+const MENTORS_INFO: Person[] = [
     {
         name: 'Alex Ger',
-        git: 'https://github.com/alexger95',
+        gitName: 'alexger95',
+        gitLink: 'https://github.com/alexger95',
+        // eslint-disable-next-line no-undef
+        photo: require('../../assets/img/mentor-alex.jpg'),
+        text: '',
     },
     {
         name: 'Maksim Rynkov',
-        git: 'https://github.com/maximzmei',
+        gitName: 'maximzmei',
+        gitLink: 'https://github.com/maximzmei',
+        // eslint-disable-next-line no-undef
+        photo: require('../../assets/img/mentor-maks.jpg'),
+        text: '',
     },
 ];
-const MEMBERS_INFO: Member[] = [
+const MEMBERS_INFO: Person[] = [
     {
         name: 'Yulia Novoselova',
         gitName: 'Jully13',
@@ -110,7 +118,7 @@ export class AboutPage extends Page {
         });
         const listEl = createElement({ tag: 'div', classes: ['mentors__list'] });
         MENTORS_INFO.forEach((mentor) => {
-            const mentorEl = createElement({ tag: 'div', classes: ['mentors__mentor'], text: mentor.name });
+            const mentorEl = this.createMentorItem(mentor);
             listEl.append(mentorEl);
         });
 
@@ -149,7 +157,7 @@ export class AboutPage extends Page {
         return sectionEl;
     }
 
-    private createMemberItem(member: Member): HTMLElement {
+    private createMemberItem(member: Person): HTMLElement {
         const { name, photo, text, gitName, gitLink } = member;
         const memberItemEl = createElement({ tag: 'div', classes: ['member'] });
         const photoEl = createElement({ tag: 'img', classes: ['member__photo'] });
@@ -162,5 +170,19 @@ export class AboutPage extends Page {
         headerEl.append(nameEl, githubEl);
         memberItemEl.append(photoEl, headerEl, textEl);
         return memberItemEl;
+    }
+
+    private createMentorItem(mentor: Person): HTMLElement {
+        const { name, photo, gitName, gitLink } = mentor;
+        const mentorItemEl = createElement({ tag: 'div', classes: ['mentor'] });
+        const photoEl = createElement({ tag: 'img', classes: ['mentor__photo'] });
+        const headerEl = createElement({ tag: 'div', classes: ['mentor__header'] });
+        const nameEl = createElement({ tag: 'h6', classes: ['mentor__name'], text: name });
+        const githubEl = new GitHubLink({ name: gitName, link: gitLink }).getComponent();
+
+        photoEl.setAttribute('src', photo);
+        headerEl.append(nameEl, githubEl);
+        mentorItemEl.append(photoEl, headerEl);
+        return mentorItemEl;
     }
 }
