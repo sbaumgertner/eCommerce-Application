@@ -119,6 +119,7 @@ export class CatalogPage extends Page {
         this.totalProducts = 0;
         const data = (await getCategories()).results;
         this.categoriesData = data;
+        this.pageInfo.currentPage = 1;
         this.setProductsData();
         this.createCategoriesBar();
         return data;
@@ -221,6 +222,7 @@ export class CatalogPage extends Page {
         searchField.setValue(this.pageInfo.searchText);
         searchBtnEl.addEventListener('click', () => {
             this.pageInfo.searchText = searchField.getValue();
+            this.pageInfo.currentPage = 1;
             this.setProductsData();
             this.createInner();
         });
@@ -228,6 +230,7 @@ export class CatalogPage extends Page {
         searchField.getComponent().addEventListener('keyup', (e) => {
             if (e.keyCode === 13) {
                 this.pageInfo.searchText = searchField.getValue();
+                this.pageInfo.currentPage = 1;
                 this.setProductsData();
                 this.createInner();
             }
@@ -352,6 +355,7 @@ export class CatalogPage extends Page {
                     sizeArr.splice(index, 1);
                 }
 
+                this.pageInfo.currentPage = 1;
                 this.setProductsData();
                 this.createInner();
             });
@@ -385,6 +389,7 @@ export class CatalogPage extends Page {
                     ageArr.splice(index, 1);
                 }
 
+                this.pageInfo.currentPage = 1;
                 this.setProductsData();
                 this.createInner();
             });
@@ -430,6 +435,7 @@ export class CatalogPage extends Page {
             }
             param.min = +minInput.value;
 
+            this.pageInfo.currentPage = 1;
             this.setProductsData();
             this.createInner();
         });
@@ -454,6 +460,7 @@ export class CatalogPage extends Page {
             }
             param.max = +maxInput.value;
 
+            this.pageInfo.currentPage = 1;
             this.setProductsData();
             this.createInner();
         });
@@ -474,6 +481,7 @@ export class CatalogPage extends Page {
         chepsEl.addEventListener('click', () => {
             this.pageInfo.saleFilters = !this.pageInfo.saleFilters;
 
+            this.pageInfo.currentPage = 1;
             this.setProductsData();
             this.createInner();
         });
@@ -571,6 +579,7 @@ export class CatalogPage extends Page {
 
         selectEl.getComponent().addEventListener('change', () => {
             this.pageInfo.sortBy = selectEl.getValue();
+            this.pageInfo.currentPage = 1;
             this.setProductsData();
             this.createInner();
         });
