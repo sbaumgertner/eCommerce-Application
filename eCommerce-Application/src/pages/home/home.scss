@@ -70,6 +70,10 @@
     }
   }
 
+  &__text-wrapper {
+    margin-top: 16px;
+  }
+
   &__text {
     color: $color-neutral-60;
     margin-top: 8px;
@@ -78,9 +82,101 @@
 
   & .nav-bar {
     margin-top: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
 
     @media (max-width: $max-mobile) {
       flex-direction: column;
     }
+  }
+}
+
+.promo-code {
+  background: url('../../assets/img/image-02.jpg') 50%/cover no-repeat;
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    align-items: center;
+  }
+  &__title {
+    color: $color-neutral-30;
+
+  }
+  &__list {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  & .promo-card {
+    flex-grow: 1;
+  }
+}
+
+@keyframes copy {
+  from {
+    background: $color-primary-80;
+  }
+
+  to {
+    background: $color-white;
+  }
+}
+
+.promo-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  border-radius: 24px;
+  min-width: 240px;
+  max-width: 480px;
+  background: $color-white;
+  &::before {
+    content: "Copied!";
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    color: white;
+    @include font-h6;
+  } 
+  
+  &_copied {
+    animation-name: copy;
+    animation-duration: 1s;
+    animation-play-state: running;  
+  }
+
+  &__header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: space-between;
+    align-items: center;
+  }
+  &__header-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  &__title {
+    color: $color-neutral-30;
+  }
+  &__code {
+    color: $color-neutral-60;
+  }
+  &__description {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding-top: 12px;
+    border-top: solid 1px $color-neutral-90;
+  }
+  &__li {
+    margin-left: 24px;
+    color: $color-neutral-60;
   }
 }
