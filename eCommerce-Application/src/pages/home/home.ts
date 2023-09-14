@@ -20,8 +20,6 @@ const ImplimentedPages: LinkProps[] = [
         page: PageName.REGISTRATION,
         text: 'REGISTRATION',
     },
-];
-const NonImplimentedPages: LinkProps[] = [
     {
         page: PageName.ACCOUNT,
         text: 'ACCOUNT',
@@ -39,11 +37,12 @@ const NonImplimentedPages: LinkProps[] = [
         text: 'ABOUT US',
     },
 ];
+const ImplementedText = `The 'Login' and 'Registration' pages are available only for anonymous users.
+The 'Account' page is only available to authorized users.`;
 
 export class HomePage extends Page {
     private routeAction: RouteAction;
     private implimentedPages = new NavigationBar(this.appStore, ImplimentedPages, 'dark').getComponent();
-    private nonImplimentedPages = new NavigationBar(this.appStore, NonImplimentedPages, 'dark').getComponent();
 
     constructor(private appStore: AppStore) {
         super();
@@ -52,40 +51,10 @@ export class HomePage extends Page {
 
     public render(): void {
         this.html = document.createElement('div');
-        this.html.append(this.createHeroBanner(), this.createAllLinks());
+        this.html.append(this.createHeroBannerSection(), this.createAllLinksSection());
     }
 
-    private createAllLinks(): HTMLElement {
-        const allLinksEl = createElement({ tag: 'section', classes: ['all-links'] });
-        const wrapperEl = createElement({ tag: 'div', classes: ['wrapper', 'all-links__wrapper'] });
-        const titleImplemented = createElement({
-            tag: 'h3',
-            classes: ['all-links__title'],
-            text: 'Implemented pages',
-        });
-        const titleNonImplemented = createElement({
-            tag: 'h3',
-            classes: ['all-links__title'],
-            text: 'Non implemented pages',
-        });
-        const textNonImplemented = createElement({
-            tag: 'p',
-            classes: ['all-links__text'],
-            text: 'Expected navigation result page 404',
-        });
-
-        wrapperEl.append(
-            titleImplemented,
-            this.implimentedPages,
-            titleNonImplemented,
-            textNonImplemented,
-            this.nonImplimentedPages
-        );
-        allLinksEl.append(wrapperEl);
-        return allLinksEl;
-    }
-
-    private createHeroBanner(): HTMLElement {
+    private createHeroBannerSection(): HTMLElement {
         const heroBannerEl = createElement({ tag: 'section', classes: ['hero-banner'] });
         const wrapperEl = createElement({ tag: 'div', classes: ['wrapper', 'hero-banner__wrapper'] });
         const titleEl = createElement({
@@ -102,5 +71,24 @@ export class HomePage extends Page {
         wrapperEl.append(titleEl, btnEl);
         heroBannerEl.append(wrapperEl);
         return heroBannerEl;
+    }
+
+    private createAllLinksSection(): HTMLElement {
+        const allLinksEl = createElement({ tag: 'section', classes: ['all-links'] });
+        const wrapperEl = createElement({ tag: 'div', classes: ['wrapper', 'all-links__wrapper'] });
+        const titleImplemented = createElement({
+            tag: 'h3',
+            classes: ['all-links__title'],
+            text: 'Implemented pages',
+        });
+        const textImplemented = createElement({ tag: 'div', classes: ['all-links__text-wrapper'] });
+
+        ImplementedText.split('\n').forEach((p) => {
+            const paragraphEl = createElement({ tag: 'p', classes: ['all-links__text'], text: p });
+            textImplemented.append(paragraphEl);
+        });
+        wrapperEl.append(titleImplemented, textImplemented, this.implimentedPages);
+        allLinksEl.append(wrapperEl);
+        return allLinksEl;
     }
 }

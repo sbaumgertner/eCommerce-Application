@@ -70,6 +70,10 @@
     }
   }
 
+  &__text-wrapper {
+    margin-top: 16px;
+  }
+
   &__text {
     color: $color-neutral-60;
     margin-top: 8px;
@@ -78,6 +82,8 @@
 
   & .nav-bar {
     margin-top: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
 
     @media (max-width: $max-mobile) {
       flex-direction: column;
