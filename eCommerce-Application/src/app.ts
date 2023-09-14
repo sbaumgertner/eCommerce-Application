@@ -12,7 +12,7 @@ export default class App {
     constructor() {
         this.router = new Router();
         this.appStore = new AppStore(this.router);
-        this.cartStore = new CartStore();
+        this.cartStore = new CartStore(this.appStore);
         this.layout = new Layout(this.appStore, this.cartStore);
         this.layout.render();
     }

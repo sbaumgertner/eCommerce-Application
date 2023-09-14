@@ -213,6 +213,7 @@ export default class Header extends Component {
         logoutBtnEl.addEventListener('click', () => {
             this.userAction.changeUserType(true);
             localStorage.removeItem('token');
+            localStorage.removeItem('cartID');
             this.routeAction.changePage({ addHistory: true, page: PageName.INDEX });
         });
         return logoutBtnEl;

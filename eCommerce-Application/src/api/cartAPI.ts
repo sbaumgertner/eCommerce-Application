@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { Cart, ClientResponse } from '@commercetools/platform-sdk';
-import { getAPIRootWithExistingTokenFlow } from './client';
+import { getAPIRootWithExistingTokenFlow, getApiRootForCredentialFlow } from './client';
+import { AppStore } from '../store/app-store';
 
 type CartDraft = {
     currency: string;
@@ -38,16 +38,21 @@ type CartUpdateDraft = {
 type CartRemoveItemDraft = {
     version: number;
     lineItemId: string;
-    quantity: number;
+    quantity?: number;
 };
 
 export default class CartAPI {
+    private isAnonUser: boolean;
+
+    constructor(private appStore: AppStore) {
+        this.isAnonUser = this.appStore.getIsAnonUser();
+    }
+
     private createCustomerCartDraft(cartData: CartDraft): CartDraft {
-        const { currency, customerEmail } = cartData;
+        const { currency } = cartData;
 
         return {
             currency,
-            customerEmail,
         };
     }
 
@@ -81,6 +86,20 @@ export default class CartAPI {
         };
     }
 
+    async createCartForAnonymousCustomer(cartDraft: CartDraft) {
+        try {
+            return getApiRootForCredentialFlow()
+                .carts()
+                .post({
+                    body: this.createCustomerCartDraft(cartDraft),
+                })
+                .execute()
+                .then((data) => localStorage.setItem('cartAnonID', data.body.id));
+        } catch (error) {
+            return error;
+        }
+    }
+
     async createCartForCurrentCustomer(cartDraft: CartDraft) {
         try {
             return getAPIRootWithExistingTokenFlow()
@@ -89,47 +108,75 @@ export default class CartAPI {
                 .post({
                     body: this.createCustomerCartDraft(cartDraft),
                 })
-                .execute();
+                .execute()
+                .then((data) => {
+                    localStorage.setItem('cartID', data.body.id);
+                });
         } catch (error) {
             return error;
         }
     }
 
-    async getActiveCart(): Promise<ClientResponse<Cart>> {
-        const activeCart = await getAPIRootWithExistingTokenFlow().me().activeCart().get().execute();
+    async getActiveCart(cartId: string) {
+        let activeCart;
+        if (this.isAnonUser) {
+            activeCart = await getApiRootForCredentialFlow().carts().withId({ ID: cartId }).get().execute();
+        } else {
+            activeCart = await getAPIRootWithExistingTokenFlow().me().carts().withId({ ID: cartId }).get().execute();
+        }
+
         return activeCart;
     }
 
     async updateActiveCart(productDetails: { cartId: string; cartUpdateDraft: CartUpdateDraft }) {
-        try {
-            const { cartId, cartUpdateDraft } = productDetails;
-
-            const updatedCart = await getAPIRootWithExistingTokenFlow()
+        let activeCart;
+        const { cartId, cartUpdateDraft } = productDetails;
+        if (this.isAnonUser) {
+            activeCart = await getApiRootForCredentialFlow()
+                .carts()
+                .withId({ ID: cartId })
+                .post({ body: this.createCartUpdateDraft(cartUpdateDraft) })
+                .execute();
+        } else {
+            activeCart = await getAPIRootWithExistingTokenFlow()
                 .me()
                 .carts()
                 .withId({ ID: cartId })
                 .post({ body: this.createCartUpdateDraft(cartUpdateDraft) })
                 .execute();
-
-            return updatedCart;
-        } catch (error) {
-            return error;
         }
+        return activeCart;
     }
 
-    async removeLineItem(productDetails: CartRemoveItemDraft) {
-        try {
-            const { body } = await this.getActiveCart();
-            const updatedCart = await getAPIRootWithExistingTokenFlow()
-                .me()
+    async updateAnonCart(productDetails: { cartId: string; cartUpdateDraft: CartUpdateDraft }) {
+        const { cartId, cartUpdateDraft } = productDetails;
+
+        return getApiRootForCredentialFlow()
+            .carts()
+            .withId({ ID: cartId })
+            .post({ body: this.createCartUpdateDraft(cartUpdateDraft) })
+            .execute();
+        // .then((data) => {
+        //     console.log(data.body);
+        // });
+    }
+
+    async removeLineItem(cartId: string, productDetails: CartRemoveItemDraft) {
+        let activeCart;
+        if (this.isAnonUser) {
+            activeCart = await getApiRootForCredentialFlow()
                 .carts()
-                .withId({ ID: body.id })
+                .withId({ ID: cartId })
                 .post({ body: this.createRemoveItemDraft(productDetails) })
                 .execute();
-
-            return updatedCart;
-        } catch (error) {
-            return error;
+        } else {
+            activeCart = await getAPIRootWithExistingTokenFlow()
+                .me()
+                .carts()
+                .withId({ ID: cartId })
+                .post({ body: this.createRemoveItemDraft(productDetails) })
+                .execute();
         }
+        return activeCart;
     }
 }
