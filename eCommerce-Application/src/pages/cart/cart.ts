@@ -5,19 +5,27 @@ import { Page } from '../abstract/page';
 import { CartActions } from '../../store/action/cartActions';
 import { Button } from '../../components/button/button';
 import { CartStore } from '../../store/cart-store';
+import { RouteAction } from '../../store/action/routeAction';
+import { PageName, StoreEventType } from '../../types';
 
 const EMPTY_CART_TITLE = `Your home is missing something... a little green!`;
 const EMPTY_CART_MESSAGE = `Take a look at our curated plant collections to find the perfect addition to your space.`;
 
 export class CartPage extends Page {
     private cartAction = new CartActions();
+    private routeAction = new RouteAction();
 
     constructor(private appStore: AppStore, private cartStore: CartStore) {
         super();
+        this.cartStore.addChangeListener(StoreEventType.CART_ITEM_AMOUNT_CHANGE, this.render.bind(this));
     }
 
     public render(): void {
-        this.html = document.createElement('div');
+        if (this.html) {
+            this.html.innerHTML = '';
+        } else {
+            this.html = document.createElement('div');
+        }
         this.html.append(this.createCartSection());
     }
 
@@ -32,6 +40,7 @@ export class CartPage extends Page {
         } else {
             wrapperEl.append(myCartEl, summaryEl);
         }
+
         sectionEl.append(wrapperEl);
         return sectionEl;
     }
@@ -90,6 +99,9 @@ export class CartPage extends Page {
         const messageEl = createElement({ tag: 'h5', classes: ['empty-cart__message'], text: EMPTY_CART_MESSAGE });
         const btnEl = new Button('filled', '', 'Go to Catalog').getComponent();
 
+        btnEl.addEventListener('click', () => {
+            this.routeAction.changePage({ addHistory: true, page: PageName.CATALOG });
+        });
         cartListEl.append(titleEl, messageEl, btnEl);
         return cartListEl;
     }
