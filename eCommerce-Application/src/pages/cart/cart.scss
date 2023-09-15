@@ -19,7 +19,7 @@
     background: $color-neutral-100;
 
     &_empty {
-      min-height: calc(100vh - 80px - 144px);      
+      min-height: calc(100vh - 80px - 144px);
     }
   }
 
@@ -49,6 +49,7 @@
 }
 
 .empty-cart {
+  align-self: center;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -56,6 +57,7 @@
   justify-content: center;
   gap: 16px;
   margin-top: 24px;
+  max-width: 700px;
 
   &__title {
     color: $color-neutral-60;
@@ -100,6 +102,16 @@
 
     &__summary {
       width: 100%;
+    }
+  }
+
+  .empty-cart {
+    max-width: 400px;
+    &__title {
+      @include font-h4;
+    }
+    &__message {
+      @include font-text;
     }
   }
 }
