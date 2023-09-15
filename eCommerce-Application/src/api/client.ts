@@ -79,7 +79,6 @@ export const getCredentialFlowClient = (): Client => {
     const ctpClient = new ClientBuilder()
         .withProjectKey(CTP_PROJECT_KEY)
         .withClientCredentialsFlow(authMiddlewareOptions)
-        //.withAnonymousSessionFlow(anonymousMiddlewareOptions)
         .withHttpMiddleware(httpMiddlewareOptions)
         .withLoggerMiddleware()
         .build();
@@ -90,10 +89,8 @@ export const getCredentialFlowClient = (): Client => {
 export const getAnonymousFlowClient = (): Client => {
     const ctpClient = new ClientBuilder()
         .withProjectKey(CTP_PROJECT_KEY)
-        .withClientCredentialsFlow(authMiddlewareOptions)
         .withAnonymousSessionFlow(anonymousMiddlewareOptions)
         .withHttpMiddleware(httpMiddlewareOptions)
-        .withLoggerMiddleware()
         .build();
 
     return ctpClient;
@@ -135,4 +132,31 @@ export const getApiRootForPasswordFlow = (username: string, password: string) =>
     });
 
     return apiRootForPasswordFlow;
+};
+
+type ExistingTokenMiddlewareOptions = {
+    force?: boolean;
+};
+
+const authorization = `Bearer ${localStorage.getItem('token')}`;
+
+const options: ExistingTokenMiddlewareOptions = {
+    force: true,
+};
+
+export const getExistingTokenFlowClient = (): Client => {
+    const ctpClient = new ClientBuilder()
+        .withProjectKey(CTP_PROJECT_KEY)
+        .withHttpMiddleware(httpMiddlewareOptions)
+        .withExistingTokenFlow(authorization, options)
+        .build();
+
+    return ctpClient;
+};
+
+export const getAPIRootWithExistingTokenFlow = () => {
+    const apiRootWithExistingTokenFlow = createApiBuilderFromCtpClient(getExistingTokenFlowClient()).withProjectKey({
+        projectKey: CTP_PROJECT_KEY,
+    });
+    return apiRootWithExistingTokenFlow;
 };
