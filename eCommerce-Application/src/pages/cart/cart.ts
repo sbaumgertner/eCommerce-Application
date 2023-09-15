@@ -5,37 +5,58 @@ import { Page } from '../abstract/page';
 import { CartActions } from '../../store/action/cartActions';
 import { Button } from '../../components/button/button';
 import { CartStore } from '../../store/cart-store';
+import { RouteAction } from '../../store/action/routeAction';
+import { PageName, StoreEventType } from '../../types';
+
+const EMPTY_CART_TITLE = `Your home is missing something... a little green!`;
+const EMPTY_CART_MESSAGE = `Take a look at our curated plant collections to find the perfect addition to your space.`;
 
 export class CartPage extends Page {
-    private cartAction: CartActions;
+    private cartAction = new CartActions();
+    private routeAction = new RouteAction();
 
     constructor(private appStore: AppStore, private cartStore: CartStore) {
         super();
-        this.cartAction = new CartActions();
+        this.cartStore.addChangeListener(StoreEventType.CART_ITEM_AMOUNT_CHANGE, this.render.bind(this));
     }
 
     public render(): void {
-        this.html = document.createElement('div');
+        if (this.html) {
+            this.html.innerHTML = '';
+        } else {
+            this.html = document.createElement('div');
+        }
         this.html.append(this.createCartSection());
     }
 
     private createCartSection(): HTMLElement {
-        const heroBannerEl = createElement({ tag: 'section', classes: ['cart'] });
+        const sectionEl = createElement({ tag: 'section', classes: ['cart'] });
         const wrapperEl = createElement({ tag: 'div', classes: ['wrapper', 'cart__wrapper'] });
         const myCartEl = this.createMyCart();
         const summaryEl = this.createSummary();
 
-        wrapperEl.append(myCartEl, summaryEl);
-        heroBannerEl.append(wrapperEl);
-        return heroBannerEl;
+        if (this.cartStore.getCartItemAmount() === 0) {
+            wrapperEl.append(myCartEl);
+        } else {
+            wrapperEl.append(myCartEl, summaryEl);
+        }
+
+        sectionEl.append(wrapperEl);
+        return sectionEl;
     }
 
     private createMyCart(): HTMLElement {
         const myCartEl = createElement({ tag: 'div', classes: ['cart__my-cart'] });
         const headerEl = this.createMyCartHeader();
         const listEl = this.createMyCartList();
+        const emptyEl = this.createMyCartEmpty();
 
-        myCartEl.append(headerEl, listEl);
+        if (this.cartStore.getCartItemAmount() === 0) {
+            myCartEl.classList.add('cart__my-cart_empty');
+            myCartEl.append(headerEl, emptyEl);
+        } else {
+            myCartEl.append(headerEl, listEl);
+        }
         return myCartEl;
     }
 
@@ -46,7 +67,12 @@ export class CartPage extends Page {
             classes: ['my-cart__title'],
             text: 'My Cart',
         });
-        const btnResetCartEl = new Button('bordered', 'clear-cart', 'Clear cart').getComponent();
+        const btnResetCart = new Button('bordered', 'clear-cart', 'Clear cart');
+        const btnResetCartEl = btnResetCart.getComponent();
+
+        if (this.cartStore.getCartItemAmount() === 0) {
+            btnResetCart.disable();
+        }
         btnResetCartEl.classList.add('button_bordered_negative');
         btnResetCartEl.addEventListener('click', () => {
             this.cartAction.clearCart();
@@ -64,6 +90,19 @@ export class CartPage extends Page {
             text: 'CART_LIST',
         });
 
+        return cartListEl;
+    }
+
+    private createMyCartEmpty(): HTMLElement {
+        const cartListEl = createElement({ tag: 'div', classes: ['empty-cart'] });
+        const titleEl = createElement({ tag: 'h2', classes: ['empty-cart__title'], text: EMPTY_CART_TITLE });
+        const messageEl = createElement({ tag: 'h5', classes: ['empty-cart__message'], text: EMPTY_CART_MESSAGE });
+        const btnEl = new Button('filled', '', 'Go to Catalog').getComponent();
+
+        btnEl.addEventListener('click', () => {
+            this.routeAction.changePage({ addHistory: true, page: PageName.CATALOG });
+        });
+        cartListEl.append(titleEl, messageEl, btnEl);
         return cartListEl;
     }
 
