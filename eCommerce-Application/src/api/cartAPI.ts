@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { getAPIRootWithExistingTokenFlow, getApiRootForCredentialFlow } from './client';
-import { AppStore } from '../store/app-store';
 
 type CartDraft = {
     currency: string;
@@ -44,8 +43,8 @@ type CartRemoveItemDraft = {
 export default class CartAPI {
     private isAnonUser: boolean;
 
-    constructor(private appStore: AppStore) {
-        this.isAnonUser = this.appStore.getIsAnonUser();
+    constructor(isAnonUser: boolean) {
+        this.isAnonUser = isAnonUser;
     }
 
     private createCustomerCartDraft(cartData: CartDraft): CartDraft {
@@ -138,6 +137,7 @@ export default class CartAPI {
                 .post({ body: this.createCartUpdateDraft(cartUpdateDraft) })
                 .execute();
         } else {
+            console.log('updateActiveCart logged');
             activeCart = await getAPIRootWithExistingTokenFlow()
                 .me()
                 .carts()

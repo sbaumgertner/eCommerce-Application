@@ -2,43 +2,46 @@
 import CartAPI from '../api/cartAPI';
 import { Action, ActionType, CartItem, ProductID, StoreEventType } from '../types';
 import { Store } from './abstract/store';
-import { AppStore } from '../store/app-store';
-//import cartApi from '../api/cartAPI';
+//import { AppStore } from '../store/app-store';
 
 export class CartStore extends Store {
     private cartItemAmount: number;
     private items: CartItem[];
     private cartId: string;
     private version: number;
+    private cartAPI: CartAPI;
 
-    constructor(private appStore: AppStore) {
+    constructor() {
         super();
-
         // получить по API текущую корзину (или создать новую) и заполнить cartItemAmount и items
         this.cartId = '';
         this.version = 1;
         this.cartItemAmount = 0;
         this.items = [];
+        this.cartAPI = new CartAPI(!localStorage.getItem('token'));
+        //this.initCart();
+        this.setMaxListeners(100);
+    }
+
+    public async initCart(): Promise<void> {
+        console.log('get cartId');
         if (localStorage.getItem('cartAnonID') !== null) {
             this.cartId = localStorage.getItem('cartAnonID') as string;
-            this.getCart().then((data) => {
-                this.version = data.body.version;
-                this.cartItemAmount = data.body.lineItems.length;
-                data.body.lineItems.forEach((el) => {
-                    this.items.push({ productID: el.productId, count: el.quantity });
-                });
-            });
         } else {
-            new CartAPI(this.appStore).createCartForAnonymousCustomer({ currency: 'USD' }).then(() => {
-                this.cartId = localStorage.getItem('cartAnonID') as string;
-                console.log(this.cartId);
-            });
+            await this.cartAPI.createCartForAnonymousCustomer({ currency: 'USD' });
+            this.cartId = localStorage.getItem('cartAnonID') as string;
         }
+        const data = await this.cartAPI.getActiveCart(this.cartId);
+        this.version = data.body.version;
+        this.cartItemAmount = data.body.lineItems.length;
+        data.body.lineItems.forEach((el) => {
+            this.items.push({ productID: el.productId, count: el.quantity });
+        });
     }
 
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     private getCart() {
-        return new CartAPI(this.appStore).getActiveCart(this.cartId);
+        return this.cartAPI.getActiveCart(this.cartId);
     }
 
     public getCartItemAmount(): number {
@@ -57,7 +60,7 @@ export class CartStore extends Store {
             product.count = null;
             this.emit(StoreEventType.CART_INC_ITEM);
             // ДОБАВИТЬ API изменения количества продукта в корзине (+1)
-            new CartAPI(this.appStore)
+            this.cartAPI
                 .updateActiveCart({
                     cartId: this.cartId,
                     cartUpdateDraft: {
@@ -80,7 +83,7 @@ export class CartStore extends Store {
             this.items.push(item);
             this.emit(StoreEventType.CART_INC_ITEM);
             // ДОБАВИТЬ API добавки продукта в корзину
-            new CartAPI(this.appStore)
+            this.cartAPI
                 .updateActiveCart({
                     cartId: this.cartId,
                     cartUpdateDraft: {
@@ -118,7 +121,7 @@ export class CartStore extends Store {
         if (product && typeof product.count === 'number' && product.count > 1) {
             product.count--;
             // ДОБАВИТЬ API изменения количества продукта в корзине (-1)
-            new CartAPI(this.appStore)
+            this.cartAPI
                 .removeLineItem(this.cartId, {
                     version: this.version,
                     lineItemId: product.cartItemId as string,
@@ -131,7 +134,7 @@ export class CartStore extends Store {
             this.cartItemAmount--;
             this.items.splice(index, 1);
             // ДОБАВИТЬ API удаления продукта из корзину
-            new CartAPI(this.appStore)
+            this.cartAPI
                 .removeLineItem(this.cartId, {
                     version: this.version,
                     lineItemId: product?.cartItemId as string,
@@ -164,7 +167,7 @@ export class CartStore extends Store {
             this.cartItemAmount--;
             this.items.splice(index, 1);
             // ДОБАВИТЬ API удаления продукта из корзину
-            new CartAPI(this.appStore)
+            this.cartAPI
                 .removeLineItem(this.cartId, {
                     version: this.version,
                     lineItemId: product.cartItemId as string,

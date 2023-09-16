@@ -89,6 +89,7 @@ export class Layout extends Page {
     }
 
     private updateMainView(page: Page): void {
+        console.log('update view');
         this.mainEl.innerHTML = '';
         this.main = page;
         this.main.render();
@@ -98,7 +99,7 @@ export class Layout extends Page {
     public render(): void {
         this.header.render();
         this.footer.render();
-        this.main.render();
+        //this.main.render();
         this.mainEl.append(this.main.getHtml());
         document.body.append(this.header.getComponent(), this.mainEl, this.footer.getComponent());
     }

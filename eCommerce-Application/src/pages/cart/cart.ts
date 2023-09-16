@@ -5,6 +5,7 @@ import { Page } from '../abstract/page';
 import { CartActions } from '../../store/action/cartActions';
 import { Button } from '../../components/button/button';
 import { CartStore } from '../../store/cart-store';
+import CartItem from '../../components/cart-item/cart-item';
 import { RouteAction } from '../../store/action/routeAction';
 import { PageName, StoreEventType } from '../../types';
 
@@ -87,8 +88,23 @@ export class CartPage extends Page {
         const cartListEl = createElement({
             tag: 'div',
             classes: ['my-cart__list'],
-            text: 'CART_LIST',
         });
+
+        cartListEl.innerHTML = `
+            <div class="my-cart__list-header">
+                <p class="header-plant">Plant</p>
+                <p class="header-price">Price</p>
+                <p class="header-count">Quantity</p>
+                <p class="header-total">Total</p>
+            </div>
+        `;
+
+        const items = this.cartStore.getCartItems();
+        for (let i = 0; i < items.length; i += 1) {
+            const item = new CartItem(items[i].productID, items[i].count as number, this.cartStore);
+            item.render();
+            cartListEl.append(item.getComponent());
+        }
 
         return cartListEl;
     }

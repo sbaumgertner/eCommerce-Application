@@ -48,6 +48,36 @@
   }
 }
 
+.my-cart__list-header {
+  display: flex;
+  padding-top: 16px;
+  border-bottom: 1px solid $color-neutral-90;
+
+  p {
+    padding: 8px 16px;
+    @include font-text-bold;
+    color: $color-neutral-60;
+  }
+
+  .header-plant {
+    flex-basis: 472px;
+  }
+
+  .header-price {
+    flex-basis: 112px;
+  }
+
+  .header-count {
+    text-align: center;
+    flex-basis: 192px;
+  }
+
+  .header-total {
+    text-align: end;
+    flex-basis: 144px;
+  }
+}
+
 .empty-cart {
   align-self: center;
   flex-grow: 1;
