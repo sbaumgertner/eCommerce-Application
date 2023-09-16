@@ -4,16 +4,19 @@ import { Router } from './router';
 import { CartStore } from './store/cart-store';
 
 export default class App {
-    private appStore: AppStore;
+    private appStore?: AppStore;
     private cartStore: CartStore;
-    private layout: Layout;
-    private router: Router;
+    private layout?: Layout;
+    private router?: Router;
 
     constructor() {
-        this.router = new Router();
-        this.appStore = new AppStore(this.router);
-        this.cartStore = new CartStore(this.appStore);
-        this.layout = new Layout(this.appStore, this.cartStore);
-        this.layout.render();
+        this.cartStore = new CartStore();
+        this.cartStore.initCart().then(() => {
+            this.router = new Router();
+            this.appStore = new AppStore(this.router);
+            this.layout = new Layout(this.appStore, this.cartStore);
+            this.router.initRouter();
+            this.layout.render();
+        });
     }
 }

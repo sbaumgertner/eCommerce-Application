@@ -20,18 +20,31 @@ export class Router {
 
     constructor() {
         this.routeAction = new RouteAction();
-        document.addEventListener('DOMContentLoaded', () => {
-            const host: string = window.location.host;
-            if (host.includes('localhost')) {
-                this.basePath = '/';
-            } else if (host.includes('127.0.0.1')) {
-                this.basePath = '/eCommerce-Application/eCommerce-Application/dist/';
-            } else {
-                this.basePath = '/eCommerce-sprint3-deploy/';
-            }
-            this.navigate();
-        });
+        //document.addEventListener('DOMContentLoaded', () => {
+        /*const host: string = window.location.host;
+        if (host.includes('localhost')) {
+            this.basePath = '/';
+        } else if (host.includes('127.0.0.1')) {
+            this.basePath = '/eCommerce-Application/eCommerce-Application/dist/';
+        } else {
+            this.basePath = '/eCommerce-sprint3-deploy/';
+        }
+        this.navigate();
+        alert(this.basePath);*/
+        //});
         window.addEventListener('popstate', this.navigate.bind(this));
+    }
+
+    public initRouter(): void {
+        const host: string = window.location.host;
+        if (host.includes('localhost')) {
+            this.basePath = '/';
+        } else if (host.includes('127.0.0.1')) {
+            this.basePath = '/eCommerce-Application/eCommerce-Application/dist/';
+        } else {
+            this.basePath = '/eCommerce-sprint3-deploy/';
+        }
+        this.navigate();
     }
 
     public static getBasePath(): string {
@@ -63,7 +76,7 @@ export class Router {
         if (url_arr.length > 2) {
             pageName = PageName.NOT_FOUND;
         } else {
-            const page: Page | undefined = pages.find((item) => item.url === url_arr[0]);
+            const page: Page | undefined = pages.find((item) => item.url === url_arr[0]); //?.name;
             if (!page || (Boolean(page.hasResourse) != url_arr.length > 1 && page.name === PageName.PRODUCT)) {
                 pageName = PageName.NOT_FOUND;
             } else {
