@@ -100,20 +100,16 @@ export default class CartAPI {
     }
 
     async createCartForCurrentCustomer(cartDraft: CartDraft) {
-        try {
-            return getAPIRootWithExistingTokenFlow()
-                .me()
-                .carts()
-                .post({
-                    body: this.createCustomerCartDraft(cartDraft),
-                })
-                .execute()
-                .then((data) => {
-                    localStorage.setItem('cartID', data.body.id);
-                });
-        } catch (error) {
-            return error;
-        }
+        return getAPIRootWithExistingTokenFlow()
+            .me()
+            .carts()
+            .post({
+                body: this.createCustomerCartDraft(cartDraft),
+            })
+            .execute()
+            .then((data) => {
+                localStorage.setItem('cartID', data.body.id);
+            });
     }
 
     async getActiveCart(cartId: string) {
@@ -122,6 +118,15 @@ export default class CartAPI {
             activeCart = await getApiRootForCredentialFlow().carts().withId({ ID: cartId }).get().execute();
         } else {
             activeCart = await getAPIRootWithExistingTokenFlow().me().carts().withId({ ID: cartId }).get().execute();
+            // activeCart = await getAPIRootWithExistingTokenFlow().me().activeCart().get().execute();
+            // getAPIRootWithExistingTokenFlow()
+            //     .me()
+            //     .activeCart()
+            //     .get()
+            //     .execute()
+            //     .then((data) => {
+            //         localStorage.setItem('cartID', data.body.id);
+            //     });
         }
 
         return activeCart;

@@ -137,7 +137,7 @@ export type ProductID = string;
 export type CartItem = {
     productID: string;
     count: number | null;
-    cartItemId?: string;
+    cartItemId: string;
 };
 
 export type CartInteractionProps = {
