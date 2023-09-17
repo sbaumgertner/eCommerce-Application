@@ -66,15 +66,30 @@ export class CartStore extends Store {
             });
     }
 
+    public getCartId(): void {
+        if (localStorage.getItem('cartID') !== null) {
+            this.cartId = localStorage.getItem('cartID') as string;
+        } else this.cartId = localStorage.getItem('cartAnonID') as string;
+    }
+
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     private getCart() {
         return this.cartAPI.getActiveCart(this.cartId);
     }
 
-    public getCartId(): void {
-        if (localStorage.getItem('cartID') !== null) {
-            this.cartId = localStorage.getItem('cartID') as string;
-        } else this.cartId = localStorage.getItem('cartAnonID') as string;
+    private clearCart(): void {
+        this.getCart().then((data) => {
+            data.body.lineItems.forEach((el) => {
+                this.cartAPI
+                    .removeLineItem(this.cartId, {
+                        version: this.version,
+                        lineItemId: el.id,
+                    })
+                    .then((data) => {
+                        this.version = data.body.version;
+                    });
+            });
+        });
     }
 
     public getCartItemAmount(): number {
