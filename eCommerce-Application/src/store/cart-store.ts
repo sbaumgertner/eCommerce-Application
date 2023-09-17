@@ -2,7 +2,9 @@
 import CartAPI from '../api/cartAPI';
 import { Action, ActionType, CartItem, ProductID, StoreEventType } from '../types';
 import { Store } from './abstract/store';
-//import { AppStore } from '../store/app-store';
+import { AppStore } from '../store/app-store';
+import { Router } from '../router';
+import { LoginStore } from './login-store';
 
 export class CartStore extends Store {
     private cartItemAmount: number;
@@ -10,18 +12,23 @@ export class CartStore extends Store {
     private cartId: string;
     private version: number;
     private cartAPI: CartAPI;
+    private appStore: AppStore;
+    private router?: Router;
+    private loginStore: LoginStore;
 
     constructor() {
         super();
+        this.router = new Router();
+        this.appStore = new AppStore(this.router);
+        this.loginStore = new LoginStore(this.appStore);
         // получить по API текущую корзину (или создать новую) и заполнить cartItemAmount и items
         this.cartId = '';
         this.version = 1;
         this.cartItemAmount = 0;
         this.items = [];
         this.cartAPI = new CartAPI(!localStorage.getItem('token'));
-        //this.initCart();
+        this.loginStore.addChangeListener(StoreEventType.LOGIN, this.updateCart.bind(this));
         this.setMaxListeners(100);
-        this.updateCart();
     }
 
     public async initCart(): Promise<void> {
@@ -41,31 +48,20 @@ export class CartStore extends Store {
     }
 
     public updateCart(): void {
-        if (localStorage.getItem('cartID') !== null && localStorage.getItem('cartAnonID') !== null) {
-            this.cartId = localStorage.getItem('cartID') as string;
-            this.getCart().then((data) => {
-                this.version = data.body.version;
-                this.cartItemAmount = data.body.lineItems.length;
+        this.cartId = localStorage.getItem('cartAnonID') as string;
+
+        this.getCart()
+            .then((data) => {
                 data.body.lineItems.forEach((el) => {
                     this.items.push({ productID: el.productId, count: el.quantity, cartItemId: el.id });
                 });
-            });
-        }
-        if (localStorage.getItem('cartID') == null && localStorage.getItem('cartAnonID') !== null) {
-            this.cartId = localStorage.getItem('cartAnonID') as string;
-            this.getCart().then((data) => {
-                this.version = data.body.version;
-                this.cartItemAmount = data.body.lineItems.length;
-                data.body.lineItems.forEach((el) => {
-                    this.items.push({ productID: el.productId, count: el.quantity, cartItemId: el.id });
+            })
+            .then(() => {
+                this.getCart().then((data) => {
+                    this.cartItemAmount = data.body.lineItems.length;
+                    this.emit(StoreEventType.CART_ITEM_AMOUNT_CHANGE);
                 });
             });
-        }
-        if (localStorage.getItem('cartID') == null && localStorage.getItem('cartAnonID') == null) {
-            this.cartAPI.createCartForAnonymousCustomer({ currency: 'USD' }).then(() => {
-                this.cartId = localStorage.getItem('cartAnonID') as string;
-            });
-        }
     }
 
     public getCartId(): void {

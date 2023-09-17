@@ -49,6 +49,7 @@ export enum StoreEventType {
     CART_REMOVE_ITEM = 'CART_REMOVE_ITEM',
     CART_CLEAR = 'CART_CLEAR',
     CART_ITEM_AMOUNT_CHANGE = 'CART_ITEM_AMOUNT_CHANGE',
+    LOGIN = 'LOGIN',
 }
 
 export type ElementParams = {

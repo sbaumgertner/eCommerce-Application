@@ -9,7 +9,8 @@ import { RouteAction } from './action/routeAction';
 import { AppStore } from './app-store';
 import CartAPI from '../api/cartAPI';
 import { getAPIRootWithExistingTokenFlow } from '../api/client';
-import { CartStore } from './cart-store';
+import { CartActions } from './action/cartActions';
+//import { CartStore } from './cart-store';
 
 export type LoginValidationErrors = Partial<LoginActionData>;
 
@@ -18,6 +19,7 @@ export class LoginStore extends Store {
     private loginError?: string;
     private routeAction: RouteAction;
     private appStore: AppStore;
+    private cartAction: CartActions = new CartActions();
 
     constructor(appStore: AppStore) {
         super();
@@ -67,12 +69,17 @@ export class LoginStore extends Store {
                         .execute()
                         .then((data) => {
                             if (data.body.results.length == 0) {
-                                new CartAPI(this.appStore).createCartForCurrentCustomer({ currency: 'USD' });
+                                new CartAPI(!localStorage.getItem('cartID')).createCartForCurrentCustomer({
+                                    currency: 'USD',
+                                });
                             } else {
                                 //localStorage.removeItem('cartAnonID');
-                                localStorage.setItem('cartID', data.body.results[0].id);
+                                localStorage.setItem('cartAnonID', data.body.results[0].id);
                                 //new CartStore(this.appStore).getCartId();
-                                new CartStore(this.appStore).updateCart();
+                                //new CartStore().updateCart();
+                                //this.cartAction.updateCart();
+                                this.emit(StoreEventType.LOGIN);
+                                //location.reload();
                             }
                         });
                 })

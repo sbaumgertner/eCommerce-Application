@@ -108,7 +108,7 @@ export default class CartAPI {
             })
             .execute()
             .then((data) => {
-                localStorage.setItem('cartID', data.body.id);
+                localStorage.setItem('cartAnonID', data.body.id);
             });
     }
 
