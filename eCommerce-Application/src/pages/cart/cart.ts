@@ -153,7 +153,7 @@ export class CartPage extends Page {
     }
 
     private updateTotal(): void {
-        const totalEl = this.getHtml().querySelector('.summary__total-value');
+        const totalEl = document.querySelector('.summary__total-value');
         if (totalEl) {
             totalEl.textContent = `${this.cartStore.getTotalPrice() / 100}$`;
         }
