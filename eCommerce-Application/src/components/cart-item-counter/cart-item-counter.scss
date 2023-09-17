@@ -21,9 +21,8 @@
   }
 
   &__display {
-    flex-grow: 1;
+    flex: 0 0 calc(100% - 80px);
     display: flex;
-    max-width: calc(100% - 80px);
     align-items: center;
     justify-content: center;
     border-top: solid 1px $color-neutral-60;
@@ -33,6 +32,7 @@
 
     & .loader {
       transform: scale(0.5);
+      margin: 0 -100px;
     }
   }
 }

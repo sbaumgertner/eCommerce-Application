@@ -9,21 +9,16 @@ import { CartItemCounter } from '../cart-item-counter/cart-item-counter';
 import { Loader } from '../loader/loader';
 
 export class CartInteractionBar extends Component {
-    private cartActions: CartActions;
-    private count: number | null = null;
-    private addBtnEl: HTMLElement;
-    private removeBtnEl: HTMLElement;
+    private cartActions = new CartActions();
+    private count = 0;
+    private addBtnEl = this.createAddBtn();
+    private removeBtnEl = this.createRemoveBtn();
     private buttonBar: CartItemCounter;
     private loaderEl = new Loader().getComponent();
 
     constructor(private props: CartInteractionProps, private cartStore: CartStore) {
         super({ tag: 'div', classes: ['cib-bar'] });
-        this.cartStore.addChangeListener(StoreEventType.CART_REMOVE_ITEM, this.render.bind(this));
-        this.cartStore.addChangeListener(StoreEventType.CART_INC_ITEM, this.render.bind(this));
-        this.cartStore.addChangeListener(StoreEventType.CART_DEC_ITEM, this.render.bind(this));
-        this.cartActions = new CartActions();
-        this.addBtnEl = this.createAddBtn();
-        this.removeBtnEl = this.createRemoveBtn();
+        this.cartStore.addChangeListener(StoreEventType.CART_ITEM_AMOUNT_CHANGE, this.render.bind(this));
         this.buttonBar = new CartItemCounter(props, cartStore);
         this.render();
     }
@@ -33,9 +28,7 @@ export class CartInteractionBar extends Component {
         this.count = cartItem ? cartItem.count : 0;
         this.componentElem.innerHTML = '';
 
-        if (this.count === null) {
-            this.componentElem.append(this.loaderEl);
-        } else if (this.count === 0) {
+        if (this.count === 0) {
             this.componentElem.append(this.addBtnEl);
         } else {
             this.buttonBar.render();
@@ -49,6 +42,7 @@ export class CartInteractionBar extends Component {
         addToCardBtnEl.classList.add('cib-bar__add');
         addToCardBtnEl.addEventListener('click', (e: Event) => {
             e.preventDefault();
+            this.setLoaderMod();
             this.cartActions.incProduct(this.props.productID);
         });
 
@@ -61,9 +55,15 @@ export class CartInteractionBar extends Component {
         removeFromCardBtnEl.classList.add('button_bordered_negative', 'cib-bar__remove');
         removeFromCardBtnEl.addEventListener('click', (e: Event) => {
             e.preventDefault();
+            this.setLoaderMod();
             this.cartActions.removeProduct(this.props.productID);
         });
 
         return removeFromCardBtnEl;
+    }
+
+    private setLoaderMod(): void {
+        this.componentElem.innerHTML = '';
+        this.componentElem.append(this.loaderEl);
     }
 }
