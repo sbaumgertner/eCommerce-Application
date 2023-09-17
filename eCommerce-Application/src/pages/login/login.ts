@@ -31,7 +31,7 @@ export class LoginPage extends Page {
         this.button = new Button('filled', 'button-login', 'Login');
         this.emailField = new InputField('text', 'email', 'Email', 'Enter your e-mail');
         this.passwordField = new InputField('password', 'password', 'Password', 'Enter your password');
-        this.loginStore = new LoginStore();
+        this.loginStore = new LoginStore(this.appStore);
         this.apiError = createElement({ tag: 'div', classes: ['api-error'] });
         this.loginStore.addChangeListener(StoreEventType.LOGIN_ERROR, this.onStoreChange.bind(this));
         this.createPasswordButton(this.passwordField.getComponent());

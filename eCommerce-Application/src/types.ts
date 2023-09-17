@@ -49,6 +49,7 @@ export enum StoreEventType {
     CART_REMOVE_ITEM = 'CART_REMOVE_ITEM',
     CART_CLEAR = 'CART_CLEAR',
     CART_ITEM_AMOUNT_CHANGE = 'CART_ITEM_AMOUNT_CHANGE',
+    LOGIN = 'LOGIN',
 }
 
 export type ElementParams = {
@@ -137,7 +138,7 @@ export type ProductID = string;
 export type CartItem = {
     productID: string;
     count: number | null;
-    cartItemId?: string;
+    cartItemId: string;
 };
 
 export type CartInteractionProps = {

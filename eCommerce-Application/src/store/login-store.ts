@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import { Action, ActionType, PageName, StoreEventType } from '../types';
 import { Store } from './abstract/store';
 import { LoginActionData } from './action/loginAction';
@@ -5,6 +6,11 @@ import { LoginActionData } from './action/loginAction';
 import CustomerAPI from '../api/customerAPI';
 import { Validation, ValidationResult } from '../utils/validation';
 import { RouteAction } from './action/routeAction';
+import { AppStore } from './app-store';
+import CartAPI from '../api/cartAPI';
+import { getAPIRootWithExistingTokenFlow } from '../api/client';
+import { CartActions } from './action/cartActions';
+//import { CartStore } from './cart-store';
 
 export type LoginValidationErrors = Partial<LoginActionData>;
 
@@ -12,11 +18,14 @@ export class LoginStore extends Store {
     private validationErrors: LoginValidationErrors;
     private loginError?: string;
     private routeAction: RouteAction;
+    private appStore: AppStore;
+    private cartAction: CartActions = new CartActions();
 
-    constructor() {
+    constructor(appStore: AppStore) {
         super();
         this.validationErrors = {};
         this.routeAction = new RouteAction();
+        this.appStore = appStore;
     }
 
     public getValidationErrors(): LoginValidationErrors | undefined {
@@ -51,6 +60,28 @@ export class LoginStore extends Store {
                 .loginCustommer()
                 .then(() => {
                     this.routeAction.changePage({ addHistory: true, page: PageName.INDEX });
+                    // вернуть карзину или создать
+                    //new CartAPI(this.appStore).getActiveCart();
+                    getAPIRootWithExistingTokenFlow()
+                        .me()
+                        .carts()
+                        .get()
+                        .execute()
+                        .then((data) => {
+                            if (data.body.results.length == 0) {
+                                new CartAPI(!localStorage.getItem('cartID')).createCartForCurrentCustomer({
+                                    currency: 'USD',
+                                });
+                            } else {
+                                //localStorage.removeItem('cartAnonID');
+                                localStorage.setItem('cartAnonID', data.body.results[0].id);
+                                //new CartStore(this.appStore).getCartId();
+                                //new CartStore().updateCart();
+                                //this.cartAction.updateCart();
+                                this.emit(StoreEventType.LOGIN);
+                                //location.reload();
+                            }
+                        });
                 })
                 .catch((error) => {
                     this.loginError = error.message;

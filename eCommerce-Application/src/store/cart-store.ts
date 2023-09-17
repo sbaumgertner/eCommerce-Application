@@ -2,6 +2,10 @@
 import CartAPI from '../api/cartAPI';
 import { Action, ActionType, CartItem, ProductID, StoreEventType } from '../types';
 import { Store } from './abstract/store';
+import { AppStore } from '../store/app-store';
+import { Router } from '../router';
+import { LoginStore } from './login-store';
+
 
 export class CartStore extends Store {
     private cartItemAmount: number;
@@ -10,15 +14,23 @@ export class CartStore extends Store {
     private version: number;
     private cartAPI: CartAPI;
     private totalPrice: number;
+    private appStore: AppStore;
+    private router?: Router;
+    private loginStore: LoginStore;
 
     constructor() {
         super();
+        this.router = new Router();
+        this.appStore = new AppStore(this.router);
+        this.loginStore = new LoginStore(this.appStore);
+
         this.cartId = '';
         this.version = 1;
         this.cartItemAmount = 0;
         this.items = [];
         this.totalPrice = 0;
         this.cartAPI = new CartAPI(!localStorage.getItem('token'));
+        this.loginStore.addChangeListener(StoreEventType.LOGIN, this.updateCart.bind(this));
         this.setMaxListeners(100);
     }
 
@@ -34,6 +46,45 @@ export class CartStore extends Store {
         this.cartItemAmount = data.body.lineItems.length;
         data.body.lineItems.forEach((el) => {
             this.items.push({ productID: el.productId, count: el.quantity, cartItemId: el.id });
+
+        });
+    }
+
+    public updateCart(): void {
+        this.cartId = localStorage.getItem('cartAnonID') as string;
+
+        this.getCart()
+            .then((data) => {
+                data.body.lineItems.forEach((el) => {
+                    this.items.push({ productID: el.productId, count: el.quantity, cartItemId: el.id });
+                });
+            })
+            .then(() => {
+                this.getCart().then((data) => {
+                    this.cartItemAmount = data.body.lineItems.length;
+                    this.emit(StoreEventType.CART_ITEM_AMOUNT_CHANGE);
+                });
+            });
+    }
+
+    public getCartId(): void {
+        if (localStorage.getItem('cartID') !== null) {
+            this.cartId = localStorage.getItem('cartID') as string;
+        } else this.cartId = localStorage.getItem('cartAnonID') as string;
+    }
+
+    private clearCart(): void {
+        this.getCart().then((data) => {
+            data.body.lineItems.forEach((el) => {
+                this.cartAPI
+                    .removeLineItem(this.cartId, {
+                        version: this.version,
+                        lineItemId: el.id,
+                    })
+                    .then((data) => {
+                        this.version = data.body.version;
+                    });
+            });
         });
         this.totalPrice = data.body.totalPrice.centAmount;
     }
@@ -73,6 +124,10 @@ export class CartStore extends Store {
                     console.log(err);
                 });
         } else {
+            const item: CartItem = { productID, count: null, cartItemId: '' };
+            this.items.push(item);
+            this.emit(StoreEventType.CART_INC_ITEM);
+            // ДОБАВИТЬ API добавки продукта в корзину
             this.cartAPI
                 .updateActiveCart({
                     cartId: this.cartId,
@@ -113,7 +168,7 @@ export class CartStore extends Store {
             this.cartAPI
                 .removeLineItem(this.cartId, {
                     version: this.version,
-                    lineItemId: product.cartItemId as string,
+                    lineItemId: product.cartItemId,
                     quantity: 1,
                 })
                 .then((data) => {
@@ -156,7 +211,7 @@ export class CartStore extends Store {
             this.cartAPI
                 .removeLineItem(this.cartId, {
                     version: this.version,
-                    lineItemId: product.cartItemId as string,
+                    lineItemId: product.cartItemId,
                 })
                 .then((data) => {
                     this.cartItemAmount--;
@@ -176,7 +231,7 @@ export class CartStore extends Store {
         this.cartItemAmount = 0;
         this.items = [];
         // ДОБАВИТЬ API очистки корзины
-
+        this.clearCart();
         this.emit(StoreEventType.CART_ITEM_AMOUNT_CHANGE);
         this.emit(StoreEventType.CART_CLEAR);
     }
