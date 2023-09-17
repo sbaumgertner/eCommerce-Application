@@ -5,6 +5,7 @@ import Component from '../abstract/component';
 import { EcomProductData, ProductID } from '../../types';
 import { CartInteractionBar } from '../cart-interactions-bar/cart-interactions-bar';
 import { CartStore } from '../../store/cart-store';
+import { createProductURL } from '../../utils/create-product-url';
 
 type ProductCardData = {
     id: ProductID;
@@ -116,7 +117,7 @@ export function productDataAdapter(product: EcomProductData, categoriesData: any
         const age = ageData ? ageData.value.label : '';
         const imgURL = product.masterVariant.images[0].url;
         const description = product.metaDescription.en;
-        const url = `https://sbaumgertner.github.io/eCommerce-sprint3-deploy/product/${product.key}`;
+        const url = createProductURL(product.key);
         const key = product.key;
 
         return { id, name, category, mainPrice, salePrice, age, imgURL, description, url, key };
