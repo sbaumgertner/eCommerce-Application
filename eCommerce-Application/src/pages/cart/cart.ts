@@ -104,7 +104,7 @@ export class CartPage extends Page {
 
         const items = this.cartStore.getCartItems();
         for (let i = 0; i < items.length; i += 1) {
-            const item = new CartItem(items[i].productID, items[i].count as number, this.cartStore);
+            const item = new CartItem(items[i].productID, items[i].count, this.cartStore);
             item.render();
             cartListEl.append(item.getComponent());
         }
@@ -153,7 +153,7 @@ export class CartPage extends Page {
     }
 
     private updateTotal(): void {
-        const totalEl = document.querySelector('.summary__total-value');
+        const totalEl = this.html?.querySelector('.summary__total-value');
         if (totalEl) {
             totalEl.textContent = `${this.cartStore.getTotalPrice() / 100}$`;
         }
