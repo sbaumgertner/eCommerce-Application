@@ -19,6 +19,8 @@ export class CartPage extends Page {
     constructor(private appStore: AppStore, private cartStore: CartStore) {
         super();
         this.cartStore.addChangeListener(StoreEventType.CART_ITEM_AMOUNT_CHANGE, this.render.bind(this));
+        this.cartStore.addChangeListener(StoreEventType.CART_INC_ITEM, () => this.updateTotal());
+        this.cartStore.addChangeListener(StoreEventType.CART_DEC_ITEM, () => this.updateTotal());
     }
 
     public render(): void {
@@ -28,6 +30,7 @@ export class CartPage extends Page {
             this.html = document.createElement('div');
         }
         this.html.append(this.createCartSection());
+        this.updateTotal();
     }
 
     private createCartSection(): HTMLElement {
@@ -139,9 +142,18 @@ export class CartPage extends Page {
         const summaryInnerEl = createElement({
             tag: 'div',
             classes: ['summary__inner'],
-            text: 'SUMMARY_INNER',
         });
 
+        summaryInnerEl.innerHTML = `
+        <p class="summary__total-title">Total:</p>
+        <p class="summary__total-value"></p>
+        `;
+
         return summaryInnerEl;
+    }
+
+    private updateTotal(): void {
+        const totalEl = this.getHtml().querySelector('.summary__total-value') as HTMLElement;
+        totalEl.textContent = `${this.cartStore.getTotalPrice() / 100}$`;
     }
 }

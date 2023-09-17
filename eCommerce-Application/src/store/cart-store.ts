@@ -6,12 +6,14 @@ import { AppStore } from '../store/app-store';
 import { Router } from '../router';
 import { LoginStore } from './login-store';
 
+
 export class CartStore extends Store {
     private cartItemAmount: number;
     private items: CartItem[];
     private cartId: string;
     private version: number;
     private cartAPI: CartAPI;
+    private totalPrice: number;
     private appStore: AppStore;
     private router?: Router;
     private loginStore: LoginStore;
@@ -21,18 +23,18 @@ export class CartStore extends Store {
         this.router = new Router();
         this.appStore = new AppStore(this.router);
         this.loginStore = new LoginStore(this.appStore);
-        // получить по API текущую корзину (или создать новую) и заполнить cartItemAmount и items
+
         this.cartId = '';
         this.version = 1;
         this.cartItemAmount = 0;
         this.items = [];
+        this.totalPrice = 0;
         this.cartAPI = new CartAPI(!localStorage.getItem('token'));
         this.loginStore.addChangeListener(StoreEventType.LOGIN, this.updateCart.bind(this));
         this.setMaxListeners(100);
     }
 
     public async initCart(): Promise<void> {
-        console.log('get cartId');
         if (localStorage.getItem('cartAnonID') !== null) {
             this.cartId = localStorage.getItem('cartAnonID') as string;
         } else {
@@ -44,6 +46,7 @@ export class CartStore extends Store {
         this.cartItemAmount = data.body.lineItems.length;
         data.body.lineItems.forEach((el) => {
             this.items.push({ productID: el.productId, count: el.quantity, cartItemId: el.id });
+
         });
     }
 
@@ -83,11 +86,7 @@ export class CartStore extends Store {
                     });
             });
         });
-    }
-
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    private getCart() {
-        return this.cartAPI.getActiveCart(this.cartId);
+        this.totalPrice = data.body.totalPrice.centAmount;
     }
 
     public getCartItemAmount(): number {
@@ -98,14 +97,14 @@ export class CartStore extends Store {
         return this.items;
     }
 
+    public getTotalPrice(): number {
+        return this.totalPrice;
+    }
+
     private onIncItem(productID: ProductID): void {
         const product = this.items.find((item) => item.productID === productID);
 
         if (product && typeof product.count === 'number') {
-            const currentCount = product.count;
-            product.count = null;
-            this.emit(StoreEventType.CART_INC_ITEM);
-            // ДОБАВИТЬ API изменения количества продукта в корзине (+1)
             this.cartAPI
                 .updateActiveCart({
                     cartId: this.cartId,
@@ -116,13 +115,13 @@ export class CartStore extends Store {
                     },
                 })
                 .then((data) => {
-                    product.count = currentCount + 1;
+                    product.count = Number(product.count) + 1;
                     this.version = data.body.version;
+                    this.totalPrice = data.body.totalPrice.centAmount;
                     this.emit(StoreEventType.CART_INC_ITEM);
                 })
-                .catch(() => {
-                    product.count = currentCount;
-                    this.emit(StoreEventType.CART_INC_ITEM);
+                .catch((err) => {
+                    console.log(err);
                 });
         } else {
             const item: CartItem = { productID, count: null, cartItemId: '' };
@@ -139,16 +138,17 @@ export class CartStore extends Store {
                     },
                 })
                 .then((data) => {
-                    item.count = 1;
+                    const item: CartItem = { productID, count: 1 };
                     item.cartItemId = data.body.lineItems[data.body.lineItems.length - 1].id;
+                    this.items.push(item);
                     this.cartItemAmount++;
                     this.version = data.body.version;
+                    this.totalPrice = data.body.totalPrice.centAmount;
                     this.emit(StoreEventType.CART_ITEM_AMOUNT_CHANGE);
                     this.emit(StoreEventType.CART_INC_ITEM);
                 })
-                .catch(() => {
-                    this.items.pop();
-                    this.emit(StoreEventType.CART_INC_ITEM);
+                .catch((err) => {
+                    console.log(err);
                 });
         }
     }
@@ -165,8 +165,6 @@ export class CartStore extends Store {
         });
 
         if (product && typeof product.count === 'number' && product.count > 1) {
-            product.count--;
-            // ДОБАВИТЬ API изменения количества продукта в корзине (-1)
             this.cartAPI
                 .removeLineItem(this.cartId, {
                     version: this.version,
@@ -174,29 +172,29 @@ export class CartStore extends Store {
                     quantity: 1,
                 })
                 .then((data) => {
+                    product.count = Number(product.count) - 1;
                     this.version = data.body.version;
+                    this.totalPrice = data.body.totalPrice.centAmount;
+                    this.emit(StoreEventType.CART_DEC_ITEM);
                 });
         } else {
-            this.cartItemAmount--;
-            this.items.splice(index, 1);
-            // ДОБАВИТЬ API удаления продукта из корзину
             this.cartAPI
                 .removeLineItem(this.cartId, {
                     version: this.version,
                     lineItemId: product?.cartItemId as string,
                 })
                 .then((data) => {
+                    this.cartItemAmount--;
+                    this.items.splice(index, 1);
                     this.version = data.body.version;
+                    this.totalPrice = data.body.totalPrice.centAmount;
+                    if (this.items.length === 0) {
+                        this.emit(StoreEventType.CART_CLEAR);
+                    }
+                    this.emit(StoreEventType.CART_REMOVE_ITEM);
+                    this.emit(StoreEventType.CART_ITEM_AMOUNT_CHANGE);
                 });
-
-            if (this.items.length === 0) {
-                this.emit(StoreEventType.CART_CLEAR);
-            }
-            this.emit(StoreEventType.CART_REMOVE_ITEM);
-            this.emit(StoreEventType.CART_ITEM_AMOUNT_CHANGE);
         }
-
-        this.emit(StoreEventType.CART_DEC_ITEM);
     }
 
     private onRemoveItem(productID: ProductID): void {
@@ -210,24 +208,23 @@ export class CartStore extends Store {
         });
 
         if (product) {
-            this.cartItemAmount--;
-            this.items.splice(index, 1);
-            // ДОБАВИТЬ API удаления продукта из корзину
             this.cartAPI
                 .removeLineItem(this.cartId, {
                     version: this.version,
                     lineItemId: product.cartItemId,
                 })
                 .then((data) => {
+                    this.cartItemAmount--;
+                    this.items.splice(index, 1);
                     this.version = data.body.version;
+                    this.totalPrice = data.body.totalPrice.centAmount;
+                    if (this.items.length === 0) {
+                        this.emit(StoreEventType.CART_CLEAR);
+                    }
+                    this.emit(StoreEventType.CART_ITEM_AMOUNT_CHANGE);
+                    this.emit(StoreEventType.CART_REMOVE_ITEM);
                 });
-            if (this.items.length === 0) {
-                this.emit(StoreEventType.CART_CLEAR);
-            }
-            this.emit(StoreEventType.CART_ITEM_AMOUNT_CHANGE);
         }
-
-        this.emit(StoreEventType.CART_REMOVE_ITEM);
     }
 
     private onClearCart(): void {
