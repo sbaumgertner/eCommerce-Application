@@ -6,7 +6,6 @@ import { AppStore } from '../store/app-store';
 import { Router } from '../router';
 import { LoginStore } from './login-store';
 
-
 export class CartStore extends Store {
     private cartItemAmount: number;
     private items: CartItem[];
@@ -46,8 +45,8 @@ export class CartStore extends Store {
         this.cartItemAmount = data.body.lineItems.length;
         data.body.lineItems.forEach((el) => {
             this.items.push({ productID: el.productId, count: el.quantity, cartItemId: el.id });
-
         });
+        this.totalPrice = data.body.totalPrice.centAmount;
     }
 
     public updateCart(): void {
@@ -65,6 +64,11 @@ export class CartStore extends Store {
                     this.emit(StoreEventType.CART_ITEM_AMOUNT_CHANGE);
                 });
             });
+    }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    private getCart() {
+        return this.cartAPI.getActiveCart(this.cartId);
     }
 
     public getCartId(): void {
@@ -86,7 +90,6 @@ export class CartStore extends Store {
                     });
             });
         });
-        this.totalPrice = data.body.totalPrice.centAmount;
     }
 
     public getCartItemAmount(): number {
@@ -138,7 +141,7 @@ export class CartStore extends Store {
                     },
                 })
                 .then((data) => {
-                    const item: CartItem = { productID, count: 1 };
+                    const item: CartItem = { productID, count: 1, cartItemId: '' };
                     item.cartItemId = data.body.lineItems[data.body.lineItems.length - 1].id;
                     this.items.push(item);
                     this.cartItemAmount++;
