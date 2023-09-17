@@ -100,6 +100,23 @@
   }
 }
 
+.summary__inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 0px 32px;
+  border-top: 1px solid $color-neutral-60;
+  color: $color-neutral-10;
+}
+
+.summary__total-title {
+  @include font-h5;
+}
+
+.summary__total-value {
+  @include font-h6;
+}
+
 @media (max-width: $max-tablet) {
   .cart {
     &__wrapper {
