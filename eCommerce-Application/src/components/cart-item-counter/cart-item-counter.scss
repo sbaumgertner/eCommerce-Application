@@ -10,22 +10,28 @@
   }
 
   &__inc {
+    flex-shrink: 0;
     border-radius: 0 12px 12px 0;
   }
 
   &__dec {
+    flex-shrink: 0;
     border-radius: 12px 0 0 12px;
   }
 
   &__display {
-    flex-grow: 1;
+    flex: 0 0 calc(100% - 80px);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 16px;
     border-top: solid 1px $color-neutral-60;
     border-bottom: solid 1px $color-neutral-60;
     color: $color-neutral-10;
     cursor: default;
+
+    & .loader {
+      transform: scale(0.5);
+      margin: 0 -100px;
+    }
   }
 }
