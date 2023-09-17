@@ -72,11 +72,6 @@ export class CartStore extends Store {
         } else this.cartId = localStorage.getItem('cartAnonID') as string;
     }
 
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    private getCart() {
-        return this.cartAPI.getActiveCart(this.cartId);
-    }
-
     private clearCart(): void {
         this.getCart().then((data) => {
             data.body.lineItems.forEach((el) => {
