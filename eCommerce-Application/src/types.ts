@@ -139,6 +139,7 @@ export type CartItem = {
     productID: string;
     count: number;
     cartItemId: string;
+    price: number;
 };
 
 export type CartInteractionProps = {
