@@ -17,8 +17,7 @@
       padding: 16px;
     }
 
-    >* {
-        // align-self: ;
+    & .section {
         display: flex;
         flex-direction: column;
         width: 640px;
@@ -214,4 +213,8 @@
     display: flex;
     gap: 10px;
     align-items: center;
+}
+
+.popup .address__title {
+    padding-top: 0;
 }
