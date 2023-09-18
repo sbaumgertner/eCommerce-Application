@@ -5,6 +5,16 @@
   padding: 16px 0px;
   align-items: center;
   border-bottom: 1px solid $color-neutral-90;
+
+  .cic-bar__display {
+    flex-basis: 82px;
+    flex-shrink: 1;
+    padding: 0 20px;
+  }
+
+  @media (max-width: $max-mobile) {
+    flex-wrap: wrap;
+  }
 }
 
 .cart-item__img-wrap {
@@ -23,6 +33,7 @@
 .cart-item__text {
   flex-basis: 360px;
   padding: 8px 16px;
+  flex-shrink: 2;
 }
 
 .cart-item__attrs {

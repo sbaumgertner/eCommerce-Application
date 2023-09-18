@@ -51,6 +51,8 @@ export enum StoreEventType {
     CART_REMOVE_ITEM = 'CART_REMOVE_ITEM',
     CART_CLEAR = 'CART_CLEAR',
     CART_ITEM_AMOUNT_CHANGE = 'CART_ITEM_AMOUNT_CHANGE',
+    CART_PROMO_ERROR = 'CART_PROMO_ERROR',
+    CART_PROMO_SUCCESS = 'CART_PROMO_SUCCESS',
     LOGIN = 'LOGIN',
 }
 
@@ -141,6 +143,7 @@ export type CartItem = {
     productID: string;
     count: number;
     cartItemId: string;
+    price: number;
 };
 
 export type CartInteractionProps = {
