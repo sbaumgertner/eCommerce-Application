@@ -78,7 +78,7 @@ export class CartStore extends Store {
     }
 
     public getSubtotalPrice(): number {
-        return this.items.reduce((sum, item) => (sum += item.price), 0);
+        return this.items.reduce((sum, item) => (sum += item.count * item.price), 0);
     }
 
     public updateCart(): void {
