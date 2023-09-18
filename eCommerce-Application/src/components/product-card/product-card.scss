@@ -78,10 +78,11 @@ $card-transform: all 0.2s ease-out;
     display: flex;
     align-items: last baseline;
     color: $color-neutral-10;
+    height: 40px;
 
     &_sale {
       position: absolute;
-      top: -40px;
+      top: -48px;
       right: 0;
       height: 48px;
       padding: 0 8px 4px;
@@ -92,7 +93,7 @@ $card-transform: all 0.2s ease-out;
       &::after {
         content: '';
         position: absolute;
-        bottom: -28px;
+        bottom: -20px;
         width: 100%;
         height: 1px;
         background-color: $color-secondary-40;

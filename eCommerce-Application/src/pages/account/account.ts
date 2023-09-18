@@ -338,6 +338,7 @@ export class AccountPage extends Page {
         billingCheckbox.append(this.billingAddressCheckbox.getComponent(), this.billingDefaultCheckbox.getComponent());
         popUpContent.append(this.newAddressFields.getComponent(), shippingCheckbox, billingCheckbox);
         const popUp = new PopUp('', popUpContent, this.apiError, this.buttonSaveNewAddress.getComponent());
+        popUp.getComponent().querySelector('.popup__title')?.remove();
 
         return popUp.getComponent();
     }
