@@ -231,17 +231,17 @@ export class CartPage extends Page {
 
         const subtotalPriceEl = this.html?.querySelector('.subtotal__price-value');
         if (subtotalPriceEl) {
-            subtotalPriceEl.textContent = `${subtotal / 100}$`;
+            subtotalPriceEl.textContent = `$${subtotal / 100}`;
         }
 
         const totalEl = this.html?.querySelector('.summary__total-value');
         if (totalEl) {
-            totalEl.textContent = `${total / 100}$`;
+            totalEl.textContent = `$${total / 100}`;
         }
 
         const promoDiscountEl = this.html?.querySelector('.subtotal__promo-value');
         if (promoDiscountEl) {
-            promoDiscountEl.textContent = `-${promoDiscount / 100}$`;
+            promoDiscountEl.textContent = `-$${promoDiscount / 100}`;
         }
     }
 

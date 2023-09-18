@@ -24,10 +24,11 @@
   }
 
   &__summary {
+    // flex: 1 0 464px;
     align-self: self-start;
     position: sticky;
     top: 112px;
-    width: 464px;
+    width: 400px;
     padding: 24px 16px 16px;
     border-radius: 24px;
     background: $color-white;
@@ -209,6 +210,7 @@
     }
 
     &__my-cart {
+      padding: 32px 16px;
       &_empty {
         min-height: calc(100vh - 80px - 32px);      
       }

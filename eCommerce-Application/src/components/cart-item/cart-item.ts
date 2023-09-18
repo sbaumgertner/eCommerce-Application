@@ -65,15 +65,15 @@ export default class CartItem extends Component {
         </div>
         <div class="cart-item__prices">
           <p class="cart-item__discounted">${
-              this.productData.discountPrice ? this.productData.price / 100 + '$' : ''
+              this.productData.discountPrice ? '$' + this.productData.price / 100 : ''
           }</p>
-          <p class="cart-item__price">${this.currentPrice / 100}$</p>
+          <p class="cart-item__price">$${this.currentPrice / 100}</p>
         </div>
         `;
         const counter = new CartItemCounter({ type: 'bordered', productID: this.productId }, this.cartStore);
         this.componentElem.append(counter.getComponent());
         const totalEl = createElement({ tag: 'div', classes: ['cart-item__total'] });
-        totalEl.innerHTML = `<p>${(this.currentPrice * this.count) / 100}$</p>`;
+        totalEl.innerHTML = `<p>$${(this.currentPrice * this.count) / 100}</p>`;
         this.componentElem.append(totalEl);
 
         const deleteBtn = new IconButton({ icon: deleteIcon, type: 'clear', id: 'delete-item' });
