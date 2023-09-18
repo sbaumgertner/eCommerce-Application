@@ -76,6 +76,10 @@
     text-align: end;
     flex-basis: 144px;
   }
+
+  @media (max-width: $max-mobile) {
+    display: none;
+  }
 }
 
 .empty-cart {

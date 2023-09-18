@@ -18,12 +18,20 @@ export class CartPage extends Page {
     private routeAction = new RouteAction();
     private promoInput?: InputField;
     private promoCode?: string;
+    private subtotalEl?: HTMLElement;
+    private promoButton?: Button;
+    private promoRemoveButton?: Button;
 
     constructor(private appStore: AppStore, private cartStore: CartStore) {
         super();
         this.cartStore.addChangeListener(StoreEventType.CART_ITEM_AMOUNT_CHANGE, this.render.bind(this));
         this.cartStore.addChangeListener(StoreEventType.CART_INC_ITEM, () => this.updateTotal());
         this.cartStore.addChangeListener(StoreEventType.CART_DEC_ITEM, () => this.updateTotal());
+        this.cartStore.addChangeListener(StoreEventType.CART_PROMO_SUCCESS, () => this.updateTotal());
+        this.cartStore.addChangeListener(StoreEventType.CART_PROMO_ERROR, () => {
+            this.updateTotal();
+            this.promoInput?.setError('The promo code is not valid');
+        });
     }
 
     public render(): void {
@@ -142,23 +150,27 @@ export class CartPage extends Page {
     }
 
     private createSummaryInner(): HTMLElement {
-        this.promoCode = this.cartStore.getPromoCode();
-
         const summaryInnerEl = createElement({
             tag: 'div',
             classes: ['summary__inner'],
         });
-
         const promoEl = createElement({
             tag: 'div',
             classes: ['summary__promo'],
         });
         this.promoInput = new InputField('text', 'promo-input', 'promo code', '');
-        if (this.promoCode) {
-            this.promoInput.setValue(this.promoCode);
-        }
-        const promoButton = new Button('bordered', 'promo-button', 'Apply');
-        promoEl.append(this.promoInput.getComponent(), promoButton.getComponent());
+        this.promoButton = new Button('bordered', 'promo-button', 'Apply');
+        this.promoRemoveButton = new Button('bordered', 'promo-remove-button', 'Remove');
+        this.promoRemoveButton.getComponent().classList.add('button_bordered_negative');
+        promoEl.append(
+            this.promoInput.getComponent(),
+            this.promoButton.getComponent(),
+            this.promoRemoveButton.getComponent()
+        );
+        this.promoButton.getComponent().addEventListener('click', () => this.applyPromo());
+        this.promoRemoveButton
+            .getComponent()
+            .addEventListener('click', () => this.cartAction.removePromo(this.promoCode || ''));
         summaryInnerEl.append(promoEl);
 
         const subtotalEl = this.createSubtotal();
@@ -179,14 +191,12 @@ export class CartPage extends Page {
     }
 
     private createSubtotal(): HTMLElement {
-        const subtotalEl = createElement({
+        this.subtotalEl = createElement({
             tag: 'div',
             classes: ['subtotal'],
         });
-        if (!this.promoCode) {
-            subtotalEl.classList.add('hidden');
-        }
-        subtotalEl.innerHTML = `
+
+        this.subtotalEl.innerHTML = `
             <div class="subtotal__price">
                 <p class="subtotal__price-title">Subtotal:</p>
                 <p class="subtotal__price-value">1,090.50$</p>
@@ -196,13 +206,28 @@ export class CartPage extends Page {
                 <p class="subtotal__promo-value">-100$</p>
             </div>
         `;
-        return subtotalEl;
+        return this.subtotalEl;
     }
 
     private updateTotal(): void {
+        this.promoCode = this.cartStore.getPromoCode();
         const total = this.cartStore.getTotalPrice();
         const subtotal = this.cartStore.getSubtotalPrice();
         const promoDiscount = subtotal - total;
+        this.promoInput?.setError('');
+
+        if (this.promoCode) {
+            this.promoInput?.setValue(this.promoCode);
+            this.promoInput?.setDisable(true);
+            this.promoButton?.getComponent().classList.add('hidden');
+            this.promoRemoveButton?.getComponent().classList.remove('hidden');
+            this.subtotalEl?.classList.remove('hidden');
+        } else {
+            this.promoInput?.setDisable(false);
+            this.promoButton?.getComponent().classList.remove('hidden');
+            this.promoRemoveButton?.getComponent().classList.add('hidden');
+            this.subtotalEl?.classList.add('hidden');
+        }
 
         const subtotalPriceEl = this.html?.querySelector('.subtotal__price-value');
         if (subtotalPriceEl) {
@@ -217,6 +242,13 @@ export class CartPage extends Page {
         const promoDiscountEl = this.html?.querySelector('.subtotal__promo-value');
         if (promoDiscountEl) {
             promoDiscountEl.textContent = `-${promoDiscount / 100}$`;
+        }
+    }
+
+    private applyPromo(): void {
+        const promo = this.promoInput?.getValue();
+        if (promo) {
+            this.cartAction.addPromo(promo);
         }
     }
 }

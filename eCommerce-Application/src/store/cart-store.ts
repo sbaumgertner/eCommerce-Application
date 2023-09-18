@@ -283,17 +283,25 @@ export class CartStore extends Store {
     }
 
     private onAddPromo(promocode: Promocode): void {
-        this.cartAPI
-            .addPromocode(this.cartId, {
-                version: this.version,
-                code: promocode,
-            })
-            .then((data) => {
-                this.promoID = data.body.discountCodes[0].discountCode.id;
-                this.version = data.body.version;
-                this.totalPrice = data.body.totalPrice.centAmount;
-                this.emit(StoreEventType.CART_ITEM_AMOUNT_CHANGE);
-            });
+        if (!PROMO_CODES_INFO.find((item) => item.code === promocode)) {
+            this.emit(StoreEventType.CART_PROMO_ERROR);
+        } else {
+            this.cartAPI
+                .addPromocode(this.cartId, {
+                    version: this.version,
+                    code: promocode,
+                })
+                .then((data) => {
+                    console.log(data.body);
+                    this.setDiscount(data.body.discountCodes);
+                    this.version = data.body.version;
+                    this.totalPrice = data.body.totalPrice.centAmount;
+                    this.emit(StoreEventType.CART_PROMO_SUCCESS);
+                })
+                .catch(() => {
+                    this.emit(StoreEventType.CART_PROMO_ERROR);
+                });
+        }
     }
 
     private onRemovePromo(): void {
@@ -304,9 +312,10 @@ export class CartStore extends Store {
             })
             .then((data) => {
                 this.promoID = undefined;
+                this.promoCode = undefined;
                 this.version = data.body.version;
                 this.totalPrice = data.body.totalPrice.centAmount;
-                this.emit(StoreEventType.CART_ITEM_AMOUNT_CHANGE);
+                this.emit(StoreEventType.CART_PROMO_SUCCESS);
             });
     }
 
