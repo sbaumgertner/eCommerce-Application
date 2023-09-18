@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import CartAPI from '../api/cartAPI';
-import { Action, ActionType, CartItem, ProductID, StoreEventType } from '../types';
+import { Action, ActionType, CartItem, ProductID, Promocode, StoreEventType } from '../types';
 import { Store } from './abstract/store';
 import { AppStore } from '../store/app-store';
 import { Router } from '../router';
@@ -16,6 +16,7 @@ export class CartStore extends Store {
     private appStore: AppStore;
     private router?: Router;
     private loginStore: LoginStore;
+    private promoID?: string;
 
     constructor() {
         super();
@@ -47,6 +48,7 @@ export class CartStore extends Store {
             this.items.push({ productID: el.productId, count: el.quantity, cartItemId: el.id });
         });
         this.totalPrice = data.body.totalPrice.centAmount;
+        this.promoID = data.body.discountCodes[0]?.discountCode.id;
     }
 
     public updateCart(): void {
@@ -89,6 +91,13 @@ export class CartStore extends Store {
         return this.totalPrice;
     }
 
+    public hasPromo(): boolean {
+        if (this.promoID) {
+            return true;
+        }
+        return false;
+    }
+
     private onIncItem(productID: ProductID): void {
         const product = this.items.find((item) => item.productID === productID);
 
@@ -96,7 +105,7 @@ export class CartStore extends Store {
             this.cartAPI
                 .updateActiveCart({
                     cartId: this.cartId,
-                    cartUpdateDraft: {
+                    cartUpdateItemInfo: {
                         version: this.version,
                         productId: productID,
                         quantity: 1,
@@ -115,7 +124,7 @@ export class CartStore extends Store {
             this.cartAPI
                 .updateActiveCart({
                     cartId: this.cartId,
-                    cartUpdateDraft: {
+                    cartUpdateItemInfo: {
                         version: this.version,
                         productId: productID,
                         quantity: 1,
@@ -236,6 +245,34 @@ export class CartStore extends Store {
             });
     }
 
+    private onAddPromo(promocode: Promocode): void {
+        this.cartAPI
+            .addPromocode(this.cartId, {
+                version: this.version,
+                code: promocode,
+            })
+            .then((data) => {
+                this.promoID = data.body.discountCodes[0].discountCode.id;
+                this.version = data.body.version;
+                this.totalPrice = data.body.totalPrice.centAmount;
+                this.emit(StoreEventType.CART_ITEM_AMOUNT_CHANGE);
+            });
+    }
+
+    private onRemovePromo(): void {
+        this.cartAPI
+            .removePromocode(this.cartId, {
+                version: this.version,
+                id: this.promoID as string,
+            })
+            .then((data) => {
+                this.promoID = undefined;
+                this.version = data.body.version;
+                this.totalPrice = data.body.totalPrice.centAmount;
+                this.emit(StoreEventType.CART_ITEM_AMOUNT_CHANGE);
+            });
+    }
+
     protected actionCallback(action: Action): void {
         switch (action.actionType) {
             case ActionType.CART_INC_ITEM:
@@ -249,6 +286,13 @@ export class CartStore extends Store {
                 break;
             case ActionType.CART_CLEAR:
                 this.onClearCart();
+                break;
+
+            case ActionType.CART_ADD_PROMO:
+                this.onAddPromo(action.data);
+                break;
+            case ActionType.CART_REMOVE_PROMO:
+                this.onRemovePromo();
                 break;
         }
     }

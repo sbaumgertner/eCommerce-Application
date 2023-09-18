@@ -31,6 +31,8 @@ export enum ActionType {
     CART_DEC_ITEM = 'CART_DEC_ITEM',
     CART_REMOVE_ITEM = 'CART_REMOVE_ITEM',
     CART_CLEAR = 'CART_CLEAR',
+    CART_ADD_PROMO = 'CART_ADD_PROMO',
+    CART_REMOVE_PROMO = 'CART_REMOVE_PROMO',
 }
 
 export type Action = {
@@ -145,3 +147,5 @@ export type CartInteractionProps = {
     type: 'filled' | 'bordered';
     productID: ProductID;
 };
+
+export type Promocode = string;

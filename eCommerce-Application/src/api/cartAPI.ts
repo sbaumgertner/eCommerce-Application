@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
+import { MyCartUpdate } from '@commercetools/platform-sdk';
 import { getAPIRootWithExistingTokenFlow, getApiRootForCredentialFlow } from './client';
 
 type CartDraft = {
@@ -6,38 +7,26 @@ type CartDraft = {
     customerEmail?: string;
 };
 
-type MyCartUpdate = {
-    version: number;
-    actions: MyCartUpdateAction[];
-};
-
-type MyCartUpdateAction = {
-    readonly action: 'addLineItem';
-    readonly productId?: string;
-    readonly quantity?: number;
-};
-
-type MyCartRemoveItem = {
-    version: number;
-    actions: MyCartRemoveLineItemAction[];
-};
-
-type MyCartRemoveLineItemAction = {
-    readonly action: 'removeLineItem';
-    readonly lineItemId: string;
-    readonly quantity?: number;
-};
-
-type CartUpdateDraft = {
+type CartUpdateItemInfo = {
     version: number;
     productId: string;
     quantity: number;
 };
 
-type CartRemoveItemDraft = {
+type CartRemoveItemInfo = {
     version: number;
     lineItemId: string;
     quantity?: number;
+};
+
+type CartAddPromoInfo = {
+    version: number;
+    code: string;
+};
+
+type CartRemovePromoInfo = {
+    version: number;
+    id: string;
 };
 
 export default class CartAPI {
@@ -55,9 +44,9 @@ export default class CartAPI {
         };
     }
 
-    private createCartUpdateDraft(cartUpdateDraft: CartUpdateDraft): MyCartUpdate {
-        const action = 'addLineItem'; // default value needed to tell the system we are adding an item to cart
-        const { version, productId, quantity } = cartUpdateDraft;
+    private createCartUpdateDraft(cartUpdateItemInfo: CartUpdateItemInfo): MyCartUpdate {
+        const action = 'addLineItem';
+        const { version, productId, quantity } = cartUpdateItemInfo;
         return {
             version,
             actions: [
@@ -70,9 +59,9 @@ export default class CartAPI {
         };
     }
 
-    private createRemoveItemDraft(cartRemoveItemDraft: CartRemoveItemDraft): MyCartRemoveItem {
-        const action = 'removeLineItem'; // default value needed to tell the system we are removing an item from the cart
-        const { version, lineItemId, quantity } = cartRemoveItemDraft;
+    private createRemoveItemDraft(cartRemoveItemInfo: CartRemoveItemInfo): MyCartUpdate {
+        const action = 'removeLineItem';
+        const { version, lineItemId, quantity } = cartRemoveItemInfo;
         return {
             version,
             actions: [
@@ -80,6 +69,37 @@ export default class CartAPI {
                     action,
                     lineItemId,
                     quantity,
+                },
+            ],
+        };
+    }
+
+    private createAddPromocodeDraft(addPromocodeDraft: CartAddPromoInfo): MyCartUpdate {
+        const action = 'addDiscountCode';
+        const { version, code } = addPromocodeDraft;
+        return {
+            version,
+            actions: [
+                {
+                    action,
+                    code,
+                },
+            ],
+        };
+    }
+
+    private createRemovePromocodeDraft(removePromocodeDraft: CartRemovePromoInfo): MyCartUpdate {
+        const action = 'removeDiscountCode';
+        const { version, id } = removePromocodeDraft;
+        return {
+            version,
+            actions: [
+                {
+                    action,
+                    discountCode: {
+                        typeId: 'discount-code',
+                        id,
+                    },
                 },
             ],
         };
@@ -118,28 +138,19 @@ export default class CartAPI {
             activeCart = await getApiRootForCredentialFlow().carts().withId({ ID: cartId }).get().execute();
         } else {
             activeCart = await getAPIRootWithExistingTokenFlow().me().carts().withId({ ID: cartId }).get().execute();
-            // activeCart = await getAPIRootWithExistingTokenFlow().me().activeCart().get().execute();
-            // getAPIRootWithExistingTokenFlow()
-            //     .me()
-            //     .activeCart()
-            //     .get()
-            //     .execute()
-            //     .then((data) => {
-            //         localStorage.setItem('cartID', data.body.id);
-            //     });
         }
 
         return activeCart;
     }
 
-    async updateActiveCart(productDetails: { cartId: string; cartUpdateDraft: CartUpdateDraft }) {
+    async updateActiveCart(productDetails: { cartId: string; cartUpdateItemInfo: CartUpdateItemInfo }) {
         let activeCart;
-        const { cartId, cartUpdateDraft } = productDetails;
+        const { cartId, cartUpdateItemInfo } = productDetails;
         if (this.isAnonUser) {
             activeCart = await getApiRootForCredentialFlow()
                 .carts()
                 .withId({ ID: cartId })
-                .post({ body: this.createCartUpdateDraft(cartUpdateDraft) })
+                .post({ body: this.createCartUpdateDraft(cartUpdateItemInfo) })
                 .execute();
         } else {
             console.log('updateActiveCart logged');
@@ -147,26 +158,13 @@ export default class CartAPI {
                 .me()
                 .carts()
                 .withId({ ID: cartId })
-                .post({ body: this.createCartUpdateDraft(cartUpdateDraft) })
+                .post({ body: this.createCartUpdateDraft(cartUpdateItemInfo) })
                 .execute();
         }
         return activeCart;
     }
 
-    async updateAnonCart(productDetails: { cartId: string; cartUpdateDraft: CartUpdateDraft }) {
-        const { cartId, cartUpdateDraft } = productDetails;
-
-        return getApiRootForCredentialFlow()
-            .carts()
-            .withId({ ID: cartId })
-            .post({ body: this.createCartUpdateDraft(cartUpdateDraft) })
-            .execute();
-        // .then((data) => {
-        //     console.log(data.body);
-        // });
-    }
-
-    async removeLineItem(cartId: string, productDetails: CartRemoveItemDraft) {
+    async removeLineItem(cartId: string, productDetails: CartRemoveItemInfo) {
         let activeCart;
         if (this.isAnonUser) {
             activeCart = await getApiRootForCredentialFlow()
@@ -180,6 +178,44 @@ export default class CartAPI {
                 .carts()
                 .withId({ ID: cartId })
                 .post({ body: this.createRemoveItemDraft(productDetails) })
+                .execute();
+        }
+        return activeCart;
+    }
+
+    async addPromocode(cartId: string, cartAddPromoInfo: CartAddPromoInfo) {
+        let activeCart;
+        if (this.isAnonUser) {
+            activeCart = await getApiRootForCredentialFlow()
+                .carts()
+                .withId({ ID: cartId })
+                .post({ body: this.createAddPromocodeDraft(cartAddPromoInfo) })
+                .execute();
+        } else {
+            activeCart = await getAPIRootWithExistingTokenFlow()
+                .me()
+                .carts()
+                .withId({ ID: cartId })
+                .post({ body: this.createAddPromocodeDraft(cartAddPromoInfo) })
+                .execute();
+        }
+        return activeCart;
+    }
+
+    async removePromocode(cartId: string, cartRemovePromoInfo: CartRemovePromoInfo) {
+        let activeCart;
+        if (this.isAnonUser) {
+            activeCart = await getApiRootForCredentialFlow()
+                .carts()
+                .withId({ ID: cartId })
+                .post({ body: this.createRemovePromocodeDraft(cartRemovePromoInfo) })
+                .execute();
+        } else {
+            activeCart = await getAPIRootWithExistingTokenFlow()
+                .me()
+                .carts()
+                .withId({ ID: cartId })
+                .post({ body: this.createRemovePromocodeDraft(cartRemovePromoInfo) })
                 .execute();
         }
         return activeCart;
