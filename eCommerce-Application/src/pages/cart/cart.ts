@@ -9,6 +9,8 @@ import CartItem from '../../components/cart-item/cart-item';
 import { RouteAction } from '../../store/action/routeAction';
 import { PageName, StoreEventType } from '../../types';
 import InputField from '../../components/input-field/input-field';
+import PopUp from '../../components/pop-up/popUp';
+import { Loader } from '../../components/loader/loader';
 
 const EMPTY_CART_TITLE = `Your home is missing something... a little green!`;
 const EMPTY_CART_MESSAGE = `Take a look at our curated plant collections to find the perfect addition to your space.`;
@@ -21,6 +23,7 @@ export class CartPage extends Page {
     private subtotalEl?: HTMLElement;
     private promoButton?: Button;
     private promoRemoveButton?: Button;
+    private loaderEl = new Loader().getComponent();
 
     constructor(private appStore: AppStore, private cartStore: CartStore) {
         super();
@@ -89,9 +92,22 @@ export class CartPage extends Page {
             btnResetCart.disable();
         }
         btnResetCartEl.classList.add('button_bordered_negative');
+
         btnResetCartEl.addEventListener('click', () => {
-            this.cartAction.clearCart();
-            console.log('Clear cart');
+            const title = 'Clear cart';
+            const contentEl = this.createPopUpContent();
+            const errorMessageEl = document.createElement('div');
+            const button = new Button('bordered', undefined, 'Clear cart');
+            const buttonEl = button.getComponent();
+
+            buttonEl.classList.add('button_bordered_negative');
+            buttonEl.addEventListener('click', () => {
+                contentEl.innerHTML = '';
+                contentEl.append(this.loaderEl);
+                button.disable();
+                this.cartAction.clearCart();
+            });
+            this.html?.append(new PopUp(title, contentEl, errorMessageEl, buttonEl).getComponent());
         });
 
         headerEl.append(titleEl, btnResetCartEl);
@@ -243,6 +259,15 @@ export class CartPage extends Page {
         if (promoDiscountEl) {
             promoDiscountEl.textContent = `-$${promoDiscount / 100}`;
         }
+    }
+
+    private createPopUpContent(): HTMLElement {
+        const contentEl = createElement({
+            tag: 'div',
+            classes: ['popup-clear-cart-text'],
+            text: 'Are you really want clear cart?',
+        });
+        return contentEl;
     }
 
     private applyPromo(): void {

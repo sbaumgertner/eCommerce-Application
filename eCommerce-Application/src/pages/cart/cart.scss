@@ -210,6 +210,11 @@
 }
 
 
+.popup-clear-cart-text {
+  color: $color-neutral-30;
+  @include font-text-bold;
+}
+
 @media (max-width: $max-tablet) {
   .cart {
     &__wrapper {
