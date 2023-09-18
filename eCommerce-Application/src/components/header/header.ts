@@ -215,6 +215,7 @@ export default class Header extends Component {
             localStorage.removeItem('token');
             localStorage.removeItem('cartID');
             localStorage.removeItem('cartAnonID');
+            location.reload();
             this.routeAction.changePage({ addHistory: true, page: PageName.INDEX });
         });
         return logoutBtnEl;

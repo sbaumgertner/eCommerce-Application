@@ -54,8 +54,14 @@ export class CartStore extends Store {
     public updateCart(): void {
         this.cartId = localStorage.getItem('cartAnonID') as string;
 
+        this.getCart().then((data) => {
+            this.version = data.body.version;
+        });
+        this.items = [];
+
         this.getCart()
             .then((data) => {
+                this.version = data.body.version;
                 data.body.lineItems.forEach((el) => {
                     this.items.push({ productID: el.productId, count: el.quantity, cartItemId: el.id });
                 });

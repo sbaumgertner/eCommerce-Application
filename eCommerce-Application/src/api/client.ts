@@ -11,6 +11,7 @@ import {
     PasswordAuthMiddlewareOptions,
     Client,
     AnonymousAuthMiddlewareOptions,
+    RefreshAuthMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
 
 const CTP_PROJECT_KEY = 'ecom_app';
@@ -158,4 +159,19 @@ export const getAPIRootWithExistingTokenFlow = () => {
         projectKey: CTP_PROJECT_KEY,
     });
     return apiRootWithExistingTokenFlow;
+};
+
+export const getApiRefreshTokenRoot = () => {
+    const refreshOptions: RefreshAuthMiddlewareOptions = {
+        ...authMiddlewareOptions,
+        refreshToken: myToken.get().token,
+    };
+    const ctpClient = new ClientBuilder()
+        .withProjectKey(CTP_PROJECT_KEY)
+        .withHttpMiddleware(httpMiddlewareOptions)
+        .withRefreshTokenFlow(refreshOptions)
+        .withLoggerMiddleware()
+        .build();
+
+    return ctpClient;
 };

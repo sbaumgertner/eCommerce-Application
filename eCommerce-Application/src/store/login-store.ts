@@ -10,7 +10,6 @@ import { AppStore } from './app-store';
 import CartAPI from '../api/cartAPI';
 import { getAPIRootWithExistingTokenFlow } from '../api/client';
 import { CartActions } from './action/cartActions';
-//import { CartStore } from './cart-store';
 
 export type LoginValidationErrors = Partial<LoginActionData>;
 
@@ -60,8 +59,6 @@ export class LoginStore extends Store {
                 .loginCustommer()
                 .then(() => {
                     this.routeAction.changePage({ addHistory: true, page: PageName.INDEX });
-                    // вернуть карзину или создать
-                    //new CartAPI(this.appStore).getActiveCart();
                     getAPIRootWithExistingTokenFlow()
                         .me()
                         .carts()
@@ -73,13 +70,8 @@ export class LoginStore extends Store {
                                     currency: 'USD',
                                 });
                             } else {
-                                //localStorage.removeItem('cartAnonID');
                                 localStorage.setItem('cartAnonID', data.body.results[0].id);
-                                //new CartStore(this.appStore).getCartId();
-                                //new CartStore().updateCart();
-                                //this.cartAction.updateCart();
                                 this.emit(StoreEventType.LOGIN);
-                                //location.reload();
                             }
                         });
                 })
