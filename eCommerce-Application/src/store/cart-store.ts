@@ -53,12 +53,6 @@ export class CartStore extends Store {
                 cartItemId: el.id,
                 price: el.price.discounted?.value.centAmount || el.price.value.centAmount,
             });
-            this.items.push({
-                productID: el.productId,
-                count: el.quantity,
-                cartItemId: el.id,
-                price: el.price.discounted?.value.centAmount || el.price.value.centAmount,
-            });
         });
         this.totalPrice = data.body.totalPrice.centAmount;
         this.setDiscount(data.body.discountCodes);
