@@ -149,7 +149,35 @@ export class CartPage extends Page {
         <p class="summary__total-value"></p>
         `;
 
+        const testPromo = this.createTestPromocodeBtnBar();
+        summaryInnerEl.append(testPromo);
+
         return summaryInnerEl;
+    }
+
+    private createTestPromocodeBtnBar(): HTMLElement {
+        const bartEl = createElement({ tag: 'div', classes: ['123'] });
+        const addBtnEl = new Button('filled', '', 'ADD').getComponent();
+        const removeBtnEl = new Button('filled', '', 'REMOVE').getComponent();
+
+        addBtnEl.addEventListener('click', () => {
+            this.cartAction.addPromo('PROMO-45USD');
+            bartEl.innerHTML = '';
+            bartEl.append(removeBtnEl);
+        });
+
+        removeBtnEl.addEventListener('click', () => {
+            this.cartAction.removePromo('');
+            bartEl.innerHTML = '';
+            bartEl.append(addBtnEl);
+        });
+
+        if (this.cartStore.hasPromo()) {
+            bartEl.append(removeBtnEl);
+        } else {
+            bartEl.append(addBtnEl);
+        }
+        return bartEl;
     }
 
     private updateTotal(): void {

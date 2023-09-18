@@ -1,4 +1,4 @@
-import { ActionType, ProductID } from '../../types';
+import { ActionType, ProductID, Promocode } from '../../types';
 import { AbstractAction } from '../abstract/action';
 
 export class CartActions extends AbstractAction {
@@ -12,6 +12,14 @@ export class CartActions extends AbstractAction {
 
     public removeProduct(data: ProductID): void {
         this.dispatcher.handleAction({ actionType: ActionType.CART_REMOVE_ITEM, data });
+    }
+
+    public addPromo(data: Promocode): void {
+        this.dispatcher.handleAction({ actionType: ActionType.CART_ADD_PROMO, data });
+    }
+
+    public removePromo(data: Promocode): void {
+        this.dispatcher.handleAction({ actionType: ActionType.CART_REMOVE_PROMO, data });
     }
 
     public clearCart(): void {
