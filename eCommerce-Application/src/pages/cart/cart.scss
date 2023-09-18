@@ -57,7 +57,7 @@
   &__promo {
     display: flex;
     justify-content: space-between;
-    align-items: end;
+    align-items: start;
     gap: 16px;
     padding: 24px 0;
   
@@ -70,7 +70,7 @@
     }
   
     .button {
-      margin-bottom: 17px;
+      margin-top: 32px;
     }
   }
 
