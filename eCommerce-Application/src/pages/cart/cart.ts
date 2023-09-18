@@ -150,6 +150,8 @@ export class CartPage extends Page {
     }
 
     private createSummaryInner(): HTMLElement {
+        this.promoCode = this.cartStore.getPromoCode();
+
         const summaryInnerEl = createElement({
             tag: 'div',
             classes: ['summary__inner'],
@@ -174,7 +176,6 @@ export class CartPage extends Page {
         summaryInnerEl.append(promoEl);
 
         const subtotalEl = this.createSubtotal();
-
         const totalEl = createElement({
             tag: 'div',
             classes: ['summary__total'],
@@ -186,7 +187,6 @@ export class CartPage extends Page {
 
         const checkout = new Button('filled', 'checkout', 'Checkout');
         summaryInnerEl.append(promoEl, subtotalEl, totalEl, checkout.getComponent());
-
         return summaryInnerEl;
     }
 
