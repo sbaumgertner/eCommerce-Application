@@ -102,6 +102,63 @@
 
 .summary__inner {
   display: flex;
+  flex-direction: column;
+}
+
+.summary__promo {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+  padding: 24px 0;
+
+  .label {
+    color: $color-neutral-60;
+  }
+
+  input {
+    line-height: 24px;
+  }
+
+  .button {
+    margin-bottom: 17px;
+  }
+}
+
+.hidden {
+  display: none !important;
+}
+
+.subtotal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 0;
+  border-top: 1px solid $color-neutral-60;
+  color: $color-neutral-60;
+}
+
+.subtotal__price,
+.subtotal__promo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center
+}
+
+.subtotal__price-title {
+  @include font-h5;
+}
+
+.subtotal__price-value {
+  @include font-h6;
+}
+
+.subtotal__promo-value {
+  @include font-text-bold; 
+}
+
+.summary__total {
+  display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 24px 0px 32px;

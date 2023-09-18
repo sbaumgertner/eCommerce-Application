@@ -2,9 +2,10 @@
 import CartAPI from '../api/cartAPI';
 import { Action, ActionType, CartItem, ProductID, Promocode, StoreEventType } from '../types';
 import { Store } from './abstract/store';
-import { AppStore } from '../store/app-store';
+import { AppStore, PROMO_CODES_INFO } from '../store/app-store';
 import { Router } from '../router';
 import { LoginStore } from './login-store';
+import { DiscountCodeInfo } from '@commercetools/platform-sdk';
 
 export class CartStore extends Store {
     private cartItemAmount: number;
@@ -17,6 +18,7 @@ export class CartStore extends Store {
     private router?: Router;
     private loginStore: LoginStore;
     private promoID?: string;
+    private promoCode?: string;
 
     constructor() {
         super();
@@ -45,10 +47,38 @@ export class CartStore extends Store {
         this.version = data.body.version;
         this.cartItemAmount = data.body.lineItems.length;
         data.body.lineItems.forEach((el) => {
-            this.items.push({ productID: el.productId, count: el.quantity, cartItemId: el.id });
+            this.items.push({
+                productID: el.productId,
+                count: el.quantity,
+                cartItemId: el.id,
+                price: el.price.discounted?.value.centAmount || el.price.value.centAmount,
+            });
         });
         this.totalPrice = data.body.totalPrice.centAmount;
-        this.promoID = data.body.discountCodes[0]?.discountCode.id;
+        this.setDiscount(data.body.discountCodes);
+    }
+
+    private setDiscount(discounts: DiscountCodeInfo[]): void {
+        if (discounts.length > 0) {
+            const discount =
+                discounts.find((item) => item.state === 'MatchesCart') || discounts.find((item) => !item.state);
+
+            this.promoID = discount?.discountCode.id;
+            if (this.promoID) {
+                const promo = PROMO_CODES_INFO.find((item) => item.id === this.promoID);
+                if (promo) {
+                    this.promoCode = promo.code;
+                }
+            }
+        }
+    }
+
+    public getPromoCode(): string | undefined {
+        return this.promoCode;
+    }
+
+    public getSubtotalPrice(): number {
+        return this.items.reduce((sum, item) => (sum += item.price), 0);
     }
 
     public updateCart(): void {
@@ -57,7 +87,12 @@ export class CartStore extends Store {
         this.getCart()
             .then((data) => {
                 data.body.lineItems.forEach((el) => {
-                    this.items.push({ productID: el.productId, count: el.quantity, cartItemId: el.id });
+                    this.items.push({
+                        productID: el.productId,
+                        count: el.quantity,
+                        cartItemId: el.id,
+                        price: el.price.discounted?.value.centAmount || el.price.value.centAmount,
+                    });
                 });
             })
             .then(() => {
@@ -131,8 +166,10 @@ export class CartStore extends Store {
                     },
                 })
                 .then((data) => {
-                    const item: CartItem = { productID, count: 1, cartItemId: '' };
-                    item.cartItemId = data.body.lineItems[data.body.lineItems.length - 1].id;
+                    const item: CartItem = { productID, count: 1, cartItemId: '', price: 0 };
+                    const dataItem = data.body.lineItems[data.body.lineItems.length - 1];
+                    item.cartItemId = dataItem.id;
+                    item.price = dataItem.price.discounted?.value.centAmount || dataItem.price.value.centAmount;
                     this.items.push(item);
                     this.cartItemAmount++;
                     this.version = data.body.version;

@@ -5,6 +5,10 @@
   padding: 16px 0px;
   align-items: center;
   border-bottom: 1px solid $color-neutral-90;
+
+  .cic-bar__display {
+    flex-basis: 82px;
+  }
 }
 
 .cart-item__img-wrap {

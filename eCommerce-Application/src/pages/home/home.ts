@@ -1,38 +1,12 @@
 import './home.scss';
 import { Button } from '../../components/button/button';
 import NavigationBar from '../../components/navigation-bar/navigation-bar';
-import { AppStore } from '../../store/app-store';
+import { AppStore, PROMO_CODES_INFO, PromocodeInfo } from '../../store/app-store';
 import { LinkProps, PageName } from '../../types';
 import createElement from '../../utils/create-element';
 import { Page } from '../abstract/page';
 import { RouteAction } from '../../store/action/routeAction';
 
-type PromocodeInfo = {
-    name: string;
-    code: string;
-    description: string;
-};
-
-const PROMO_CODES_INFO: PromocodeInfo[] = [
-    {
-        name: 'Discount 50%',
-        code: 'PROMO-50',
-        description: `Products without discount
-        Any total amount`,
-    },
-    {
-        name: 'Discount 30%',
-        code: 'PROMO-30',
-        description: `All production
-        Any total amount`,
-    },
-    {
-        name: 'Discount $45',
-        code: 'PROMO-45USD',
-        description: `All production
-        Cart total amount from $100`,
-    },
-];
 const ImplimentedPages: LinkProps[] = [
     {
         page: PageName.INDEX,

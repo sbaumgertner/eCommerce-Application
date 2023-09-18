@@ -8,6 +8,7 @@ import { CartStore } from '../../store/cart-store';
 import CartItem from '../../components/cart-item/cart-item';
 import { RouteAction } from '../../store/action/routeAction';
 import { PageName, StoreEventType } from '../../types';
+import InputField from '../../components/input-field/input-field';
 
 const EMPTY_CART_TITLE = `Your home is missing something... a little green!`;
 const EMPTY_CART_MESSAGE = `Take a look at our curated plant collections to find the perfect addition to your space.`;
@@ -15,6 +16,8 @@ const EMPTY_CART_MESSAGE = `Take a look at our curated plant collections to find
 export class CartPage extends Page {
     private cartAction = new CartActions();
     private routeAction = new RouteAction();
+    private promoInput?: InputField;
+    private promoCode?: string;
 
     constructor(private appStore: AppStore, private cartStore: CartStore) {
         super();
@@ -139,51 +142,81 @@ export class CartPage extends Page {
     }
 
     private createSummaryInner(): HTMLElement {
+        this.promoCode = this.cartStore.getPromoCode();
+
         const summaryInnerEl = createElement({
             tag: 'div',
             classes: ['summary__inner'],
         });
 
-        summaryInnerEl.innerHTML = `
-        <p class="summary__total-title">Total:</p>
-        <p class="summary__total-value"></p>
+        const promoEl = createElement({
+            tag: 'div',
+            classes: ['summary__promo'],
+        });
+        this.promoInput = new InputField('text', 'promo-input', 'promo code', '');
+        if (this.promoCode) {
+            this.promoInput.setValue(this.promoCode);
+        }
+        const promoButton = new Button('bordered', 'promo-button', 'Apply');
+        promoEl.append(this.promoInput.getComponent(), promoButton.getComponent());
+        summaryInnerEl.append(promoEl);
+
+        const subtotalEl = this.createSubtotal();
+
+        const totalEl = createElement({
+            tag: 'div',
+            classes: ['summary__total'],
+        });
+        totalEl.innerHTML = `
+            <p class="summary__total-title">Total:</p>
+            <p class="summary__total-value"></p>
         `;
 
-        const testPromo = this.createTestPromocodeBtnBar();
-        summaryInnerEl.append(testPromo);
+        const checkout = new Button('filled', 'checkout', 'Checkout');
+        summaryInnerEl.append(promoEl, subtotalEl, totalEl, checkout.getComponent());
 
         return summaryInnerEl;
     }
 
-    private createTestPromocodeBtnBar(): HTMLElement {
-        const bartEl = createElement({ tag: 'div', classes: ['123'] });
-        const addBtnEl = new Button('filled', '', 'ADD').getComponent();
-        const removeBtnEl = new Button('filled', '', 'REMOVE').getComponent();
-
-        addBtnEl.addEventListener('click', () => {
-            this.cartAction.addPromo('PROMO-45USD');
-            bartEl.innerHTML = '';
-            bartEl.append(removeBtnEl);
+    private createSubtotal(): HTMLElement {
+        const subtotalEl = createElement({
+            tag: 'div',
+            classes: ['subtotal'],
         });
-
-        removeBtnEl.addEventListener('click', () => {
-            this.cartAction.removePromo('');
-            bartEl.innerHTML = '';
-            bartEl.append(addBtnEl);
-        });
-
-        if (this.cartStore.hasPromo()) {
-            bartEl.append(removeBtnEl);
-        } else {
-            bartEl.append(addBtnEl);
+        if (!this.promoCode) {
+            subtotalEl.classList.add('hidden');
         }
-        return bartEl;
+        subtotalEl.innerHTML = `
+            <div class="subtotal__price">
+                <p class="subtotal__price-title">Subtotal:</p>
+                <p class="subtotal__price-value">1,090.50$</p>
+            </div>
+            <div class="subtotal__promo">
+                <p class="subtotal__promo-title">Promo code:</p>
+                <p class="subtotal__promo-value">-100$</p>
+            </div>
+        `;
+        return subtotalEl;
     }
 
     private updateTotal(): void {
+        const total = this.cartStore.getTotalPrice();
+        const subtotal = this.cartStore.getSubtotalPrice();
+        const promoDiscount = subtotal - total;
+
+        const subtotalPriceEl = this.html?.querySelector('.subtotal__price-value');
+        if (subtotalPriceEl) {
+            subtotalPriceEl.textContent = `${subtotal / 100}$`;
+        }
+
         const totalEl = this.html?.querySelector('.summary__total-value');
         if (totalEl) {
-            totalEl.textContent = `${this.cartStore.getTotalPrice() / 100}$`;
+            totalEl.textContent = `${total / 100}$`;
+        }
+
+        const promoDiscountEl = this.html?.querySelector('.subtotal__promo-value');
+        if (promoDiscountEl) {
+            promoDiscountEl.textContent = `-${promoDiscount / 100}$`;
         }
     }
 }

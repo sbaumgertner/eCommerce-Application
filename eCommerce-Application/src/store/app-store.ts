@@ -56,6 +56,37 @@ const ProductIDArr = [
     '11003',
 ];
 
+export type PromocodeInfo = {
+    id: string;
+    name: string;
+    code: string;
+    description: string;
+};
+
+export const PROMO_CODES_INFO: PromocodeInfo[] = [
+    {
+        id: '6f5a62ba-b64b-4977-89a9-c1ba2929f8cd',
+        name: 'Discount 50%',
+        code: 'PROMO-50',
+        description: `Products without discount
+        Any total amount`,
+    },
+    {
+        id: '52315dab-d4a5-4556-ab70-039c06840c31',
+        name: 'Discount 30%',
+        code: 'PROMO-30',
+        description: `All production
+        Any total amount`,
+    },
+    {
+        id: '98c66c66-f849-45c2-bc4e-04669d7d5035',
+        name: 'Discount $45',
+        code: 'PROMO-45USD',
+        description: `All production
+        Cart total amount from $100`,
+    },
+];
+
 export class AppStore extends Store {
     private currentPage: PageName;
     private currentPageResource?: string;
