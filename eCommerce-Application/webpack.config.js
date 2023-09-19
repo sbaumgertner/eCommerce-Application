@@ -20,7 +20,7 @@ module.exports = (_env, options) => {
         output: {
             path: path.join(__dirname, '/dist'),
             filename: 'script.js',
-            publicPath: isProduction ? '/eCommerce-sprint3-deploy/' : '/',
+            publicPath: isProduction ? '/eCommerce-sprint4-deploy/' : '/',
         },
         module: {
             rules: [

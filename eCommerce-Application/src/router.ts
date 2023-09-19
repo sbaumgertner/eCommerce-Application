@@ -20,18 +20,6 @@ export class Router {
 
     constructor() {
         this.routeAction = new RouteAction();
-        //document.addEventListener('DOMContentLoaded', () => {
-        /*const host: string = window.location.host;
-        if (host.includes('localhost')) {
-            this.basePath = '/';
-        } else if (host.includes('127.0.0.1')) {
-            this.basePath = '/eCommerce-Application/eCommerce-Application/dist/';
-        } else {
-            this.basePath = '/eCommerce-sprint3-deploy/';
-        }
-        this.navigate();
-        alert(this.basePath);*/
-        //});
         window.addEventListener('popstate', this.navigate.bind(this));
     }
 
@@ -42,7 +30,7 @@ export class Router {
         } else if (host.includes('127.0.0.1')) {
             this.basePath = '/eCommerce-Application/eCommerce-Application/dist/';
         } else {
-            this.basePath = '/eCommerce-sprint3-deploy/';
+            this.basePath = '/eCommerce-sprint4-deploy/';
         }
         this.navigate();
     }
@@ -54,7 +42,7 @@ export class Router {
         } else if (host.includes('127.0.0.1')) {
             return 'eCommerce-Application/eCommerce-Application/dist/';
         } else {
-            return 'eCommerce-sprint3-deploy/';
+            return 'eCommerce-sprint4-deploy/';
         }
     }
 
