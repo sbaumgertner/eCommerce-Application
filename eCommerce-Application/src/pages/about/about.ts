@@ -15,9 +15,9 @@ type Person = {
 };
 
 const GREETING_TEXT = `Hello, everyone! We're the Positive Code Crafters team, and this is our final project for the JavaScript/Front-end course at The Rolling Scopes School.`;
-const RESP_TEXT = `Svetlana Sbaumgertner (team lead): set up the application structure, developed routing, worked on the "Registration" and "Detailed Product" pages. 
+const RESP_TEXT = `Svetlana Sbaumgertner (team lead): set up the application structure, developed routing, worked on the "Registration", "Detailed Product" and "Basket" pages. 
 Yulia Novoselova: managed the initial setup of the project in eCommerce tools and worked with their API, developed the "Login" and "User Profile" pages.
-Illia Sakharau: created the design of the application, managed the board, was responsible for filling the project in eCommerce tools, worked on the "Header & Footer", "Main Page", and "Catalog" pages.
+Illia Sakharau: created the design of the application, managed the board, was responsible for filling the project in eCommerce tools, worked on the "Header & Footer", "Main", "Catalog", and "About Us" pages.
 Although we chose Svetlana Sbaumgertner as our team leader, we made all decisions together. During the project, we supported each other and helped each other with any problems that arose.`;
 const MENTORS_INFO: Person[] = [
     {
