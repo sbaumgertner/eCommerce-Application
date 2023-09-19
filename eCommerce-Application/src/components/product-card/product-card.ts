@@ -117,7 +117,7 @@ export function productDataAdapter(product: EcomProductData, categoriesData: any
         const age = ageData ? ageData.value.label : '';
         const imgURL = product.masterVariant.images[0].url;
         const description = product.metaDescription.en;
-        const url = createProductURL(product.key);
+        const url = createProductURL(product.key, 'catalog');
         const key = product.key;
 
         return { id, name, category, mainPrice, salePrice, age, imgURL, description, url, key };
