@@ -25,6 +25,9 @@ export default class PopUp extends Component {
 
         this.closePopUp(closeButton);
         this.closePopUp(this.componentElem);
+        button.addEventListener('click', () => {
+            this.scroll.addScroll();
+        });
         popUp.append(popUpTitle, closeButton, content, errorMessage, button);
         return popUp;
     }
