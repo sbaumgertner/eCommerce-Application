@@ -1,14 +1,16 @@
 @import "../../styles/tokens.scss";
 
 .dimming-window {
-    position: relative;
-    width: 100%;
-    min-height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    overflow: hidden;
     position: fixed;
-    top: 0px;
-    border-radius: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(55, 67, 47, 0.60);
+
+    z-index: 150;
 }
 
 .popup {
@@ -19,16 +21,22 @@
     padding: 32px;
     background-color: $color-neutral-100;
     border-radius: 32px;
-    box-shadow: 0px 0px 10px #000;
-    margin: 100px auto;
+    box-shadow: 0px 0px 24px $color-neutral-60;
     max-height: 80vh;
     overflow-y: scroll;
+
     @media (max-width: $max-mobile) {
-        width: 328px;
+        width: calc(100vw - 32px);
     }
 
     &::-webkit-scrollbar {
-        width: 0;
+        margin-right: -4px;
+        width: 8px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        border-radius: 50%;
+        background: linear-gradient(180deg, rgba(125, 137, 117, 0.00) 10%, rgba(125, 137, 117, 0.60) 50%, rgba(125, 137, 117, 0.00) 90%);
     }
 
     >* {
@@ -37,14 +45,14 @@
 
     &__close {
         position: absolute;
-        top: 15px;
-        right: 20px;
+        top: 16px;
+        right: 8px;
         width: 24px;
         height: 24px;
         opacity: 0.2;
         cursor: pointer;
-      transition: opacity ease 0.5s;
-    
+        transition: opacity ease 0.5s;    
+
         &:hover {
             opacity: 1;
         }
@@ -58,7 +66,7 @@
         display: block;
         width: 24px;
         height: 2px;
-        background: #000;
+        background: $color-neutral-30;
     }
     
     &__close::before {
@@ -69,7 +77,8 @@
         transform: rotate(-45deg);
     }
 
-    &__save {
+    #popup__save {
         width: 100%;
+        margin: 0;
     }
 }

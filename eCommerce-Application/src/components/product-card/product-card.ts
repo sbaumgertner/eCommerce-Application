@@ -2,10 +2,13 @@ import './product-card.scss';
 
 import createElement from '../../utils/create-element';
 import Component from '../abstract/component';
-import { Button } from '../button/button';
-import { EcomProductData } from '../../types';
+import { EcomProductData, ProductID } from '../../types';
+import { CartInteractionBar } from '../cart-interactions-bar/cart-interactions-bar';
+import { CartStore } from '../../store/cart-store';
+import { createProductURL } from '../../utils/create-product-url';
 
 type ProductCardData = {
+    id: ProductID;
     name: string;
     category: string;
     mainPrice: number;
@@ -14,10 +17,11 @@ type ProductCardData = {
     imgURL: string;
     description: string;
     url: string;
+    key: string;
 };
 
 export class ProductCard extends Component {
-    constructor(productData: ProductCardData) {
+    constructor(productData: ProductCardData, private cartStore: CartStore) {
         super({ tag: 'a', classes: ['product-card'] });
         this.componentElem.setAttribute('target', '_blank');
         this.componentElem.setAttribute('href', productData.url);
@@ -25,9 +29,9 @@ export class ProductCard extends Component {
     }
 
     public render(productInfo: ProductCardData): void {
-        const { name, category, mainPrice, salePrice, age, imgURL, description } = productInfo;
+        const { name, category, mainPrice, salePrice, age, imgURL, description, id } = productInfo;
         const headerEl = this.createHeader(name, category, mainPrice, salePrice);
-        const buttonBarEl = this.createButtonbar();
+        const buttonBarEl = this.createButtonbar(id);
         const ageEl = this.createAge(age);
         const imageEl = this.createImage(imgURL);
         const descriptionEl = this.createDescription(description);
@@ -93,16 +97,9 @@ export class ProductCard extends Component {
         return descriptionEl;
     }
 
-    private createButtonbar(): HTMLElement {
-        const btnBarEl = createElement({ tag: 'div', classes: ['product-card__button-bar'] });
-        const addToCardBtnEl = new Button('bordered', undefined, 'Add to cart').getComponent();
-
-        addToCardBtnEl.addEventListener('click', (e: Event) => {
-            e.preventDefault();
-            console.log('Add to cart');
-        });
-
-        btnBarEl.append(addToCardBtnEl);
+    private createButtonbar(productID: ProductID): HTMLElement {
+        const btnBarEl = new CartInteractionBar({ type: 'bordered', productID }, this.cartStore).getComponent();
+        btnBarEl.classList.add('product-card__button-bar');
         return btnBarEl;
     }
 }
@@ -110,6 +107,7 @@ export class ProductCard extends Component {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function productDataAdapter(product: EcomProductData, categoriesData: any[]): ProductCardData {
     try {
+        const id = product.id;
         const name = product.name.en;
         const category = categoriesData.find((catigory: { id: string }) => catigory.id === product.categories[0].id)
             .name.en;
@@ -119,20 +117,13 @@ export function productDataAdapter(product: EcomProductData, categoriesData: any
         const age = ageData ? ageData.value.label : '';
         const imgURL = product.masterVariant.images[0].url;
         const description = product.metaDescription.en;
-        const url = `https://sbaumgertner.github.io/eCommerce-sprint3-deploy/product/${product.key}`;
+        const url = createProductURL(product.key, 'catalog');
+        const key = product.key;
 
-        return {
-            name,
-            category,
-            mainPrice,
-            salePrice,
-            age,
-            imgURL,
-            description,
-            url,
-        };
+        return { id, name, category, mainPrice, salePrice, age, imgURL, description, url, key };
     } catch (error) {
         return {
+            id: '',
             name: '',
             category: '',
             mainPrice: 0,
@@ -140,6 +131,7 @@ export function productDataAdapter(product: EcomProductData, categoriesData: any
             imgURL: '',
             description: '',
             url: '',
+            key: '',
         };
     }
 }

@@ -21,7 +21,6 @@ import { addRemoveClasslist } from '../../utils/add-remove-classlist';
 import { AddressFields } from '../../components/address-fields/address-fields';
 import { Checkbox } from '../../components/checkbox/checkbox';
 import { ClientResponse, Customer } from '@commercetools/platform-sdk';
-import { Scroll } from '../../utils/scroll';
 import { checkboxChecking } from '../../utils/checkbox-checking';
 
 export class AccountPage extends Page {
@@ -52,13 +51,10 @@ export class AccountPage extends Page {
     private buttonEditAddress: Button;
     private editEmailButton: IconButton;
     private apiError: HTMLElement;
-    private scroll: Scroll;
-    //private adresses;
 
     constructor(appStore: AppStore) {
         super();
         this.appStore = appStore;
-        //this.accountStore = new AccountStore();
         this.accountAction = new AcountAction();
         this.buttonEditPassword = new Button('bordered', 'button-edit', 'Edit Password');
         this.editEmailButton = new IconButton({ icon: bottonEdit, type: 'clear' });
@@ -94,7 +90,6 @@ export class AccountPage extends Page {
         this.shippingDefaultCheckbox = new Checkbox('Default address', 'shipping-default-checkbox');
         this.billingDefaultCheckbox = new Checkbox('Default address', 'billing-default-checkbox');
         this.billingAddressCheckbox.setChecked();
-        //this.accountStore.addChangeListener(StoreEventType.ACCOUNT_ERROR, this.onStoreChange.bind(this));
         this.shippingAddressCheckbox.getComponent().addEventListener('click', () => {
             this.shippingDefaultCheckbox.getComponent().classList.toggle('disabled');
             this.shippingDefaultCheckbox.setUnchecked();
@@ -103,7 +98,6 @@ export class AccountPage extends Page {
             this.billingDefaultCheckbox.getComponent().classList.toggle('disabled');
             this.billingDefaultCheckbox.setUnchecked();
         });
-        this.scroll = new Scroll();
     }
 
     public render(): void {
@@ -113,7 +107,6 @@ export class AccountPage extends Page {
         this.html = document.createElement('div');
         this.html.className = 'account-page';
         this.html.append(this.createEmailWrapper(), this.createInfoWrapper(), this.createAdressWrapper());
-        this.getEditPasswordPopUp();
         this.addEventListeners();
     }
 
@@ -183,7 +176,6 @@ export class AccountPage extends Page {
         const button = new Button('bordered', 'button-edit-info', 'Edit');
         button.getComponent().addEventListener('click', () => {
             this.html?.append(this.getFullNamePopUp());
-            this.scroll.removeScroll();
         });
         sectionHead.append(title);
 
@@ -338,6 +330,7 @@ export class AccountPage extends Page {
         billingCheckbox.append(this.billingAddressCheckbox.getComponent(), this.billingDefaultCheckbox.getComponent());
         popUpContent.append(this.newAddressFields.getComponent(), shippingCheckbox, billingCheckbox);
         const popUp = new PopUp('', popUpContent, this.apiError, this.buttonSaveNewAddress.getComponent());
+        popUp.getComponent().querySelector('.popup__title')?.remove();
 
         return popUp.getComponent();
     }
@@ -411,10 +404,8 @@ export class AccountPage extends Page {
                 document.querySelectorAll(`#${button.id}`).forEach((el) => {
                     el.remove();
                 });
-                //document.querySelector('.address-all')?.querySelector(`#${button.id}`)?.remove();
             } catch (error) {
                 console.log(error);
-                //location.reload();
             }
         };
     }
@@ -423,7 +414,6 @@ export class AccountPage extends Page {
         button.onclick = (): void => {
             localStorage.setItem('buttonId', button.id);
             this.html?.append(this.createEditAddressPopUp());
-            this.scroll.removeScroll();
             document.querySelectorAll('.checkbox-wrapper')[0].textContent = '';
             checkboxChecking(
                 this.billingAddressCheckbox.getComponent(),
@@ -475,18 +465,15 @@ export class AccountPage extends Page {
     public addEventListeners(): void {
         this.buttonEditPassword.getComponent().addEventListener('click', () => {
             this.html?.append(this.getEditPasswordPopUp());
-            this.scroll.removeScroll();
         });
 
         this.editEmailButton.getComponent().addEventListener('click', () => {
             this.html?.append(this.getEmailPopUp());
-            this.scroll.removeScroll();
         });
 
         this.buttonAddress.getComponent().addEventListener('click', () => {
             this.html?.append(this.createNewAddressPopUp());
             document.querySelectorAll('.checkbox-wrapper')[0].textContent = '';
-            this.scroll.removeScroll();
         });
 
         this.buttonSavePassword.getComponent().addEventListener('click', () => {
@@ -523,12 +510,6 @@ export class AccountPage extends Page {
             this.newAddressFields.addValidations();
             this.apiError.textContent = '';
             this.sendNewAddressData();
-            // (document.querySelector('.address-all') as HTMLElement).textContent = '';
-            // this.accountStore.getCustomerInfo().then((data) => {
-            //     for (let i = 0; i < data.body.addresses.length; i += 1) {
-            //         (document.querySelector('.address-all') as HTMLElement).append(this.createAddressItem(data, i));
-            //     }
-            // });
         };
 
         this.buttonEditAddress.getComponent().addEventListener('click', () => {
@@ -568,7 +549,6 @@ export class AccountPage extends Page {
         } else {
             this.apiError.textContent = '';
         }
-        //this.emailInfo.innerHTML = this.accountStore?.getEmailInfo(this.emailInfo) as string;
         this.accountStore?.getFirstName(this.firstName);
         this.accountStore?.getLastName(this.lastName);
         this.accountStore?.getDateOfBirth(this.birthDate);

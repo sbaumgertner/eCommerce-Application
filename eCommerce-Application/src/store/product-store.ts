@@ -10,6 +10,11 @@ export class ProductStore extends Store {
         this.product = await api.getProductByKey(productKey);
     }
 
+    public async setDataFromAPIById(productId: string): Promise<void> {
+        const api = new ProductsApi();
+        this.product = await api.getProductById(productId);
+    }
+
     protected actionCallback(action: Action): void {
         switch (action.actionType) {
             case ActionType.LOGIN:

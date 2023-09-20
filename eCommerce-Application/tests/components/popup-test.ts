@@ -3,7 +3,7 @@
  */
 import PopUp from '../../src/components/pop-up/popUp';
 
-describe('FormField', () => {
+describe('PopUp', () => {
     // Create a temporary container element for testing
     const title = 'Popup Title';
     const content = document.createElement('div');

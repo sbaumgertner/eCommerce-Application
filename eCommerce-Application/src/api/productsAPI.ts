@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { LocalizedString, Product } from '@commercetools/platform-sdk';
+import { LocalizedString, Product, ProductPagedQueryResponse } from '@commercetools/platform-sdk';
 import { getApiRootForCredentialFlow } from './client';
 import { ProductData } from '../types';
 
@@ -44,26 +44,26 @@ export class ProductsApi {
         return descriptions;
     }
 
-    // async getProductsPrices() {
-    //     const productsPrices = () => {
-    //         return getApiRootForCredentialFlow().products().get().execute();
-    //     };
-    //     const prices: number[] = [];
-    //     productsPrices().then(({ body }) => {
-    //         for (let i = 0; i < body.results.length; i += 1) {
-    //             prices.push(body.results[i].masterData.staged.variants[i].prices[i].value.centAmount);
-    //         }
-    //     });
-    //     return prices;
-    // }
-
     async getProductByKey(key: string): Promise<ProductData> {
         const data = await getApiRootForCredentialFlow()
             .products()
             .get({ queryArgs: { where: `key = "${key}"` } })
             .execute();
 
-        const productData = data.body.results[0].masterData.current;
+        return await this.getProductData(data.body);
+    }
+
+    async getProductById(id: string): Promise<ProductData> {
+        const data = await getApiRootForCredentialFlow()
+            .products()
+            .get({ queryArgs: { where: `id = "${id}"` } })
+            .execute();
+
+        return await this.getProductData(data.body);
+    }
+
+    async getProductData(data: ProductPagedQueryResponse): Promise<ProductData> {
+        const productData = data.results[0].masterData.current;
         const categoryId = productData.categories[0].id;
         const category = await this.getCategoryById(categoryId);
 
@@ -77,7 +77,7 @@ export class ProductsApi {
         const images: string[] = productData.masterVariant.images?.map((item) => item.url) as string[];
 
         const product: ProductData = {
-            id: data.body.results[0].key as string,
+            id: data.results[0].key as string,
             name: productData.name['en'],
             category: category,
             description: productData.metaDescription?.['en'] as string,
@@ -86,6 +86,7 @@ export class ProductsApi {
             images: images,
             size: size,
             age: age,
+            productID: data.results[0].id,
         };
 
         return product;

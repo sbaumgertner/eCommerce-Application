@@ -17,7 +17,7 @@
       padding: 16px;
     }
 
-    >* {
+    & .section {
         display: flex;
         flex-direction: column;
         width: 640px;
@@ -25,7 +25,7 @@
         border-radius: 32px;
         background-color: $color-neutral-100;
         @media (max-width: $max-mobile) {
-            width: 328px;
+            width: 100%;
             padding: 24px;
           }
     }
@@ -213,4 +213,8 @@
     display: flex;
     gap: 10px;
     align-items: center;
+}
+
+.popup .address__title {
+    padding-top: 0;
 }

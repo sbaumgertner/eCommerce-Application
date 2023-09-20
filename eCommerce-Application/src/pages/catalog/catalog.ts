@@ -22,6 +22,7 @@ import InputField from '../../components/input-field/input-field';
 import searchIcon from '../../assets/icons/icon-search.svg';
 import Input from '../../components/input/input';
 import { Select } from '../../components/select/select';
+import { CartStore } from '../../store/cart-store';
 
 const PLANT_SIZE_FILTERS = [
     {
@@ -91,7 +92,7 @@ export class CatalogPage extends Page {
     private productsData: EcomProductData[] | undefined;
     private totalProducts = 0;
 
-    constructor(private appStore: AppStore) {
+    constructor(private appStore: AppStore, private cartStore: CartStore) {
         super();
         this.html = document.createElement('div');
         this.routeAction = new RouteAction();
@@ -118,6 +119,7 @@ export class CatalogPage extends Page {
         this.totalProducts = 0;
         const data = (await getCategories()).results;
         this.categoriesData = data;
+        this.pageInfo.currentPage = 1;
         this.setProductsData();
         this.createCategoriesBar();
         return data;
@@ -220,6 +222,7 @@ export class CatalogPage extends Page {
         searchField.setValue(this.pageInfo.searchText);
         searchBtnEl.addEventListener('click', () => {
             this.pageInfo.searchText = searchField.getValue();
+            this.pageInfo.currentPage = 1;
             this.setProductsData();
             this.createInner();
         });
@@ -227,6 +230,7 @@ export class CatalogPage extends Page {
         searchField.getComponent().addEventListener('keyup', (e) => {
             if (e.keyCode === 13) {
                 this.pageInfo.searchText = searchField.getValue();
+                this.pageInfo.currentPage = 1;
                 this.setProductsData();
                 this.createInner();
             }
@@ -351,6 +355,7 @@ export class CatalogPage extends Page {
                     sizeArr.splice(index, 1);
                 }
 
+                this.pageInfo.currentPage = 1;
                 this.setProductsData();
                 this.createInner();
             });
@@ -384,6 +389,7 @@ export class CatalogPage extends Page {
                     ageArr.splice(index, 1);
                 }
 
+                this.pageInfo.currentPage = 1;
                 this.setProductsData();
                 this.createInner();
             });
@@ -429,6 +435,7 @@ export class CatalogPage extends Page {
             }
             param.min = +minInput.value;
 
+            this.pageInfo.currentPage = 1;
             this.setProductsData();
             this.createInner();
         });
@@ -453,6 +460,7 @@ export class CatalogPage extends Page {
             }
             param.max = +maxInput.value;
 
+            this.pageInfo.currentPage = 1;
             this.setProductsData();
             this.createInner();
         });
@@ -473,6 +481,7 @@ export class CatalogPage extends Page {
         chepsEl.addEventListener('click', () => {
             this.pageInfo.saleFilters = !this.pageInfo.saleFilters;
 
+            this.pageInfo.currentPage = 1;
             this.setProductsData();
             this.createInner();
         });
@@ -501,7 +510,7 @@ export class CatalogPage extends Page {
         if (this.productsData) {
             this.productsData.forEach((product) => {
                 const productData = productDataAdapter(product, this.categoriesData);
-                const productCard = new ProductCard(productData);
+                const productCard = new ProductCard(productData, this.cartStore);
                 cardGridEl.append(productCard.getComponent());
             });
         } else {
@@ -570,6 +579,7 @@ export class CatalogPage extends Page {
 
         selectEl.getComponent().addEventListener('change', () => {
             this.pageInfo.sortBy = selectEl.getValue();
+            this.pageInfo.currentPage = 1;
             this.setProductsData();
             this.createInner();
         });
