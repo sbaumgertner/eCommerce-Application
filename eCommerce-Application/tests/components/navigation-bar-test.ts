@@ -6,11 +6,12 @@ import NavigationBar from "../../src/components/navigation-bar/navigation-bar";
 import { Router } from "../../src/router";
 import { RouteAction } from "../../src/store/action/routeAction";
 import { AppStore } from "../../src/store/app-store";
+import { CartStore } from "../../src/store/cart-store";
 import { PageName } from "../../src/types";
 
 test('navigarionBar.constructor', () => {
 
-  const appStore = new AppStore(new Router());
+  const appStore = new AppStore(new Router(), new CartStore());
   const nav = new NavigationBar(appStore, 
     [{page: PageName.LOGIN, text: 'LOGIN'}, {page: PageName.REGISTRATION, text: 'REGISTRATION'}]);
   const el = nav.getComponent();
@@ -22,7 +23,7 @@ test('navigarionBar.constructor', () => {
 
 test('navigarionBar.changePage', () => {
 
-  const appStore = new AppStore(new Router());
+  const appStore = new AppStore(new Router(), new CartStore());
   const nav = new NavigationBar(appStore, 
     [{page: PageName.LOGIN, text: 'LOGIN'}, {page: PageName.REGISTRATION, text: 'REGISTRATION'}]);
   const el = nav.getComponent();

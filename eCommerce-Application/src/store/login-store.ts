@@ -71,6 +71,7 @@ export class LoginStore extends Store {
                                 });
                             } else {
                                 localStorage.setItem('cartAnonID', data.body.results[0].id);
+                                this.appStore.getCartStore().updateCart();
                                 this.emit(StoreEventType.LOGIN);
                             }
                         });

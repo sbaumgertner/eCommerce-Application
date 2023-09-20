@@ -2,6 +2,7 @@ import { RouteActionData } from './action/routeAction';
 import { Router } from '../router';
 import { Action, ActionType, PageName, StoreEventType } from '../types';
 import { Store } from './abstract/store';
+import { CartStore } from './cart-store';
 
 const pagesForLoggedInUser: PageName[] = [
     PageName.ABOUT_US,
@@ -92,12 +93,18 @@ export class AppStore extends Store {
     private currentPageResource?: string;
     private router: Router;
     private isAnonUser: boolean;
+    private cartStore: CartStore;
 
-    constructor(router: Router) {
+    constructor(router: Router, cartStore: CartStore) {
         super();
         this.router = router;
         this.currentPage = PageName.INDEX;
         this.isAnonUser = !localStorage.getItem('token');
+        this.cartStore = cartStore;
+    }
+
+    public getCartStore(): CartStore {
+        return this.cartStore;
     }
 
     public getCurrentPage(): PageName {

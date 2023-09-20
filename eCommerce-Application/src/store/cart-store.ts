@@ -2,9 +2,7 @@
 import CartAPI from '../api/cartAPI';
 import { Action, ActionType, CartItem, ProductID, Promocode, StoreEventType } from '../types';
 import { Store } from './abstract/store';
-import { AppStore, PROMO_CODES_INFO } from '../store/app-store';
-import { Router } from '../router';
-import { LoginStore } from './login-store';
+import { PROMO_CODES_INFO } from '../store/app-store';
 import { DiscountCodeInfo } from '@commercetools/platform-sdk';
 
 export class CartStore extends Store {
@@ -14,25 +12,17 @@ export class CartStore extends Store {
     private version: number;
     private cartAPI: CartAPI;
     private totalPrice: number;
-    private appStore: AppStore;
-    private router?: Router;
-    private loginStore: LoginStore;
     private promoID?: string;
     private promoCode?: string;
 
     constructor() {
         super();
-        this.router = new Router();
-        this.appStore = new AppStore(this.router);
-        this.loginStore = new LoginStore(this.appStore);
-
         this.cartId = '';
         this.version = 1;
         this.cartItemAmount = 0;
         this.items = [];
         this.totalPrice = 0;
         this.cartAPI = new CartAPI(!localStorage.getItem('token'));
-        this.loginStore.addChangeListener(StoreEventType.LOGIN, this.updateCart.bind(this));
         this.setMaxListeners(100);
     }
 
