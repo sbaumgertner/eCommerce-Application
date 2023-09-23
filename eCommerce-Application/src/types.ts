@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 export enum PageName {
     INDEX = 'INDEX',
     LOGIN = 'LOGIN',
@@ -152,3 +153,11 @@ export type CartInteractionProps = {
 };
 
 export type Promocode = string;
+
+export enum CategoriesImg {
+    alocasia = require('./assets/img/category/cat-alocasia.png'),
+    syngonium = require('./assets/img/category/cat-syngonium.png'),
+    monstera = require('./assets/img/category/cat-monstera.png'),
+    cactus = require('./assets/img/category/cat-cactus.png'),
+    philodendron = require('./assets/img/category/cat-philodendron.png'),
+}

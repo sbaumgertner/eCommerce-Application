@@ -1,7 +1,7 @@
 import './catalog.scss';
 
 import { RouteAction } from '../../store/action/routeAction';
-import { EcomProductData, PageName, StoreEventType } from '../../types';
+import { CategoriesImg, EcomProductData, PageName, StoreEventType } from '../../types';
 
 import createElement from '../../utils/create-element';
 import { Page } from '../abstract/page';
@@ -263,10 +263,8 @@ export class CatalogPage extends Page {
     private fillCategoriesList(listEl: HTMLElement): void {
         this.categoriesData.forEach((element: { name: { en: string } }) => {
             const name = element.name.en.toLocaleLowerCase();
-            const cheps = new Chips(
-                element.name.en,
-                `https://raw.githubusercontent.com/Illia-Sakharau/img-for-final-task/main/cat-${name}.png`
-            );
+            const categoriesImgArr = Object.entries(CategoriesImg).find((cat) => cat[0] === name) as string[];
+            const cheps = new Chips(element.name.en, categoriesImgArr[1]);
             const chepsEl = cheps.getComponent();
 
             if (name === this.pageInfo.currentCategories) {

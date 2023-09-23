@@ -1,7 +1,7 @@
 import './product.scss';
 import { AppStore } from '../../store/app-store';
 import { ProductStore } from '../../store/product-store';
-import { ProductData, ProductID } from '../../types';
+import { CategoriesImg, ProductData, ProductID } from '../../types';
 import createElement from '../../utils/create-element';
 import { Page } from '../abstract/page';
 import { Slider } from '../../components/slider/slider';
@@ -42,14 +42,16 @@ export class ProductPage extends Page {
     }
 
     private createTitle(): HTMLElement {
+        const name = this.data?.category.toLowerCase();
         const html = createElement({ tag: 'div', classes: ['product-title'] });
+        const categoriesImgArr = Object.entries(CategoriesImg).find((cat) => cat[0] === name) as string[];
         html.innerHTML = `
             <div class="product-title__header">
                 <p class="product-title__category">${this.data?.category}</p>
                 <p class="product-title__name">${this.data?.name}</p>
             </div>
             <div class="product-title__image-wrap">
-                <img class="product-title__image" alt="category image" src="https://raw.githubusercontent.com/Illia-Sakharau/img-for-final-task/main/cat-${this.data?.category.toLowerCase()}.png">
+                <img class="product-title__image" alt="category image" src="${categoriesImgArr[1]}">
             </div>
         `;
         return html;
