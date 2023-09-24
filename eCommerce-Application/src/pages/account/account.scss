@@ -1,0 +1,220 @@
+@import "../../styles/tokens.scss";
+
+.account-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: url("../../assets/img/image-01.jpg") no-repeat;
+    background-size: cover;
+    background-position: center;
+    padding: 64px;
+    gap: 16px;
+    min-height: calc(100vh - 80px);
+    @media (max-width: $max-tablet) {
+        padding: 32px;
+    }
+    @media (max-width: $max-mobile) {
+      padding: 16px;
+    }
+
+    & .section {
+        display: flex;
+        flex-direction: column;
+        width: 640px;
+        padding: 32px;
+        border-radius: 32px;
+        background-color: $color-neutral-100;
+        @media (max-width: $max-mobile) {
+            width: 100%;
+            padding: 24px;
+          }
+    }
+}
+
+.section-email {
+    position: relative;
+    &__head {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    &__info {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .head-title {
+        @include font-h3;
+        color: $color-neutral-30;
+    }
+
+    #button-edit {
+        position: absolute;
+        right: 0;
+        top: 0;
+        @media (max-width: $max-mobile) {
+            position: relative;
+            width: 100%;
+            margin-top: 16px;
+        }
+    }
+}
+
+.section-info {
+    position: relative;
+    &__head {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 32px;
+    }
+
+    &__info {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .head-title {
+        @include font-h5;
+        color: $color-neutral-30;
+    }
+
+    .label {
+        color: $color-neutral-60;
+        @include font-overline;
+        padding-left: 0;
+        margin-bottom: 6px;
+    }
+    
+    .info {
+        color: $color-neutral-10;
+        @include font-text;
+        margin-bottom: 16px;
+    }
+
+    #button-edit-info {
+        position: absolute;
+        right: 0;
+        top: 0;
+        @media (max-width: $max-mobile) {
+            position: relative;
+            width: 100%;
+            margin-bottom: 32px;
+        }
+    }
+}
+
+.section-address {
+    &__head {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        border-bottom: 1px solid $color-neutral-90;
+        padding-bottom: 32px;
+    }
+
+    &__content {
+        margin-bottom: 32px;
+    }
+
+    &__info {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .head-title {
+        @include font-h5;
+        color: $color-neutral-30;
+    }
+
+    .address-item {
+        position: relative;
+        border-bottom: 1px solid $color-neutral-90;
+        align-items: center;
+        height: 75px;
+        @media (max-width: $max-mobile) {
+            height: 95px;
+        }
+    }
+
+    .address-info {
+        margin-left: 8px;
+        @media (max-width: $max-mobile) {
+            width: 75%;
+        }
+    }
+
+    #new-address-button {
+       width: 100%;
+    }
+
+
+}
+.api-error {
+    height: 24px;
+    color: $color-secondary-10;
+    margin: 0px;
+}
+
+.default {
+    @include font-text-bold;
+    font-weight: 900;
+}
+
+.round {
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+}
+
+.delete-address-button {
+    position: absolute;
+    right: 20px;
+    top: 8px;
+    @media (max-width: $max-mobile) {
+        right: 0;
+        top: 0;
+    }
+}
+
+.edit-address-button {
+    position: absolute;
+    right: 60px;
+    top: 10px;
+    @media (max-width: $max-mobile) {
+        right: 33px;
+        top: 0;
+    }
+}
+
+.checkboxes {
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+}
+
+.disabled {
+    //display: none;
+    pointer-events: none;
+    .checkbox-label {
+        color: $color-neutral-60;
+    }
+
+}
+
+.address-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.popup .address__title {
+    padding-top: 0;
+}

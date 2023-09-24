@@ -1,0 +1,5 @@
+.eslintrc.js
+webpack.config.js
+webpack.dev.config.js
+/node_modules
+/src/script-gh-spa.js

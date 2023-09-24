@@ -1,0 +1,11 @@
+[
+  {
+    "name": "Europe",
+    "description": "",
+    "locations": [
+      { "country": "BY"},
+      { "country": "GE"},
+      { "country": "RU"}
+    ]
+  }
+]

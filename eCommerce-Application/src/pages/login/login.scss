@@ -1,0 +1,36 @@
+@import "../../styles/tokens.scss";
+
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url("../../assets/img/image-04.jpg") no-repeat;
+    background-size: cover;
+    background-position: center;
+    padding: 64px;
+    min-height: calc(100vh - 80px);
+    @media (max-width: $max-mobile) {
+      padding: 16px;
+    }
+}
+
+.api-error {
+    margin-top: 15px;
+    height: 24px;
+    color: $color-secondary-10;
+}
+
+
+@media (max-width: $max-tablet) {
+    .login-page {
+        padding: 32px;
+    }
+}
+@media (max-width: $max-mobile) {
+    .login-page {
+        padding: 16px;
+    }
+    .eye-button {
+        right: 10%;
+    }
+}

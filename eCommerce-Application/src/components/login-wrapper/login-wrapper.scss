@@ -1,0 +1,47 @@
+@import "../../styles/tokens.scss";
+
+.login-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 640px;
+  padding: 16px 32px 32px 32px;
+  gap: 32px;
+  border-radius: 32px;
+  background-color: $color-neutral-100;
+  background-image: url('../../assets/img/image-05.png');
+  background-position: right;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.login__menu {
+  justify-content: space-around;
+
+  & >* {
+    flex: 0 1 50%;
+  }
+}
+
+@media (max-width: $max-tablet) {
+  .login-page__wrapper {
+    padding: 32px;
+  } 
+}
+
+@media (max-width: $max-mobile) {
+  .login-wrapper {
+    padding: 16px 16px 32px;
+
+  }
+  .login-page__form-wrapper {
+    padding: 16px 16px 32px 16px;
+  }
+  .login-page__wrapper {
+    padding: 16px;
+  } 
+  .form-wrapper__image {
+  width: 150%;
+    right: -20%;
+  }
+}

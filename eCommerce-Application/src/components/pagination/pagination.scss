@@ -1,0 +1,19 @@
+@import "../../styles/tokens.scss";
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+
+  &__current {
+    height: 100%;
+    padding: 8px 16px;
+    color: $color-primary-40;
+    border-radius: 12px;
+    border: solid 1px $color-primary-40;
+  }
+  & > .button {
+    padding: 4px;
+  }
+}

@@ -1,0 +1,10 @@
+sku,quantityOnStock,supplyChannel
+P0E20000000E2AA,1,plants-store-minsk
+P0E20000000E2AA,2,plants-store-tbilisi
+P0E20000000E2AA,3,plants-store-moscow
+P0E20000000E2AB,2,plants-store-minsk
+P0E20000000E2AB,2,plants-store-tbilisi
+P0E20000000E2AB,3,plants-store-moscow
+P0E20000000E2AC,3,plants-store-minsk
+P0E20000000E2AC,2,plants-store-tbilisi
+P0E20000000E2AC,3,plants-store-moscow

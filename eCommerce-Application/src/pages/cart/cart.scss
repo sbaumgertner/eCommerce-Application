@@ -1,0 +1,270 @@
+@import "../../styles/tokens.scss";
+
+.cart {
+  min-height: calc(100vh - 80px);
+  background: $color-neutral-90 url('../../assets/img/image-06.png') 50%/cover no-repeat;
+
+  &__wrapper {
+    padding-top: 72px;
+    display: flex;
+    gap: 32px
+  }
+
+  &__my-cart {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 32px;
+    border-radius: 32px;
+    background: $color-neutral-100;
+
+    &_empty {
+      min-height: calc(100vh - 80px - 144px);
+    }
+  }
+
+  &__summary {
+    align-self: self-start;
+    position: sticky;
+    top: 112px;
+    width: 400px;
+    padding: 24px 16px 16px;
+    border-radius: 24px;
+    background: $color-white;
+  }
+
+  &+.dimming-window .popup {
+    & .button {
+      margin-bottom: 0;
+    }
+    & .popup-clear-cart-text {
+      color: $color-neutral-30;
+      @include font-text-bold;
+    }
+  }
+}
+
+.my-cart {
+  &__header {
+    display: flex;
+    align-items: center;
+  }
+  &__title {
+    flex-grow: 1;
+    color: $color-neutral-10;
+  }
+}
+
+.summary {
+  &__header {
+    color: $color-neutral-10;
+  }
+  &__inner {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  &__promo {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 16px;
+    padding: 24px 0;
+  
+    .label {
+      color: $color-neutral-60;
+    }
+  
+    input {
+      line-height: 24px;
+    }
+  
+    .button {
+      margin-top: 32px;
+    }
+  }
+
+  &__total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 0px 32px;
+    border-top: 1px solid $color-neutral-60;
+    color: $color-neutral-10;
+  }
+
+  &__total-title {
+    @include font-h5;
+  }
+
+  &__total-value {
+    @include font-h6;
+  }
+}
+
+.my-cart__list-header {
+  display: flex;
+  padding-top: 16px;
+  border-bottom: 2px solid $color-neutral-90;
+  
+  @media (max-width: $max-mobile) {
+    flex-wrap: wrap;
+  }
+
+  p {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    @include font-text-bold;
+    color: $color-neutral-60;
+
+    @media (max-width: $max-mobile) {
+      padding: 4px 0;
+    }
+  }
+
+  .header-plant {
+    flex: 1 1 272px;
+    min-width: 272px;
+
+    @media (max-width: $max-mobile) {
+      flex: 1 1 calc(100% - 72px);
+      width: calc(100% - 72px);
+      min-width: calc(100% - 72px);
+    }
+  }
+
+  .header-price {
+    padding: 8px 32px 8px 0;
+    text-align: end;
+    width: 96px;
+
+    @media (max-width: $max-mobile) {
+      padding: 4px 0;
+      width: 72px;
+    }
+  }
+
+  .header-count {
+    text-align: center;
+    width: 144px;
+
+    @media (max-width: $max-mobile) {
+      text-align: start;
+      width: calc(100% - 72px);
+    }
+  }
+
+  .header-total {
+    text-align: end;
+    width: 136px;
+
+    @media (max-width: $max-mobile) {
+      width: 72px;
+    }
+  }
+}
+
+.empty-cart {
+  align-self: center;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+  max-width: 700px;
+
+  &__title {
+    color: $color-neutral-60;
+    text-align: center;
+  }
+  &__message {
+    color: $color-neutral-30;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+}
+
+
+.hidden {
+  display: none !important;
+}
+
+.subtotal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 0;
+  border-top: 1px solid $color-neutral-60;
+  color: $color-neutral-60;
+
+  &__price,
+  &__promo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center
+  }
+
+  &__price-title {
+    @include font-h5;
+  }
+
+  &__price-value {
+    @include font-h6;
+  }
+
+  &__promo-value {
+    @include font-text-bold; 
+  }
+}
+
+@media (max-width: $max-tablet) {
+  .cart {
+    &__wrapper {
+      padding: 32px;
+      flex-direction: column;
+      align-items: end;
+      gap: 16px;
+    }
+
+    &__my-cart {
+      width: 100%;
+      &_empty {
+        min-height: calc(100vh - 80px - 64px);      
+      }
+    }
+    &__summary {
+      align-self: self-end;
+    }
+  }
+}
+
+@media (max-width: $max-mobile) {
+  .cart {
+    &__wrapper {
+      padding: 16px;
+    }
+
+    &__my-cart {
+      padding: 32px 16px;
+      &_empty {
+        min-height: calc(100vh - 80px - 32px);      
+      }
+    }
+
+    &__summary {
+      width: 100%;
+    }
+  }
+
+  .empty-cart {
+    max-width: 400px;
+    &__title {
+      @include font-h4;
+    }
+    &__message {
+      @include font-text;
+    }
+  }
+}
